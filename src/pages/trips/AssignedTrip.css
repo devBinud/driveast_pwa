@@ -1,0 +1,73 @@
+.assigned-trip-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.assigned-map-container {
+  flex: 1;
+  position: relative;
+  width: 100%;
+}
+
+.assigned-leaflet-map {
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+}
+
+.assigned-action-panel {
+  width: 100%;
+  position: relative;
+  z-index: 10;
+}
+
+/* Driver car marker styling */
+.driver-car-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.driver-car-marker div {
+  transition: transform 0.3s ease;
+  filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.4));
+}
+
+/* Floating overlay */
+.navigation-overlay {
+  position: absolute;
+  top: var(--spacing-md);
+  left: var(--spacing-md);
+  right: var(--spacing-md);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  background: rgba(10, 15, 29, 0.85);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  box-shadow: var(--shadow-glass);
+}
+
+.compass-icon {
+  font-size: 1.5rem;
+  color: var(--color-success);
+}
+
+.nav-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-text span {
+  font-size: 0.725rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.nav-text strong {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  margin-top: 1px;
+}

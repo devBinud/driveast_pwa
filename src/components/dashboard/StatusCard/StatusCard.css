@@ -1,0 +1,122 @@
+.status-card {
+  overflow: hidden;
+  transition: all var(--transition-normal);
+}
+
+.status-card.online {
+  box-shadow: var(--shadow-glass), 0 8px 24px rgba(16, 185, 129, 0.05);
+}
+
+.status-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-lg) var(--spacing-lg) var(--spacing-md) var(--spacing-lg);
+}
+
+.status-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.status-title-label {
+  font-size: 0.775rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.status-text-heading {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-top: 2px;
+}
+
+.status-toggle-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.status-toggle-btn.active {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+  border-color: rgba(16, 185, 129, 0.25);
+  box-shadow: var(--shadow-glow-success);
+}
+
+.status-toggle-btn:hover {
+  transform: scale(1.05);
+}
+
+.status-toggle-btn:active {
+  transform: scale(0.95);
+}
+
+.status-card-stats {
+  display: flex;
+  border-top: 1px solid var(--card-border);
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.status-stat-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+}
+
+.status-stat-icon-wrapper {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.05rem;
+}
+
+.status-stat-icon-wrapper.purple {
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--color-primary);
+}
+
+.status-stat-icon-wrapper.green {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--color-success);
+}
+
+.status-stat-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.status-stat-label {
+  font-size: 0.725rem;
+  color: var(--text-secondary);
+}
+
+.status-stat-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: 2px;
+}
+
+.status-stat-divider {
+  width: 1px;
+  background: var(--card-border);
+  align-self: stretch;
+}

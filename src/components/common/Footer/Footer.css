@@ -1,0 +1,110 @@
+.app-footer {
+  width: 100%;
+  /* Absorbs scroll-container's removed padding so dark bg fills all the way to bottom nav */
+  padding-bottom: calc(var(--nav-height) + var(--spacing-lg));
+  background: #1c1f26;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.footer-inner {
+  padding: var(--spacing-lg) var(--container-padding) var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+/* Aligned to same container width as header and page body */
+@media (min-width: 768px) {
+  .footer-inner {
+    max-width: var(--container-max-width);
+    margin: 0 auto;
+    width: 100%;
+  }
+}
+
+/* --- Brand Row --- */
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.footer-logo-link {
+  display: block;
+  flex-shrink: 0;
+}
+
+.footer-logo-img {
+  height: 44px;
+  width: auto;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  opacity: 0.92;
+}
+
+.footer-brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.footer-brand-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #f0f0f0;
+  letter-spacing: -0.01em;
+}
+
+.footer-brand-tag {
+  width: fit-content;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #181818;
+  letter-spacing: 0.05em;
+  background: rgba(251, 191, 36, 0.8);
+  padding: 2px 14px;
+  border: 1px solid rgba(251, 191, 36, 0.2);
+  font-family: "Nova Round", system-ui;
+  border-radius: 30px;
+}
+
+/* --- Divider --- */
+.footer-divider {
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.07);
+  margin: var(--spacing-xs) 0;
+}
+
+/* --- Bottom Row --- */
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+}
+
+.footer-copyright,
+.footer-location {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.65);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.footer-location {
+  text-align: right;
+}
+
+@media (max-width: 480px) {
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .footer-location {
+    text-align: left;
+  }
+}

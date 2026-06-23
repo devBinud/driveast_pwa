@@ -1,0 +1,103 @@
+.completed-page-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - var(--header-height) - var(--nav-height));
+}
+
+.completed-card {
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-xl) var(--spacing-lg);
+  border: 1px solid var(--card-border-glow);
+}
+
+/* Success icon animations */
+.success-badge-container {
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius-full);
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--color-success);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  margin-bottom: var(--spacing-lg);
+  border: 1.5px solid rgba(16, 185, 129, 0.2);
+  box-shadow: var(--shadow-glow-success);
+  animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.success-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.success-sub {
+  font-size: 0.825rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+/* Stats list */
+.completed-stats-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  width: 100%;
+  margin: var(--spacing-lg) 0;
+  background: rgba(255, 255, 255, 0.02);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--card-border);
+}
+
+.completed-stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+}
+
+.comp-stat-lbl {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+}
+
+.comp-stat-lbl svg {
+  font-size: 1.05rem;
+}
+
+.completed-stat-row strong {
+  color: var(--text-primary);
+}
+
+.completed-stat-row.total {
+  border-top: 1px dashed var(--card-border);
+  padding-top: var(--spacing-md);
+  margin-top: 4px;
+  font-size: 1rem;
+}
+
+.completed-stat-row.total strong {
+  font-size: 1.25rem;
+}

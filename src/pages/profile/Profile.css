@@ -1,0 +1,157 @@
+.profile-page-container {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.profile-hero-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: var(--spacing-sm);
+}
+
+.profile-avatar-large {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--color-primary);
+  box-shadow: var(--shadow-glow-primary);
+}
+
+.profile-name-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-top: var(--spacing-md);
+  letter-spacing: -0.02em;
+}
+
+.profile-id-sub {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 2px;
+}
+
+.profile-rating-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--color-warning);
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  font-size: 0.825rem;
+  font-weight: 700;
+  margin-top: var(--spacing-md);
+  border: 1px solid rgba(245, 158, 11, 0.15);
+}
+
+/* Sections */
+.profile-section-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.profile-card-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--card-border);
+  padding-bottom: var(--spacing-sm);
+}
+
+.profile-card-title svg {
+  color: var(--color-secondary);
+}
+
+.profile-info-rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.profile-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+}
+
+.info-lbl {
+  color: var(--text-secondary);
+}
+
+.license-plate-badge {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--card-border);
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* Toggles settings */
+.profile-toggle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toggle-lbl-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.toggle-lbl-group strong {
+  font-size: 0.875rem;
+  color: var(--text-primary);
+}
+
+.toggle-lbl-group span {
+  font-size: 0.725rem;
+  color: var(--text-muted);
+}
+
+/* Custom checkbox switcher styling */
+.toggle-switch-checkbox {
+  appearance: none;
+  width: 44px;
+  height: 24px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-full);
+  position: relative;
+  cursor: pointer;
+  outline: none;
+  transition: background-color var(--transition-fast);
+  border: 1px solid var(--card-border);
+}
+
+.toggle-switch-checkbox:checked {
+  background: var(--color-primary);
+}
+
+.toggle-switch-checkbox::before {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+  top: 2px;
+  left: 2px;
+  transition: transform var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+.toggle-switch-checkbox:checked::before {
+  transform: translateX(20px);
+}

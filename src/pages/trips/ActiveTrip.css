@@ -1,0 +1,43 @@
+.active-trip-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.active-map-container {
+  flex: 1;
+  position: relative;
+  width: 100%;
+}
+
+.active-leaflet-map {
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+}
+
+.active-action-panel {
+  width: 100%;
+  position: relative;
+  z-index: 10;
+}
+
+/* Floating overlay */
+.navigation-overlay.active-run {
+  position: absolute;
+  top: var(--spacing-md);
+  left: var(--spacing-md);
+  right: var(--spacing-md);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  background: rgba(10, 15, 29, 0.85);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  box-shadow: var(--shadow-glass);
+}
+
+.nav-compass-icon {
+  font-size: 1.5rem;
+  color: var(--color-primary);
+}

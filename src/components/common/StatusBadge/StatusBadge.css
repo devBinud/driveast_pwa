@@ -1,0 +1,7 @@
+.badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background-color: currentColor;
+}
+/* Styling mappings are inherited from the global badge styles in global.css */

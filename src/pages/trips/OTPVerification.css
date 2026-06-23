@@ -1,0 +1,160 @@
+.otp-page {
+  justify-content: space-between;
+  min-height: calc(100vh - var(--header-height) - var(--nav-height));
+  padding-bottom: var(--spacing-md);
+}
+
+.otp-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: var(--spacing-sm);
+}
+
+.otp-icon-bg {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-full);
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: var(--spacing-md);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  box-shadow: var(--shadow-glow-primary);
+}
+
+.otp-header h2 {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.otp-desc {
+  font-size: 0.825rem;
+  color: var(--text-secondary);
+  margin-top: var(--spacing-xs);
+  line-height: 1.4;
+  max-width: 280px;
+}
+
+.otp-test-hint {
+  margin-top: var(--spacing-sm);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--card-border);
+}
+
+.otp-test-hint span {
+  font-size: 0.725rem;
+  color: var(--text-muted);
+}
+
+.otp-test-hint strong {
+  color: var(--color-secondary);
+}
+
+/* Error Banner */
+.otp-error-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  background: var(--color-danger-bg);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: var(--color-danger);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-align: center;
+  justify-content: center;
+  width: 100%;
+}
+
+/* Display cells */
+.otp-display-cells {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-md);
+  width: 100%;
+  margin: var(--spacing-md) 0;
+}
+
+.otp-cell {
+  width: 54px;
+  height: 54px;
+  border: 1.5px solid var(--card-border);
+  background: rgba(18, 24, 41, 0.5);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  transition: all var(--transition-fast);
+}
+
+.otp-cell.filled {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.15);
+  background: rgba(18, 24, 41, 0.85);
+}
+
+.otp-cell.error {
+  border-color: var(--color-danger);
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.1);
+}
+
+/* Custom Numpad styles */
+.numpad-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  width: 100%;
+  padding: var(--spacing-sm);
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.numpad-row {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.numpad-row button {
+  flex: 1;
+  height: 50px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--card-border);
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.numpad-row button:active {
+  background: var(--bg-tertiary);
+  transform: scale(0.97);
+}
+
+.numpad-row button.empty-key {
+  background: transparent;
+  border-color: transparent;
+  cursor: default;
+}
+
+.numpad-row button.delete-key {
+  color: var(--text-secondary);
+}
+
+.numpad-row button.delete-key:active {
+  color: var(--color-danger);
+}

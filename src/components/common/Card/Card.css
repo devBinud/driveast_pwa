@@ -1,0 +1,29 @@
+.card {
+  box-sizing: border-box;
+}
+
+/* Paddings */
+.card-p-none {
+  padding: 0;
+}
+
+.card-p-sm {
+  padding: var(--spacing-sm);
+}
+
+.card-p-md {
+  padding: var(--spacing-md);
+}
+
+.card-p-lg {
+  padding: var(--spacing-lg);
+}
+
+.card-glow {
+  box-shadow: var(--shadow-glass), var(--shadow-glow-primary);
+  border-color: var(--card-border-glow);
+}
+
+.clickable {
+  cursor: pointer;
+}
