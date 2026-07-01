@@ -29,8 +29,57 @@ const MOCK_TRIP_HISTORY = [
   }
 ]
 
+const MOCK_UPCOMING_TRIPS = [
+  {
+    id: 'SCH-4091',
+    pickup: 'Guwahati Railway Station, Paltan Bazar, Guwahati',
+    drop: 'LGBI Airport, Borjhar, Guwahati, Assam',
+    date: 'July 12, 2026',
+    time: '09:30 AM',
+    distance: '21.5 km',
+    duration: '45 mins',
+    fare: 450.00,
+    status: 'scheduled',
+    customerName: 'Rahul Borah',
+    customerRating: 4.8,
+    customerAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=128&h=128',
+    customerPhone: '+91 94350 12345'
+  },
+  {
+    id: 'SCH-8820',
+    pickup: 'Fancy Bazar, Guwahati, Assam',
+    drop: 'IIT Guwahati, North Guwahati, Assam',
+    date: 'July 15, 2026',
+    time: '02:00 PM',
+    distance: '18.2 km',
+    duration: '35 mins',
+    fare: 380.00,
+    status: 'scheduled',
+    customerName: 'Priya Dutta',
+    customerRating: 5.0,
+    customerAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=128&h=128',
+    customerPhone: '+91 98540 67890'
+  },
+  {
+    id: 'SCH-1052',
+    pickup: 'Dispur, Guwahati, Assam',
+    drop: 'Sarusajai Stadium, Guwahati, Assam',
+    date: 'July 18, 2026',
+    time: '06:15 PM',
+    distance: '12.4 km',
+    duration: '25 mins',
+    fare: 260.00,
+    status: 'scheduled',
+    customerName: 'Ankur Sharma',
+    customerRating: 4.7,
+    customerAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=128&h=128',
+    customerPhone: '+91 70110 45678'
+  }
+]
+
 export const useTripStore = create((set, get) => ({
   trips: MOCK_TRIP_HISTORY,
+  upcomingTrips: MOCK_UPCOMING_TRIPS,
   currentTrip: null,
   otpCode: '4820', // Default OTP for simulation
   otpInput: '',

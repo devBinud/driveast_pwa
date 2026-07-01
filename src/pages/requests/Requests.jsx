@@ -9,7 +9,7 @@ import './Requests.css'
 
 export const Requests = () => {
   const navigate = useNavigate()
-  const { requests, declineRequest, tickTimers } = useRequestStore()
+  const { requests, declineRequest, tickTimers, addMockRequest } = useRequestStore()
   const setAssignedTrip = useTripStore((state) => state.setAssignedTrip)
   const { isOnline } = useDriverStatus()
 

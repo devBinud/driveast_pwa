@@ -17,6 +17,8 @@ import { ActiveTrip } from '../pages/trips/ActiveTrip'
 import { Payment } from '../pages/trips/Payment'
 import { TripCompleted } from '../pages/trips/TripCompleted'
 import { Profile } from '../pages/profile/Profile'
+import { UpcomingTripsPage } from '../pages/trips/UpcomingTripsPage'
+import { UpcomingTripDetails } from '../pages/trips/UpcomingTripDetails'
 
 export const AppRoutes = () => {
   return (
@@ -40,6 +42,8 @@ export const AppRoutes = () => {
           <Route path="/trips/active" element={<ActiveTrip />} />
           <Route path="/trips/payment" element={<Payment />} />
           <Route path="/trips/completed" element={<TripCompleted />} />
+          <Route path="/trips/upcoming" element={<UpcomingTripsPage />} />
+          <Route path="/trips/upcoming/:id" element={<UpcomingTripDetails />} />
           <Route path="/profile" element={<Profile />} />
         </Route>
 

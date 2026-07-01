@@ -5,7 +5,7 @@ import { useAuth } from '../../hooks/useAuth'
 import { useTripStore } from '../../store/tripStore'
 import { StatusCard } from '../../components/dashboard/StatusCard/StatusCard'
 import { StatsCard } from '../../components/dashboard/StatsCard/StatsCard'
-import { QuickActionCard } from '../../components/dashboard/QuickActionCard/QuickActionCard'
+import { UpcomingTrips } from '../../components/dashboard/UpcomingTrips/UpcomingTrips'
 import './Home.css'
 
 export const Home = () => {
@@ -66,8 +66,8 @@ export const Home = () => {
       {/* Analytics Stats */}
       <StatsCard />
 
-      {/* Shortcuts */}
-      <QuickActionCard />
+      {/* Upcoming Trips List */}
+      <UpcomingTrips />
     </div>
   )
 }
