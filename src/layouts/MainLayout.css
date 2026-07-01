@@ -4,7 +4,7 @@
   height: 100vh;
   width: 100vw;
   overflow: hidden;
-  background-color: rgb(245, 245, 247);
+  background-color: var(--bg-primary);
 }
 
 .main-header {
@@ -66,12 +66,6 @@
   border: 1px solid rgba(251, 191, 36, 0.2);
   font-family: "Nova Round", system-ui;
   border-radius: 30px;
-}
-
-[data-theme="dark"] .header-partner-tag {
-  color: var(--color-primary);
-  background: rgba(251, 191, 36, 0.15);
-  border-color: rgba(251, 191, 36, 0.25);
 }
 
 .header-actions {
@@ -185,45 +179,7 @@
   width: 100%;
 }
 
-/* Theme Toggle Button */
-.theme-toggle-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--card-border);
-  color: var(--text-primary);
-  cursor: pointer;
-  transition: all var(--transition-normal);
-}
 
-.theme-toggle-btn:hover {
-  background: var(--bg-secondary);
-  border-color: var(--color-primary-hover);
-  color: var(--color-primary);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
-}
-
-.theme-toggle-btn:active {
-  transform: translateY(0);
-}
-
-.theme-icon {
-  font-size: 1.1rem;
-  transition: transform var(--transition-normal);
-}
-
-.theme-toggle-btn:hover .sun-icon {
-  transform: rotate(45deg);
-}
-
-.theme-toggle-btn:hover .moon-icon {
-  transform: rotate(-12deg);
-}
 
 @media (max-width: 480px) {
   .status-text {

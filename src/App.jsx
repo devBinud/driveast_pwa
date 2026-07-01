@@ -1,12 +1,8 @@
 import React from 'react'
 import { Toaster } from 'react-hot-toast'
 import { AppRoutes } from './routes/AppRoutes'
-import { useTheme } from './hooks/useTheme'
 
 function App() {
-  // Initialize and apply theme
-  useTheme()
-
   return (
     <>
       <AppRoutes />

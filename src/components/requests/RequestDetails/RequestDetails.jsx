@@ -53,8 +53,8 @@ export const RequestDetails = ({
 
     mapInstanceRef.current = map
 
-    // CartoDB Dark Matter tile layer for premium dark aesthetics
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    // CartoDB Positron tile layer for premium light aesthetics
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
       maxZoom: 20
     }).addTo(map)
 

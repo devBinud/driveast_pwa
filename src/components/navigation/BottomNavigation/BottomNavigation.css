@@ -81,10 +81,6 @@
   color: var(--color-primary-hover);
 }
 
-[data-theme="dark"] .bottom-nav-item.active {
-  color: var(--color-primary);
-}
-
 .bottom-nav-item.active .bottom-nav-icon {
   transform: translateY(-2px);
   color: inherit;

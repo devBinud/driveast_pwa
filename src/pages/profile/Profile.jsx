@@ -1,14 +1,12 @@
 import React, { useState } from 'react'
 import { FiUser, FiTruck, FiSettings, FiLogOut, FiAward, FiPhone, FiMail } from 'react-icons/fi'
 import { useAuth } from '../../hooks/useAuth'
-import { useTheme } from '../../hooks/useTheme'
 import { Card } from '../../components/common/Card/Card'
 import { Button } from '../../components/common/Button/Button'
 import './Profile.css'
 
 export const Profile = () => {
   const { user, logout } = useAuth()
-  const { theme, toggleTheme } = useTheme()
   const [notifications, setNotifications] = useState(true)
 
   if (!user) return null
@@ -71,19 +69,6 @@ export const Profile = () => {
           <FiSettings /> App Preferences
         </h3>
         <div className="profile-info-rows">
-          <div className="profile-toggle-row">
-            <div className="toggle-lbl-group">
-              <strong>Night Drive Theme</strong>
-              <span>Always run dark neon theme</span>
-            </div>
-            <input 
-              type="checkbox" 
-              checked={theme === 'dark'} 
-              onChange={toggleTheme}
-              className="toggle-switch-checkbox"
-            />
-          </div>
-
           <div className="profile-toggle-row">
             <div className="toggle-lbl-group">
               <strong>Ride Alerts</strong>

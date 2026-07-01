@@ -93,16 +93,6 @@
   font-weight: 800;
   color: var(--color-primary-hover);
 }
-
-[data-theme="dark"] .request-fare-badge {
-  background: rgba(251, 191, 36, 0.12);
-  border-color: rgba(251, 191, 36, 0.25);
-}
-
-[data-theme="dark"] .request-fare-amt {
-  color: var(--color-primary);
-}
-
 /* Route Timeline */
 .request-route-container {
   display: flex;

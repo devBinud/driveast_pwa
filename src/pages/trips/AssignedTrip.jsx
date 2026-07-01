@@ -36,8 +36,8 @@ export const AssignedTrip = () => {
 
     mapInstanceRef.current = map
 
-    // Dark Map tiles
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    // Light Map tiles
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
       maxZoom: 20
     }).addTo(map)
 

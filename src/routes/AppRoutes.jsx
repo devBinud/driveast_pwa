@@ -2,6 +2,7 @@ import React from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { MainLayout } from '../layouts/MainLayout'
 import { AuthLayout } from '../layouts/AuthLayout'
+import { ScrollToTop } from '../components/common/ScrollToTop/ScrollToTop'
 
 // Pages
 import { Login } from '../pages/auth/Login'
@@ -20,6 +21,7 @@ import { Profile } from '../pages/profile/Profile'
 export const AppRoutes = () => {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         {/* Auth Group */}
         <Route element={<AuthLayout />}>
