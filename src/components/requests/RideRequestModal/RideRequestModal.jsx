@@ -9,7 +9,7 @@ import './RideRequestModal.css'
 export const RideRequestModal = () => {
   const navigate = useNavigate()
   const location = useLocation()
-  const { requests, declineRequest, isMinimized, setMinimized } = useRequestStore()
+  const { requests, declineRequest, acceptRequest, isMinimized, setMinimized } = useRequestStore()
   const { currentTrip, setAssignedTrip } = useTripStore()
   const isOnline = useDriverStore((state) => state.isOnline)
 
@@ -46,7 +46,7 @@ export const RideRequestModal = () => {
   const handleAccept = (req, e) => {
     e.stopPropagation()
     setAssignedTrip(req)
-    declineRequest(req.id)
+    acceptRequest(req.id)
     navigate('/trips/assigned') // Navigate to Heading to Pickup screen
   }
 
@@ -97,14 +97,14 @@ export const RideRequestModal = () => {
         {/* Scrollable list of request cards */}
         <div className="request-modal-list scroll-container">
           {requests.map((req) => {
-            const maxTime = 600 // 10 minutes maximum timer
+            const maxTime = 20 // 20 seconds maximum timer
             const timeLeft = req.timeLeft
             const percent = Math.min((timeLeft / maxTime) * 100, 100)
 
             const radius = 22
             const circumference = 2 * Math.PI * radius
             const strokeDashoffset = circumference - (percent / 100) * circumference
-            const isUrgent = timeLeft < 60 // under 1 minute is urgent
+            const isUrgent = timeLeft < 5 // under 5 seconds is urgent
 
             return (
               <div key={req.id} className="request-modal-card animate-fade-in">

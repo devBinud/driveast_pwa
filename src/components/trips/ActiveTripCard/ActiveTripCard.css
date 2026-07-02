@@ -131,3 +131,49 @@
 .active-trip-primary-action {
   margin-top: var(--spacing-xs);
 }
+
+/* Route details inside ActiveTripCard */
+.active-trip-route-details {
+  display: flex;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--card-border);
+}
+
+.active-trip-route-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 4px;
+}
+
+
+.active-trip-route-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  flex: 1;
+}
+
+.active-trip-route-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.active-trip-route-lbl {
+  font-size: 0.675rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.active-trip-route-addr {
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  font-weight: 600;
+  line-height: 1.35;
+}

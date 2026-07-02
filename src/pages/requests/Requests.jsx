@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FiNavigation, FiClock, FiStar, FiCalendar } from 'react-icons/fi'
+import toast from 'react-hot-toast'
 import { useRequestStore } from '../../store/requestStore'
 import { useTripStore } from '../../store/tripStore'
+import { useDriverStore } from '../../store/driverStore'
 import { RequestCard } from '../../components/requests/RequestCard/RequestCard'
 import { EmptyState } from '../../components/common/EmptyState/EmptyState'
 import './Requests.css'
@@ -11,16 +13,28 @@ export const Requests = () => {
   const navigate = useNavigate()
   const [activeSubTab, setActiveSubTab] = useState('incoming')
 
-  const { requests, declineRequest, addMockRequest } = useRequestStore()
+  const { requests, declineRequest, acceptRequest, addMockRequest } = useRequestStore()
+  const isOnline = useDriverStore((state) => state.isOnline)
 
   const {
     upcomingTrips,
     setAssignedTrip
   } = useTripStore()
 
+  const handleSimulateRequest = () => {
+    if (!isOnline) {
+      toast.error('You are currently Offline. Please go Online first to receive requests.', {
+        icon: '⚠️',
+        duration: 4000
+      })
+      return
+    }
+    addMockRequest()
+  }
+
   const handleAccept = (req) => {
     setAssignedTrip(req)
-    declineRequest(req.id) // Remove from request queue
+    acceptRequest(req.id) // Mark as accepted in simulation and remove from request queue
     navigate('/trips/assigned') // Navigate to active heading to pickup screen
   }
 
@@ -92,7 +106,7 @@ export const Requests = () => {
               title="Waiting for Requests..."
               description="We will notify you immediately as soon as a new trip becomes available in your area."
               actionLabel="Simulate Incoming Request"
-              onActionClick={addMockRequest}
+              onActionClick={handleSimulateRequest}
               type="requests"
             />
           </div>

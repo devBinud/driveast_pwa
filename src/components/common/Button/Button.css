@@ -51,8 +51,6 @@
   box-shadow: var(--shadow-glow-primary);
 }
 
-.btn-primary:active:not(:disabled) {
-}
 
 .btn-secondary {
   background: var(--bg-tertiary);
@@ -71,7 +69,8 @@
 }
 
 .btn-success:hover:not(:disabled) {
-  background: #0ea5e9; /* Switch to electric blue highlight */
+  background: #0ea5e9;
+  /* Switch to electric blue highlight */
   box-shadow: var(--shadow-glow-success);
 }
 
@@ -115,5 +114,7 @@
 }
 
 @keyframes btn-spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }

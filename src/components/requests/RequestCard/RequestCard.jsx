@@ -21,8 +21,8 @@ export const RequestCard = ({
     customerName
   } = request
 
-  // Calculate percentage of timer remaining (initial full time is 600s for timer bar calculations)
-  const timerPercentage = Math.min((timeLeft / 600) * 100, 100)
+  // Calculate percentage of timer remaining (initial full time is 20s for timer bar calculations)
+  const timerPercentage = Math.min((timeLeft / 20) * 100, 100)
 
   // Format seconds into MM:SS format
   const formatTime = (seconds) => {
@@ -39,7 +39,7 @@ export const RequestCard = ({
           className="request-timer-bar" 
           style={{ 
             width: `${timerPercentage}%`,
-            background: timeLeft < 60 ? 'var(--color-danger)' : 'var(--color-warning)'
+            background: timeLeft < 5 ? 'var(--color-danger)' : 'var(--color-warning)'
           }}
         ></div>
       </div>

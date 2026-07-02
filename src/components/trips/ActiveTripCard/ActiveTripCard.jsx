@@ -56,24 +56,26 @@ export const ActiveTripCard = ({
               <a href={`tel:${customerPhone}`} className="cust-action-btn-circle phone" title="Call Customer">
                 <FiPhone />
               </a>
-              <button className="cust-action-btn-circle message" title="Chat with Customer">
-                <FiMessageSquare />
-              </button>
             </div>
           )}
         </div>
 
-        {/* Status Address Details */}
-        <div className="active-trip-addr-summary">
-          <div className="active-trip-addr-lbl">
-            <FiMapPin className={status === 'assigned' || status === 'arrived' ? 'text-success' : 'text-primary'} />
-            <div className="addr-details-text">
-              <span className="addr-lbl-text">
-                {status === 'assigned' || status === 'arrived' ? 'Pickup Location' : 'Destination Address'}
-              </span>
-              <p className="addr-val-text">
-                {status === 'assigned' || status === 'arrived' ? pickup : drop}
-              </p>
+        {/* Route Details (Pickup & Dropoff) */}
+        <div className="active-trip-route-details">
+          <div className="active-trip-route-indicator">
+            <span className="dot-p"></span>
+            <span className="line-connect"></span>
+            <span className="dot-d"></span>
+          </div>
+          
+          <div className="active-trip-route-text">
+            <div className="active-trip-route-item">
+              <span className="active-trip-route-lbl">Pickup Location</span>
+              <span className="active-trip-route-addr">{pickup}</span>
+            </div>
+            <div className="active-trip-route-item">
+              <span className="active-trip-route-lbl">Dropoff Location</span>
+              <span className="active-trip-route-addr">{drop}</span>
             </div>
           </div>
         </div>

@@ -13,8 +13,8 @@ export const BottomNavigation = () => {
 
   const navItems = [
     { label: 'Home', path: '/', icon: FiHome },
-    { label: 'Rides & Bookings', path: '/requests', icon: FiCompass, badge: requests.length > 0 ? requests.length : null },
-    { label: 'Trip History', path: '/trips', icon: FiMapPin },
+    { label: 'Rides', path: '/requests', icon: FiCompass, badge: requests.length > 0 ? requests.length : null },
+    { label: 'History', path: '/trips', icon: FiMapPin },
     { label: 'Profile', path: '/profile', icon: FiUser }
   ]
 

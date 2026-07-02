@@ -41,30 +41,7 @@ export const ActiveTrip = () => {
           <h3>Trip In Progress</h3>
           <p>Driving customer safely to their dropoff address.</p>
         </div>
-
-        {/* Route Details Panel */}
-        <div className="route-details-panel glass-panel">
-          <div className="route-flow">
-            <div className="route-node pickup">
-              <span className="node-dot dot-pickup"></span>
-              <div className="node-text">
-                <span className="node-label">Pickup Location</span>
-                <strong>{currentTrip.pickup}</strong>
-              </div>
-            </div>
-            
-            <div className="route-connector"></div>
-            
-            <div className="route-node drop">
-              <span className="node-dot dot-drop"></span>
-              <div className="node-text">
-                <span className="node-label">Dropoff Location</span>
-                <strong>{currentTrip.drop}</strong>
-              </div>
-            </div>
-          </div>
         </div>
-      </div>
 
       {/* Active Trip panel */}
       <div className="active-action-panel">

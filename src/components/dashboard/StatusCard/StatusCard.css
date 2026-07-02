@@ -144,3 +144,66 @@
   background: var(--card-border);
   align-self: stretch;
 }
+
+.gps-sync-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px var(--spacing-lg);
+  border-top: 1px dashed var(--card-border);
+  background: rgba(16, 185, 129, 0.03);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.gps-ping-dot {
+  width: 6px;
+  height: 6px;
+  background-color: #10b981;
+  border-radius: 50%;
+  box-shadow: 0 0 6px #10b981;
+  animation: gps-ping 1.5s infinite;
+}
+
+@keyframes gps-ping {
+  0% { transform: scale(0.8); opacity: 0.5; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(0.8); opacity: 0.5; }
+}
+
+@media (max-width: 560px) {
+  .status-card-header {
+    padding: var(--spacing-md);
+  }
+  
+  .status-text-heading {
+    font-size: 1.15rem;
+  }
+  
+  .status-toggle-switch-wrapper {
+    padding: 4px 10px;
+    gap: 6px;
+  }
+  
+  .status-toggle-label-text {
+    font-size: 0.7rem;
+  }
+  
+  .status-card-stats {
+    flex-direction: column;
+  }
+  
+  .status-stat-divider {
+    display: none;
+  }
+  
+  .status-stat-item {
+    border-bottom: 1px solid var(--card-border);
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+  
+  .status-stat-item:last-child {
+    border-bottom: none;
+  }
+}

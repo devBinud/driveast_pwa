@@ -55,6 +55,7 @@
   font-weight: 500;
   letter-spacing: 0.02em;
   transition: color var(--transition-fast);
+  white-space: nowrap;
 }
 
 .bottom-nav-badge {
