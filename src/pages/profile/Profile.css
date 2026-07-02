@@ -64,8 +64,13 @@
   font-size: 1rem;
   font-weight: 700;
   color: var(--text-primary);
-  border-bottom: 1px solid var(--card-border);
+  /* Dashed full-width divider extending to card edges */
+  border-bottom: 1.5px dashed #d4d4d8;
   padding-bottom: var(--spacing-sm);
+  margin-left: calc(-1 * var(--spacing-md));
+  margin-right: calc(-1 * var(--spacing-md));
+  padding-left: var(--spacing-md);
+  padding-right: var(--spacing-md);
 }
 
 .profile-card-title svg {

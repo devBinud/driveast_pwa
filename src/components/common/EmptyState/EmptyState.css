@@ -55,3 +55,12 @@
   color: var(--text-inverse);
   box-shadow: var(--shadow-glow-primary);
 }
+
+/* When inside the grey incoming-empty-area, strip the double-card look */
+.incoming-empty-area .empty-state-container {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}

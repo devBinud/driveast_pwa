@@ -2,9 +2,13 @@ import React, { useEffect, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { useRequestStore } from '../store/requestStore'
+import { useTripStore } from '../store/tripStore'
+import { useDriverStore } from '../store/driverStore'
 
 export const useNotifications = () => {
   const requests = useRequestStore((state) => state.requests)
+  const currentTrip = useTripStore((state) => state.currentTrip)
+  const isOnline = useDriverStore((state) => state.isOnline)
   const lastNotifiedId = useRef(null)
   const location = useLocation()
   const navigate = useNavigate()
@@ -79,7 +83,9 @@ export const useNotifications = () => {
       } catch (e) {}
 
       // Only show toast notification if user is NOT currently on the requests feed page
-      if (location.pathname !== '/requests') {
+      // and the request modal is not active (active when driver is online and not on a trip)
+      const showModal = isOnline && !currentTrip
+      if (location.pathname !== '/requests' && !showModal) {
         showToastNotification(
           'New Request Available',
           `Ride to ${latestReq.drop.split(',')[0]} (${latestReq.distance}) for ₹${latestReq.fare.toFixed(2)}`,
@@ -87,7 +93,7 @@ export const useNotifications = () => {
         )
       }
     }
-  }, [requests.length, location.pathname])
+  }, [requests.length, location.pathname, isOnline, currentTrip])
 
   return {
     showToast: showToastNotification,

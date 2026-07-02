@@ -71,9 +71,9 @@ export const UpcomingTrips = () => {
 
                 <div className="upcoming-card-body">
                   <div className="trip-route-indicator">
-                    <div className="indicator-dot pickup-dot"></div>
-                    <div className="indicator-line"></div>
-                    <div className="indicator-dot drop-dot"></div>
+                    <div className="dot-pickup"></div>
+                    <div className="line-connect"></div>
+                    <div className="dot-drop"></div>
                   </div>
                   <div className="trip-addresses">
                     <div className="address-block">

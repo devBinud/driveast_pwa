@@ -4,7 +4,6 @@ import { FiChevronRight, FiNavigation } from 'react-icons/fi'
 import { useAuth } from '../../hooks/useAuth'
 import { useTripStore } from '../../store/tripStore'
 import { StatusCard } from '../../components/dashboard/StatusCard/StatusCard'
-import { StatsCard } from '../../components/dashboard/StatsCard/StatsCard'
 import { UpcomingTrips } from '../../components/dashboard/UpcomingTrips/UpcomingTrips'
 import './Home.css'
 
@@ -21,7 +20,7 @@ export const Home = () => {
 
   const getActiveTripRoute = () => {
     if (!currentTrip) return '/trips'
-    if (currentTrip.status === 'assigned' || currentTrip.status === 'arrived') {
+    if (currentTrip.status === 'assigned' || currentTrip.status === 'navigating' || currentTrip.status === 'arrived') {
       return '/trips/assigned'
     }
     if (currentTrip.status === 'otp_verified' || currentTrip.status === 'active') {
@@ -62,9 +61,6 @@ export const Home = () => {
 
       {/* Driver Status Toggle */}
       <StatusCard />
-
-      {/* Analytics Stats */}
-      <StatsCard />
 
       {/* Upcoming Trips List */}
       <UpcomingTrips />

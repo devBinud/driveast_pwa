@@ -4,9 +4,9 @@ export const useAuthStore = create((set) => ({
   isAuthenticated: true, // Logged in by default for demonstration
   user: {
     id: 'DRV-8821',
-    name: 'Surya Reddy',
-    email: 'surya.reddy@driveast.com',
-    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=256&h=256',
+    name: 'Abhijit Kalita',
+    email: 'abhijit.kalita@driveast.com',
+    avatar: 'https://ui-avatars.com/api/?name=Abhijit+Kalita&background=fbbf24&color=000000&size=256&font-size=0.4&bold=true&rounded=true',
     phone: '+91 94350 88211',
     rating: 4.92,
     totalTrips: 1420,
@@ -22,9 +22,9 @@ export const useAuthStore = create((set) => ({
         isAuthenticated: true,
         user: {
           id: 'DRV-8821',
-          name: 'Surya Reddy',
+          name: 'Abhijit Kalita',
           email: email,
-          avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=256&h=256',
+          avatar: 'https://ui-avatars.com/api/?name=Abhijit+Kalita&background=fbbf24&color=000000&size=256&font-size=0.4&bold=true&rounded=true',
           phone: '+91 94350 88211',
           rating: 4.92,
           totalTrips: 1420,

@@ -18,11 +18,6 @@ export const Profile = () => {
         <img src={user.avatar} alt={user.name} className="profile-avatar-large" />
         <h2 className="profile-name-title">{user.name}</h2>
         <span className="profile-id-sub">{user.id}</span>
-        
-        <div className="profile-rating-badge">
-          <FiAward />
-          <span>{user.rating.toFixed(2)} Driver Rating</span>
-        </div>
       </div>
 
       {/* Driver contact card info */}

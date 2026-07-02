@@ -18,23 +18,28 @@ export const RequestCard = ({
     duration,
     fare,
     timeLeft,
-    customerName,
-    customerRating,
-    customerAvatar
+    customerName
   } = request
 
-  // Calculate percentage of timer remaining (initial full time is 60s for timer bar calculations)
-  const timerPercentage = Math.min((timeLeft / 60) * 100, 100)
+  // Calculate percentage of timer remaining (initial full time is 600s for timer bar calculations)
+  const timerPercentage = Math.min((timeLeft / 600) * 100, 100)
+
+  // Format seconds into MM:SS format
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60)
+    const secs = seconds % 60
+    return `${mins}:${secs.toString().padStart(2, '0')}`
+  }
 
   return (
-    <Card className="request-card pulse-glow-orange" padding="none">
+    <Card className="request-card" padding="none">
       {/* Timer Bar */}
       <div className="request-timer-track">
         <div 
           className="request-timer-bar" 
           style={{ 
             width: `${timerPercentage}%`,
-            background: timeLeft < 15 ? 'var(--color-danger)' : 'var(--color-warning)'
+            background: timeLeft < 60 ? 'var(--color-danger)' : 'var(--color-warning)'
           }}
         ></div>
       </div>
@@ -43,13 +48,8 @@ export const RequestCard = ({
         {/* Customer Header */}
         <div className="request-customer-header">
           <div className="request-cust-info">
-            <img src={customerAvatar} alt={customerName} className="request-cust-avatar" />
             <div>
               <h4 className="request-cust-name">{customerName}</h4>
-              <div className="request-cust-rating">
-                <FiStar className="star-icon" />
-                <span>{customerRating.toFixed(1)}</span>
-              </div>
             </div>
           </div>
           <div className="request-fare-badge">
@@ -89,7 +89,7 @@ export const RequestCard = ({
             <span>{duration}</span>
           </div>
           <div className="route-timer-text">
-            <span>Expires in: <strong>{timeLeft}s</strong></span>
+            <span>Expires in: <strong>{formatTime(timeLeft)}</strong></span>
           </div>
         </div>
 

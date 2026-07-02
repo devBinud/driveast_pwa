@@ -2,17 +2,19 @@ import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { FiHome, FiCompass, FiMapPin, FiUser } from 'react-icons/fi'
 import { useRequestStore } from '../../../store/requestStore'
+import { useTripStore } from '../../../store/tripStore'
 import './BottomNavigation.css'
 
 export const BottomNavigation = () => {
   const location = useLocation()
   const requests = useRequestStore((state) => state.requests)
+  const currentTrip = useTripStore((state) => state.currentTrip)
   const activePath = location.pathname
 
   const navItems = [
     { label: 'Home', path: '/', icon: FiHome },
-    { label: 'Requests', path: '/requests', icon: FiCompass, badge: requests.length > 0 ? requests.length : null },
-    { label: 'Trips', path: '/trips', icon: FiMapPin },
+    { label: 'Rides & Bookings', path: '/requests', icon: FiCompass, badge: requests.length > 0 ? requests.length : null },
+    { label: 'Trip History', path: '/trips', icon: FiMapPin },
     { label: 'Profile', path: '/profile', icon: FiUser }
   ]
 

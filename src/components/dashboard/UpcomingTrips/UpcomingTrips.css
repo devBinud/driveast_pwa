@@ -125,30 +125,8 @@
   align-items: center;
   padding: 4px 0;
 }
+/* Dots and line use global .dot-pickup, .dot-drop, .line-connect rules from global.css */
 
-.indicator-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-}
-
-.indicator-dot.pickup-dot {
-  background: var(--color-success);
-  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
-}
-
-.indicator-dot.drop-dot {
-  background: var(--color-danger);
-  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
-}
-
-.indicator-line {
-  width: 2px;
-  flex: 1;
-  background: linear-gradient(to bottom, var(--color-success), var(--color-danger));
-  margin: 4px 0;
-  opacity: 0.4;
-}
 
 .trip-addresses {
   display: flex;

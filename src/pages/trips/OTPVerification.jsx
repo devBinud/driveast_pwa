@@ -59,8 +59,12 @@ export const OTPVerification = () => {
       <div className="otp-display-cells">
         {Array.from({ length: 4 }).map((_, idx) => {
           const char = otpInput[idx] || ''
+          const isActive = otpInput.length === idx
           return (
-            <div key={idx} className={`otp-cell ${char ? 'filled' : ''} ${otpError ? 'error' : ''}`}>
+            <div 
+              key={idx} 
+              className={`otp-cell ${char ? 'filled' : ''} ${isActive ? 'active' : ''} ${otpError ? 'error' : ''}`}
+            >
               {char}
             </div>
           )

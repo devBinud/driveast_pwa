@@ -28,10 +28,26 @@ export const ActiveTripCard = ({
         {/* Customer contact panel */}
         <div className="active-trip-cust-header">
           <div className="active-trip-cust-profile">
-            <img src={customerAvatar} alt={customerName} className="active-trip-avatar" />
             <div>
               <h4 className="active-trip-name">{customerName}</h4>
-              <span className="active-trip-rating">★ {customerRating.toFixed(1)} • Customer</span>
+              {customerPhone && (
+                <a 
+                  href={`tel:${customerPhone}`}
+                  style={{ 
+                    color: 'var(--color-primary)', 
+                    fontSize: '0.8rem', 
+                    fontWeight: '700',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    textDecoration: 'none',
+                    marginTop: '2px'
+                  }}
+                >
+                  <FiPhone style={{ fontSize: '0.8rem' }} />
+                  <span>{customerPhone}</span>
+                </a>
+              )}
             </div>
           </div>
           

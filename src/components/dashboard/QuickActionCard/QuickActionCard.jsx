@@ -19,13 +19,9 @@ export const QuickActionCard = () => {
   const handleActiveTripNavigation = () => {
     if (!currentTrip) {
       navigate('/trips')
-    } else if (currentTrip.status === 'assigned') {
+    } else if (currentTrip.status === 'assigned' || currentTrip.status === 'navigating' || currentTrip.status === 'arrived') {
       navigate('/trips/assigned')
-    } else if (currentTrip.status === 'arrived') {
-      navigate('/trips/assigned')
-    } else if (currentTrip.status === 'otp_verified') {
-      navigate('/trips/active')
-    } else if (currentTrip.status === 'active') {
+    } else if (currentTrip.status === 'otp_verified' || currentTrip.status === 'active') {
       navigate('/trips/active')
     } else if (currentTrip.status === 'payment_pending') {
       navigate('/trips/payment')

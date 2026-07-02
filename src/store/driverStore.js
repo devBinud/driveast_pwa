@@ -6,8 +6,10 @@ export const useDriverStore = create((set) => ({
   acceptanceRate: 96,
   hoursOnline: 5.4,
   completedTripsCount: 8,
+  isDutyModalOpen: false,
   
   toggleOnline: () => set((state) => ({ isOnline: !state.isOnline })),
+  setDutyModalOpen: (isOpen) => set({ isDutyModalOpen: isOpen }),
   
   addEarnings: (amount) => 
     set((state) => ({ 

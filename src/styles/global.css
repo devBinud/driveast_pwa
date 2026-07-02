@@ -32,8 +32,14 @@
 .scroll-container {
   flex: 1;
   overflow-y: auto;
-  padding-bottom: 0;
+  scrollbar-gutter: stable;
+  padding-bottom: calc(var(--nav-height) + var(--spacing-lg));
   -webkit-overflow-scrolling: touch;
+}
+
+/* Extra bottom padding when the floating minimized banner is visible */
+.scroll-container.has-banner {
+  padding-bottom: calc(var(--nav-height) + 72px + var(--spacing-lg));
 }
 
 /* Animations */
@@ -204,3 +210,35 @@
 .text-warning { color: var(--color-warning); }
 
 .mt-auto { margin-top: auto; }
+
+/* Standardized Route Indicators (Pickup: Green Circle, Dropoff: Black Square) */
+.dot-pickup, .dot-p, .node-dot.dot-pickup {
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+  background-color: var(--color-primary) !important; /* Taxi Yellow */
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.dot-drop, .dot-d, .node-dot.dot-drop {
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 0 !important; /* Square */
+  background-color: #000000 !important; /* Black */
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.line-connect, .line-between {
+  width: 2px !important;
+  background: #e4e4e7 !important; /* Standard Light Grey */
+  margin: 0 !important; /* No vertical margin gaps */
+  opacity: 1 !important;
+  flex: 1;
+}
+
+.route-connector {
+  background: #e4e4e7 !important; /* Standard Light Grey */
+  opacity: 1 !important;
+}

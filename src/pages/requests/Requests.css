@@ -1,3 +1,5 @@
+/* Requests.css */
+
 .requests-header-row {
   display: flex;
   justify-content: space-between;
@@ -18,7 +20,217 @@
 }
 
 .requests-page-container {
-  max-width: 560px;
+  max-width: 500px;
   margin: 0 auto;
   width: 100%;
+  scrollbar-gutter: stable;
+}
+
+/* Soft grey fill for the empty incoming tab area */
+.incoming-empty-area {
+  background: #f4f4f5;
+  border-radius: var(--radius-lg);
+  border: 1.5px dashed #d4d4d8;
+  padding: var(--spacing-lg) var(--spacing-md);
+  margin-top: var(--spacing-md);
+  min-height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Active Trip Panel inside Requests */
+.accepted-trip-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.active-trip-card {
+  box-shadow: var(--shadow-lg);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.active-trip-status-banner {
+  background: rgba(251, 191, 36, 0.1);
+  border: 1px dashed rgba(251, 191, 36, 0.3);
+  border-radius: var(--radius-sm);
+  padding: 10px var(--spacing-md);
+  font-weight: 800;
+  color: var(--color-primary);
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 0.775rem;
+  letter-spacing: 0.06em;
+  margin-top: var(--spacing-xs);
+  box-shadow: inset 0 0 10px rgba(251, 191, 36, 0.03);
+}
+
+.active-trip-actions-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.payment-method-selector button {
+  font-size: 0.875rem !important;
+  font-weight: 700 !important;
+  padding: 10px !important;
+}
+
+.completed-success-flow {
+  animation: successPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes successPop {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Sub-Tab Navigation Bar */
+.sub-tabs-container {
+  display: flex;
+  width: 100%;
+  border-bottom: 2px solid #e4e4e7; /* Full-width bottom border */
+  padding: 0;
+  margin: var(--spacing-md) 0 var(--spacing-sm) 0;
+  gap: var(--spacing-md);
+  background: transparent;
+}
+
+.sub-tab-pill {
+  position: relative;
+  text-align: center;
+  padding: 12px 6px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px; /* Align to container border */
+  transition: color 0.15s ease, border-color 0.15s ease;
+  border-radius: 0;
+  flex: 1;
+}
+
+.sub-tab-pill.active {
+  background: transparent;
+  color: #d97706; /* Amber active text */
+  border-bottom-color: #d97706; /* Amber active bottom line */
+  box-shadow: none;
+}
+
+.sub-tab-pill.active:hover {
+  background: transparent;
+  color: #d97706;
+}
+
+.sub-tab-pill:hover {
+  color: #d97706;
+  border-bottom-color: #d97706;
+}
+
+/* Stable Tab Fade Animation */
+.animate-tab-fade {
+  animation: tabFadeIn 0.2s ease-out forwards;
+}
+
+@keyframes tabFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.tab-active-dot {
+  width: 6px;
+  height: 6px;
+  background-color: var(--color-success);
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 6px var(--color-success);
+}
+
+/* Upcoming trip card custom coloring (Pure White Theme) */
+.upcoming-trip-card {
+  background: #ffffff !important;
+  border: 1px solid #e4e4e7 !important;
+  border-radius: var(--radius-md) !important;
+  color: #09090b !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02) !important;
+  padding: var(--spacing-md) !important;
+  transition: all 0.2s ease;
+}
+
+.upcoming-trip-card:hover {
+  transform: translateY(-2px);
+  border-color: #d4d4d8 !important;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.04) !important;
+}
+
+.upcoming-trip-card .req-id-badge {
+  background: #f4f4f5 !important;
+  color: #18181b !important;
+  border: 1px solid #e4e4e7 !important;
+  font-weight: 700;
+}
+
+.upcoming-trip-card .upcoming-time-badge {
+  color: #09090b !important;
+  font-weight: 800;
+}
+
+.upcoming-trip-card .upcoming-date-section {
+  color: #27272a !important;
+}
+
+.upcoming-trip-card .modal-fare-amount {
+  color: #09090b !important;
+  font-weight: 800;
+}
+
+.upcoming-trip-card .modal-fare-label span {
+  color: #71717a !important;
+}
+
+.upcoming-trip-card .modal-route-text .route-lbl {
+  color: #71717a !important;
+}
+
+.upcoming-trip-card .modal-route-text .route-addr {
+  color: #09090b !important;
+  font-weight: 600;
+}
+
+.upcoming-trip-card .modal-stats .modal-stat-item {
+  color: #27272a !important;
+}
+
+.upcoming-trip-card .cust-name {
+  color: #09090b !important;
+  font-weight: 700;
+}
+
+.upcoming-trip-card .upcoming-action-row button {
+  font-weight: 700 !important;
 }

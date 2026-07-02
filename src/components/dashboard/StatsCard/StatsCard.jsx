@@ -11,12 +11,6 @@ export const StatsCard = () => {
 
   const stats = [
     {
-      label: "Today's Earnings",
-      value: `₹${todayEarnings.toFixed(2)}`,
-      icon: FiTrendingUp,
-      color: 'green'
-    },
-    {
       label: 'Trips Completed',
       value: completedTripsCount,
       icon: FiNavigation,

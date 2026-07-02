@@ -20,14 +20,14 @@ export const Trips = () => {
   const completedCount = trips.length
 
   return (
-    <div className="page-container animate-fade-in">
+    <div className="page-container animate-fade-in trips-page-container">
       <div>
-        <h2>Trip Logs</h2>
+        <h2>Trip History</h2>
         <p className="trips-sub-label">Review your historical ride performance</p>
       </div>
 
       {/* Summary card */}
-      <Card className="trips-summary-card">
+      <Card className="trips-summary-card" style={{ marginTop: 'var(--spacing-md)' }}>
         <div className="summary-col">
           <span className="summary-col-lbl">Total Revenue</span>
           <h3>₹{totalEarnings.toFixed(2)}</h3>
@@ -47,7 +47,7 @@ export const Trips = () => {
           type="trips"
         />
       ) : (
-        <div className="trips-history-list">
+        <div className="trips-history-list" style={{ marginTop: 'var(--spacing-md)' }}>
           {filteredTrips.map((trip) => (
             <TripCard key={trip.id} trip={trip} />
           ))}
@@ -56,4 +56,5 @@ export const Trips = () => {
     </div>
   )
 }
+
 export default Trips

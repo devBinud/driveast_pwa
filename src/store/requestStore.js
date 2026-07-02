@@ -10,7 +10,7 @@ const INITIAL_REQUESTS = [
     distance: '1.4 km',
     duration: '6 mins',
     fare: 85.00,
-    timeLeft: 45,
+    timeLeft: 600,
     customerName: 'Rahul Borah',
     customerPhone: '+91 94350 12345',
     customerAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=128&h=128',
@@ -25,7 +25,7 @@ const INITIAL_REQUESTS = [
     distance: '6.2 km',
     duration: '18 mins',
     fare: 145.00,
-    timeLeft: 30,
+    timeLeft: 600,
     customerName: 'Priya Dutta',
     customerPhone: '+91 98540 67890',
     customerAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=128&h=128',
@@ -40,7 +40,7 @@ const INITIAL_REQUESTS = [
     distance: '3.8 km',
     duration: '12 mins',
     fare: 110.00,
-    timeLeft: 55,
+    timeLeft: 600,
     customerName: 'Ankur Sharma',
     customerPhone: '+91 70110 45678',
     customerAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=128&h=128',
@@ -50,18 +50,20 @@ const INITIAL_REQUESTS = [
 
 export const useRequestStore = create((set, get) => ({
   requests: INITIAL_REQUESTS,
-  
+  isMinimized: false,
+  setMinimized: (val) => set({ isMinimized: val }),
+
   declineRequest: (id) => set((state) => ({
     requests: state.requests.filter(req => req.id !== id)
   })),
-  
+
   tickTimers: () => set((state) => {
     const updated = state.requests
       .map(req => ({ ...req, timeLeft: req.timeLeft - 1 }))
       .filter(req => req.timeLeft > 0)
     return { requests: updated }
   }),
-  
+
   addMockRequest: () => {
     const ids = ['REQ-6123', 'REQ-7234', 'REQ-8345']
     const pickNames = [
@@ -82,14 +84,14 @@ export const useRequestStore = create((set, get) => ({
     const customers = [
       { name: 'Dipankar Kalita', phone: '+91 96780 11122', rating: 4.7, avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=128&h=128' },
       { name: 'Meghna Das', phone: '+91 88760 33344', rating: 4.9, avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=128&h=128' },
-      { name: 'Bhaskar Nath', phone: '+91 91510 55566', rating: 4.6, avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=128&h=128' }
+      { name: 'Arup Nath', phone: '+91 91510 55566', rating: 4.6, avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=128&h=128' }
     ]
-    
+
     const idx = Math.floor(Math.random() * ids.length)
-    
+
     // Check if request is already in list
     if (get().requests.some(req => req.id === ids[idx])) return
-    
+
     const newReq = {
       id: ids[idx],
       pickup: pickNames[idx],
@@ -99,16 +101,16 @@ export const useRequestStore = create((set, get) => ({
       distance: distances[idx],
       duration: durations[idx],
       fare: fares[idx],
-      timeLeft: 45,
+      timeLeft: 600,
       customerName: customers[idx].name,
       customerPhone: customers[idx].phone,
       customerAvatar: customers[idx].avatar,
       customerRating: customers[idx].rating
     }
-    
+
     set((state) => ({ requests: [newReq, ...state.requests] }))
   },
-  
+
   resetRequests: () => set({ requests: INITIAL_REQUESTS })
 }))
 

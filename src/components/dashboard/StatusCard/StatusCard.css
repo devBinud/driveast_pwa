@@ -34,34 +34,63 @@
   margin-top: 2px;
 }
 
-.status-toggle-btn {
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-full);
-  background: var(--color-danger-bg);
-  color: var(--color-danger);
+.status-toggle-switch-wrapper {
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: 1.15rem;
+  gap: 10px;
   cursor: pointer;
-  transition: all var(--transition-normal);
-  border: 1px solid rgba(239, 68, 68, 0.2);
+  padding: 6px 14px;
+  background: var(--bg-tertiary);
+  border: 1.5px solid var(--card-border);
+  border-radius: var(--radius-full);
+  transition: all var(--transition-fast);
 }
 
-.status-toggle-btn.active {
-  background: var(--color-success-bg);
-  color: var(--color-success);
+.status-toggle-switch-wrapper.online {
+  background: rgba(16, 185, 129, 0.08);
   border-color: rgba(16, 185, 129, 0.25);
-  box-shadow: var(--shadow-glow-success);
 }
 
-.status-toggle-btn:hover {
-  transform: scale(1.05);
+.status-toggle-track {
+  width: 36px;
+  height: 20px;
+  background: #d4d4d8;
+  border-radius: var(--radius-full);
+  position: relative;
+  transition: background-color var(--transition-fast);
 }
 
-.status-toggle-btn:active {
-  transform: scale(0.95);
+.status-toggle-switch-wrapper.online .status-toggle-track {
+  background: #10b981; /* Green online */
+}
+
+.status-toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background: #ffffff;
+  border-radius: 50%;
+  transition: transform var(--transition-fast);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.status-toggle-switch-wrapper.online .status-toggle-thumb {
+  transform: translateX(16px);
+}
+
+.status-toggle-label-text {
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+  transition: color var(--transition-fast);
+}
+
+.status-toggle-switch-wrapper.online .status-toggle-label-text {
+  color: #10b981;
 }
 
 .status-card-stats {
@@ -88,14 +117,9 @@
   font-size: 1.05rem;
 }
 
-.status-stat-icon-wrapper.purple {
-  background: rgba(99, 102, 241, 0.1);
+.status-stat-icon-wrapper.primary {
+  background: rgba(251, 191, 36, 0.12);
   color: var(--color-primary);
-}
-
-.status-stat-icon-wrapper.green {
-  background: rgba(16, 185, 129, 0.1);
-  color: var(--color-success);
 }
 
 .status-stat-info {

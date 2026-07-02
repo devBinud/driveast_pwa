@@ -49,11 +49,9 @@
 .btn-primary:hover:not(:disabled) {
   background: var(--color-primary-hover);
   box-shadow: var(--shadow-glow-primary);
-  transform: translateY(-1px);
 }
 
 .btn-primary:active:not(:disabled) {
-  transform: translateY(0);
 }
 
 .btn-secondary {
@@ -75,7 +73,6 @@
 .btn-success:hover:not(:disabled) {
   background: #0ea5e9; /* Switch to electric blue highlight */
   box-shadow: var(--shadow-glow-success);
-  transform: translateY(-1px);
 }
 
 .btn-danger {
@@ -86,7 +83,6 @@
 .btn-danger:hover:not(:disabled) {
   background: #dc2626;
   box-shadow: 0 0 15px rgba(220, 38, 38, 0.3);
-  transform: translateY(-1px);
 }
 
 .btn-ghost {

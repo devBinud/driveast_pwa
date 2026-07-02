@@ -93,12 +93,19 @@ export const useTripStore = create((set, get) => ({
         tripId: `TRP-${Math.floor(1000 + Math.random() * 9000)}`,
         status: 'assigned', // assigned -> arrived -> otp_verified -> active -> payment_pending -> completed
         otpCode: Math.floor(1000 + Math.random() * 9000).toString(),
-        routeProgress: 0
+        routeProgress: 0,
+        timeLeft: 600 // 10 minutes countdown for active trip
       },
       otpInput: '',
       otpError: '',
       paymentMethod: 'Cash'
     })
+  },
+  
+  startNavigationToPickup: () => {
+    set((state) => ({
+      currentTrip: state.currentTrip ? { ...state.currentTrip, status: 'navigating' } : null
+    }))
   },
   
   arriveAtPickup: () => {

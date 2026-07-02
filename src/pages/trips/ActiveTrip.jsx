@@ -1,102 +1,19 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useState } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
-import L from 'leaflet'
-import 'leaflet/dist/leaflet.css'
 import { FiNavigation } from 'react-icons/fi'
 import { useTripStore } from '../../store/tripStore'
-import { useLocation } from '../../hooks/useLocation'
 import { ActiveTripCard } from '../../components/trips/ActiveTripCard/ActiveTripCard'
 import './ActiveTrip.css'
 
 export const ActiveTrip = () => {
   const navigate = useNavigate()
   const { currentTrip, arriveAtDropoff } = useTripStore()
-  const { location, heading } = useLocation()
-  const mapContainerRef = useRef(null)
-  const mapInstanceRef = useRef(null)
-  const driverMarkerRef = useRef(null)
   const [loading, setLoading] = useState(false)
 
+  // Redirect to dashboard if no trip is active
   if (!currentTrip) {
     return <Navigate to="/" replace />
   }
-
-  // Initialize Map
-  useEffect(() => {
-    if (!mapContainerRef.current) return
-
-    const pickupLoc = currentTrip.pickupLatLng || [40.7527, -73.9772]
-    const dropLoc = currentTrip.dropLatLng || [40.7580, -73.9855]
-
-    // Create Map
-    const map = L.map(mapContainerRef.current, {
-      zoomControl: false,
-      attributionControl: false
-    }).setView(location, 14)
-
-    mapInstanceRef.current = map
-
-    // Light Map tiles
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-      maxZoom: 20
-    }).addTo(map)
-
-    // Markers divs
-    const driverIcon = L.divIcon({
-      className: 'driver-car-marker active-phase',
-      html: `<div style="transform: rotate(${heading}deg)">🚗</div>`,
-      iconSize: [26, 26],
-      iconAnchor: [13, 13]
-    })
-
-    const dropIcon = L.divIcon({
-      className: 'custom-map-marker marker-drop',
-      html: '<div></div>',
-      iconSize: [18, 18],
-      iconAnchor: [9, 9]
-    })
-
-    // Mount markers
-    const driverMarker = L.marker(location, { icon: driverIcon }).addTo(map)
-    driverMarkerRef.current = driverMarker
-
-    const dropMarker = L.marker(dropLoc, { icon: dropIcon }).addTo(map)
-
-    // Route path (pickup to drop)
-    const polyline = L.polyline([pickupLoc, dropLoc], {
-      color: '#6366f1',
-      weight: 4,
-      opacity: 0.8,
-      dashArray: '8, 8'
-    }).addTo(map)
-
-    // Fit bounds
-    const group = new L.featureGroup([driverMarker, dropMarker])
-    map.fitBounds(group.getBounds().pad(0.3))
-
-    return () => {
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.remove()
-        mapInstanceRef.current = null
-      }
-    }
-  }, [currentTrip?.id])
-
-  // Update driver marker position in real time
-  useEffect(() => {
-    if (driverMarkerRef.current && mapInstanceRef.current) {
-      driverMarkerRef.current.setLatLng(location)
-      
-      // Update HTML rotate styling based on heading
-      const markerEl = driverMarkerRef.current.getElement()
-      if (markerEl) {
-        const iconDiv = markerEl.querySelector('.driver-car-marker div')
-        if (iconDiv) {
-          iconDiv.style.transform = `rotate(${heading}deg)`
-        }
-      }
-    }
-  }, [location, heading])
 
   const handleComplete = () => {
     setLoading(true)
@@ -108,17 +25,43 @@ export const ActiveTrip = () => {
   }
 
   return (
-    <div className="active-trip-page">
-      {/* Map screen */}
-      <div className="active-map-container">
-        <div ref={mapContainerRef} className="active-leaflet-map"></div>
-        
-        {/* Floating guidance overlay */}
-        <div className="navigation-overlay active-run glass-panel">
-          <FiNavigation className="nav-compass-icon animate-pulse" />
-          <div className="nav-text">
-            <span>En Route to Destination</span>
-            <strong>Progress: Driving towards dropoff point</strong>
+    <div className="active-trip-page page-container animate-fade-in">
+      {/* Header status details */}
+      <div className="active-status-header">
+        <span className="status-badge-inline active-run">En Route to Destination</span>
+        <span className="status-subtitle-inline">Driving towards dropoff point</span>
+      </div>
+
+      {/* Main visual status display instead of Map */}
+      <div className="active-status-view">
+        <div className="status-graphic-container">
+          <div className="status-pulse-circle active-trip">
+            <FiNavigation className="navigation-icon-large animate-pulse" />
+          </div>
+          <h3>Trip In Progress</h3>
+          <p>Driving customer safely to their dropoff address.</p>
+        </div>
+
+        {/* Route Details Panel */}
+        <div className="route-details-panel glass-panel">
+          <div className="route-flow">
+            <div className="route-node pickup">
+              <span className="node-dot dot-pickup"></span>
+              <div className="node-text">
+                <span className="node-label">Pickup Location</span>
+                <strong>{currentTrip.pickup}</strong>
+              </div>
+            </div>
+            
+            <div className="route-connector"></div>
+            
+            <div className="route-node drop">
+              <span className="node-dot dot-drop"></span>
+              <div className="node-text">
+                <span className="node-label">Dropoff Location</span>
+                <strong>{currentTrip.drop}</strong>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -135,4 +78,5 @@ export const ActiveTrip = () => {
     </div>
   )
 }
+
 export default ActiveTrip

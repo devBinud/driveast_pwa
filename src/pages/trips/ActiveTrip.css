@@ -1,43 +1,181 @@
+/* ActiveTrip.css */
+
 .active-trip-page {
   display: flex;
   flex-direction: column;
   height: 100%;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  box-sizing: border-box;
 }
 
-.active-map-container {
+.active-status-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.status-badge-inline {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.725rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: var(--color-success-bg);
+  color: var(--color-success);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.status-badge-inline.active-run {
+  background: var(--color-info-bg);
+  color: var(--color-info);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.status-subtitle-inline {
+  font-size: 0.825rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.active-status-view {
   flex: 1;
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-lg);
+  background: radial-gradient(circle at center, rgba(59, 130, 246, 0.04) 0%, var(--bg-primary) 80%);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--card-border);
+  padding: var(--spacing-lg);
+  min-height: 250px;
+}
+
+.status-graphic-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--spacing-sm);
+}
+
+.status-pulse-circle {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: var(--color-success-bg);
+  border: 2px solid rgba(16, 185, 129, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 30px rgba(16, 185, 129, 0.15);
+  margin-bottom: var(--spacing-sm);
+}
+
+.status-pulse-circle.active-trip {
+  background: var(--color-info-bg);
+  border: 2px solid rgba(59, 130, 246, 0.25);
+  box-shadow: 0 0 30px rgba(59, 130, 246, 0.15);
+}
+
+.compass-icon-large {
+  font-size: 2.2rem;
+  color: var(--color-success);
+}
+
+.navigation-icon-large {
+  font-size: 2.2rem;
+  color: var(--color-info);
+}
+
+.status-graphic-container h3 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.status-graphic-container p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+/* Route Details Panel */
+.route-details-panel {
+  width: 100%;
+  max-width: 440px;
+}
+
+.route-flow {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-xs);
+}
+
+.route-node {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: flex-start;
   width: 100%;
 }
 
-.active-leaflet-map {
-  height: 100%;
-  width: 100%;
-  z-index: 1;
+.node-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+
+.node-dot.dot-pickup {
+  background-color: var(--color-success);
+  box-shadow: 0 0 6px var(--color-success);
+}
+
+.node-dot.dot-drop {
+  background-color: var(--color-danger);
+  border-radius: 2px;
+  box-shadow: 0 0 6px var(--color-danger);
+}
+
+.route-connector {
+  width: 2px;
+  height: 14px;
+  background: var(--text-muted);
+  opacity: 0.35;
+  margin-left: 4px;
+}
+
+.node-text {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.node-label {
+  font-size: 0.675rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.node-text strong {
+  font-size: 0.825rem;
+  color: var(--text-primary);
+  line-height: 1.4;
+  margin-top: 1px;
 }
 
 .active-action-panel {
   width: 100%;
-  position: relative;
-  z-index: 10;
-}
-
-/* Floating overlay */
-.navigation-overlay.active-run {
-  position: absolute;
-  top: var(--spacing-md);
-  left: var(--spacing-md);
-  right: var(--spacing-md);
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-  background: rgba(10, 15, 29, 0.85);
-  border: 1px solid rgba(99, 102, 241, 0.3);
-  box-shadow: var(--shadow-glass);
-}
-
-.nav-compass-icon {
-  font-size: 1.5rem;
-  color: var(--color-primary);
 }
