@@ -19,6 +19,14 @@ export const Trips = () => {
   const totalEarnings = trips.reduce((sum, t) => sum + t.fare, 0)
   const completedCount = trips.length
 
+  const cashEarnings = trips
+    .filter((t) => t.paymentMethod === 'Cash')
+    .reduce((sum, t) => sum + t.fare, 0)
+
+  const onlineEarnings = trips
+    .filter((t) => t.paymentMethod !== 'Cash')
+    .reduce((sum, t) => sum + t.fare, 0)
+
   return (
     <div className="page-container animate-fade-in trips-page-container">
       <div>
@@ -27,10 +35,20 @@ export const Trips = () => {
       </div>
 
       {/* Summary card */}
-      <Card className="trips-summary-card" style={{ marginTop: 'var(--spacing-md)' }}>
+      <Card className="trips-summary-card" padding="none" style={{ marginTop: 'var(--spacing-md)' }}>
         <div className="summary-col">
           <span className="summary-col-lbl">Total Revenue</span>
           <h3>₹{totalEarnings.toFixed(2)}</h3>
+        </div>
+        <div className="summary-col-divider"></div>
+        <div className="summary-col">
+          <span className="summary-col-lbl">Cash Collected</span>
+          <h3 className="text-success">₹{cashEarnings.toFixed(2)}</h3>
+        </div>
+        <div className="summary-col-divider"></div>
+        <div className="summary-col">
+          <span className="summary-col-lbl">Online Settled</span>
+          <h3>₹{onlineEarnings.toFixed(2)}</h3>
         </div>
         <div className="summary-col-divider"></div>
         <div className="summary-col">

@@ -234,3 +234,34 @@
 .upcoming-trip-card .upcoming-action-row button {
   font-weight: 700 !important;
 }
+
+/* Unified Section layout styles */
+.requests-header-container {
+  margin-bottom: var(--spacing-lg);
+}
+
+.requests-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  width: 100%;
+}
+
+.requests-section-title {
+  font-size: 1rem;
+  font-weight: 850;
+  color: var(--text-primary);
+  margin: var(--spacing-md) 0 var(--spacing-xs) 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.requests-section-divider {
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  margin: var(--spacing-lg) 0;
+  width: 100%;
+}
+

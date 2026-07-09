@@ -2,15 +2,57 @@ import React, { useState } from 'react'
 import { FiWifi, FiWifiOff, FiCoffee, FiCalendar, FiLogOut, FiX, FiAlertCircle } from 'react-icons/fi'
 import './DutyStatusModal.css'
 
+const playDutySound = (type) => {
+  try {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext
+    if (!AudioContextClass) return
+    
+    const audioCtx = new AudioContextClass()
+    const osc = audioCtx.createOscillator()
+    const gainNode = audioCtx.createGain()
+
+    osc.connect(gainNode)
+    gainNode.connect(audioCtx.destination)
+
+    if (type === 'online') {
+      // Pleasant upward double beep (Online indicator)
+      osc.type = 'sine'
+      gainNode.gain.setValueAtTime(0.12, audioCtx.currentTime)
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.38)
+
+      osc.frequency.setValueAtTime(587.33, audioCtx.currentTime) // D5
+      osc.frequency.setValueAtTime(880.00, audioCtx.currentTime + 0.12) // A5
+
+      osc.start()
+      osc.stop(audioCtx.currentTime + 0.38)
+    } else if (type === 'offline') {
+      // Short lower double beep (Offline indicator)
+      osc.type = 'triangle'
+      gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime)
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.28)
+
+      osc.frequency.setValueAtTime(329.63, audioCtx.currentTime) // E4
+      osc.frequency.setValueAtTime(220.00, audioCtx.currentTime + 0.08) // A3
+
+      osc.start()
+      osc.stop(audioCtx.currentTime + 0.28)
+    }
+  } catch (error) {
+    console.warn('Audio Context failed to initialize:', error)
+  }
+}
+
 export const DutyStatusModal = ({ isOnline, onGoOnline, onGoOffline, onClose }) => {
   const [selected, setSelected] = useState(null)
 
   const handleOption = (option) => {
     setSelected(option)
     if (option === 'online') {
+      playDutySound('online')
       onGoOnline()
       setTimeout(onClose, 300)
     } else {
+      playDutySound('offline')
       onGoOffline()
       setTimeout(onClose, 300)
     }
@@ -44,6 +86,7 @@ export const DutyStatusModal = ({ isOnline, onGoOnline, onGoOffline, onClose }) 
           <button
             className={`duty-option-btn online-btn ${isOnline ? 'active-opt' : ''}`}
             onClick={() => handleOption('online')}
+            disabled={isOnline}
           >
             <div className="duty-opt-icon online-icon">
               <FiWifi />
@@ -59,6 +102,7 @@ export const DutyStatusModal = ({ isOnline, onGoOnline, onGoOffline, onClose }) 
           <button
             className={`duty-option-btn offline-btn ${!isOnline ? 'active-opt' : ''}`}
             onClick={() => handleOption('offline')}
+            disabled={!isOnline}
           >
             <div className="duty-opt-icon offline-icon">
               <FiWifiOff />

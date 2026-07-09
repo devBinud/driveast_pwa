@@ -20,7 +20,7 @@ export const TripCard = ({ trip }) => {
   } = trip
 
   return (
-    <Card className="trip-card-item" padding="md">
+    <Card className="trip-card-item" padding="none">
       <div className="trip-card-header">
         <div className="trip-header-meta">
           <span className="trip-id-text">{id}</span>
@@ -31,9 +31,9 @@ export const TripCard = ({ trip }) => {
 
       <div className="trip-card-route">
         <div className="trip-route-nodes">
-          <span className="trip-node green"></span>
+          <span className="trip-node pickup"></span>
           <span className="trip-node-line"></span>
-          <span className="trip-node indigo"></span>
+          <span className="trip-node drop"></span>
         </div>
         <div className="trip-route-addresses">
           <span className="trip-addr-txt">{pickup.split(',')[0]}</span>

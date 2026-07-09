@@ -124,6 +124,11 @@
   border-color: #d4d4d8;
 }
 
+.duty-option-btn:disabled {
+  pointer-events: none;
+  cursor: default;
+}
+
 .duty-option-btn.active-opt {
   background: rgba(251, 191, 36, 0.07);
   border-color: var(--color-primary);
@@ -184,7 +189,7 @@
 /* Active badge */
 .duty-active-badge {
   background: var(--color-primary);
-  color: #000000;
+  color: var(--text-inverse);
   font-size: 0.7rem;
   font-weight: 800;
   padding: 3px 9px;

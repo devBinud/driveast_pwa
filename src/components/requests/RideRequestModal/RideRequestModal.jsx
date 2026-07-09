@@ -1,10 +1,36 @@
 import React, { useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { FiNavigation, FiClock, FiStar } from 'react-icons/fi'
+import { FiNavigation, FiClock, FiStar, FiUser } from 'react-icons/fi'
 import { useRequestStore } from '../../../store/requestStore'
 import { useTripStore } from '../../../store/tripStore'
 import { useDriverStore } from '../../../store/driverStore'
 import './RideRequestModal.css'
+
+const playIncomingChime = () => {
+  try {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext
+    if (!AudioContextClass) return
+
+    const audioCtx = new AudioContextClass()
+    const osc = audioCtx.createOscillator()
+    const gainNode = audioCtx.createGain()
+
+    osc.connect(gainNode)
+    gainNode.connect(audioCtx.destination)
+
+    osc.type = 'sine'
+    gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime)
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.45)
+
+    osc.frequency.setValueAtTime(659.25, audioCtx.currentTime) // E5
+    osc.frequency.setValueAtTime(880.00, audioCtx.currentTime + 0.15) // A5
+
+    osc.start()
+    osc.stop(audioCtx.currentTime + 0.45)
+  } catch (error) {
+    console.warn('Audio Context failed for incoming chime:', error)
+  }
+}
 
 export const RideRequestModal = () => {
   const navigate = useNavigate()
@@ -26,6 +52,36 @@ export const RideRequestModal = () => {
   const isAvailable = !!(isOnline && !currentTrip && requests.length > 0)
   const isRequestsPage = location.pathname === '/requests'
   const showModal = isAvailable && !isMinimized && !isRequestsPage
+
+  // Web Audio alert and device vibration when an incoming offer modal is active
+  useEffect(() => {
+    if (showModal) {
+      // Vibrate mobile device initially
+      if (navigator.vibrate) {
+        navigator.vibrate([400, 200, 400])
+      }
+
+      // Play initial chime
+      playIncomingChime()
+
+      // Repeat chime every 1.5 seconds
+      const chimeInterval = setInterval(() => {
+        playIncomingChime()
+      }, 1500)
+
+      // Repeat vibration every 3.5 seconds
+      const vibrateInterval = setInterval(() => {
+        if (navigator.vibrate) {
+          navigator.vibrate([300, 150, 300])
+        }
+      }, 3500)
+
+      return () => {
+        clearInterval(chimeInterval)
+        clearInterval(vibrateInterval)
+      }
+    }
+  }, [showModal])
 
   if (!showModal) {
     return null
@@ -56,10 +112,14 @@ export const RideRequestModal = () => {
         
         {/* Global Modal Header */}
         <div className="request-modal-list-header">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <img src="/logo/driveast_logo.jpg" alt="Driveast Logo" style={{ height: '24px', borderRadius: '4px', border: '1px solid #e4e4e7' }} />
-              <div className="status-ping">
+          <div className="header-top-row">
+            <div className="header-brand-group">
+              <img 
+                src="/logo/driveast_logo.jpg" 
+                alt="Driveast Logo" 
+                className="modal-logo-img"
+              />
+              <div className="status-badge">
                 <span>{requests.length} Incoming {requests.length > 1 ? 'Rides' : 'Ride'}</span>
               </div>
             </div>
@@ -70,22 +130,6 @@ export const RideRequestModal = () => {
               onClick={() => setMinimized(true)}
               className="btn-modal-minimize"
               aria-label="Minimize"
-              style={{
-                background: '#f4f4f5',
-                color: '#09090b',
-                border: 'none',
-                width: '28px',
-                height: '28px',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                fontSize: '0.8rem',
-                fontWeight: 'bold',
-                transition: 'all 0.2s ease',
-                padding: 0
-              }}
             >
               ✕
             </button>
@@ -181,6 +225,7 @@ export const RideRequestModal = () => {
                   </div>
 
                   <div className="modal-customer">
+                    <FiUser className="cust-icon" />
                     <div className="cust-det">
                       <span className="cust-name">{req.customerName}</span>
                     </div>

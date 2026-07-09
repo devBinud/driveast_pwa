@@ -1,10 +1,10 @@
 :root {
   /* Color Palette (Light Theme - Default - Rapido Style) */
-  --bg-primary: #ffffff;
+  --bg-primary: #FFFAEF;
   /* Pure white background */
-  --bg-secondary: #ffffff;
+  --bg-secondary: #f5f7fb;
   /* White cards/header */
-  --bg-tertiary: #f4f4f5;
+  --bg-tertiary: #f5f7fb;
   /* Soft grey */
 
   --card-bg: #ffffff;
@@ -35,9 +35,9 @@
   --color-info-bg: rgba(59, 130, 246, 0.1);
 
   /* Text Colors */
-  --text-primary: #000000;
+  --text-primary: #001536;
   /* Rich black */
-  --text-secondary: #4b5563;
+  --text-secondary: #576680;
   /* Muted dark grey */
   --text-muted: #9ca3af;
   /* Lighter grey */

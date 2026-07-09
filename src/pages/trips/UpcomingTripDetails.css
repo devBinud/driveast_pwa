@@ -145,13 +145,15 @@
 }
 
 .indicator-node.pickup-node {
-  background: var(--color-success);
-  box-shadow: 0 0 0 2.5px rgba(16, 185, 129, 0.2);
+  background: var(--color-primary);
+  box-shadow: 0 0 0 2.5px rgba(251, 191, 36, 0.2);
+  border-radius: 50%;
 }
 
 .indicator-node.drop-node {
-  background: var(--color-danger);
-  box-shadow: 0 0 0 2.5px rgba(239, 68, 68, 0.2);
+  background: #000000;
+  box-shadow: 0 0 0 2.5px rgba(0, 0, 0, 0.1);
+  border-radius: 0;
 }
 
 .indicator-dashed-line {

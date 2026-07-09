@@ -16,7 +16,7 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: var(--spacing-sm) 0;
+  padding: var(--spacing-md) var(--spacing-sm);
 }
 
 .summary-col-lbl {
@@ -107,5 +107,18 @@
   100% {
     transform: scale(1);
     opacity: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .summary-col {
+    padding: var(--spacing-sm) var(--spacing-xs);
+  }
+  .summary-col-lbl {
+    font-size: 0.58rem;
+    white-space: nowrap;
+  }
+  .summary-col h3 {
+    font-size: 0.95rem;
   }
 }

@@ -1,12 +1,14 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import { FiActivity, FiAward, FiNavigation } from 'react-icons/fi'
+import { FaRupeeSign } from 'react-icons/fa'
 import { useDriverStatus } from '../../../hooks/useDriverStatus'
 import { useAuth } from '../../../hooks/useAuth'
 import { Card } from '../../common/Card/Card'
 import './StatusCard.css'
 
 export const StatusCard = () => {
-  const { isOnline, acceptanceRate, completedTripsCount, setDutyModalOpen } = useDriverStatus()
+  const { isOnline, todayEarnings, acceptanceRate, completedTripsCount, setDutyModalOpen } = useDriverStatus()
   const { user } = useAuth()
 
   return (
@@ -17,8 +19,8 @@ export const StatusCard = () => {
           <span className="status-title-label">Duty Status</span>
           <h3 className="status-text-heading">{isOnline ? 'Online & Active' : 'Offline'}</h3>
         </div>
-        
-        <div 
+
+        <div
           onClick={() => setDutyModalOpen(true)}
           className={`status-toggle-switch-wrapper ${isOnline ? 'online' : 'offline'}`}
         >
@@ -34,7 +36,7 @@ export const StatusCard = () => {
       {/* Row stats */}
       <div className="status-card-stats">
         <div className="status-stat-item">
-          <div className="status-stat-icon-wrapper primary">
+          <div className="status-stat-icon-wrapper yellow">
             <FiAward />
           </div>
           <div className="status-stat-info">
@@ -46,7 +48,7 @@ export const StatusCard = () => {
         <div className="status-stat-divider"></div>
 
         <div className="status-stat-item">
-          <div className="status-stat-icon-wrapper primary">
+          <div className="status-stat-icon-wrapper yellow">
             <FiActivity />
           </div>
           <div className="status-stat-info">
@@ -58,7 +60,7 @@ export const StatusCard = () => {
         <div className="status-stat-divider"></div>
 
         <div className="status-stat-item">
-          <div className="status-stat-icon-wrapper primary">
+          <div className="status-stat-icon-wrapper yellow">
             <FiNavigation />
           </div>
           <div className="status-stat-info">
@@ -66,6 +68,18 @@ export const StatusCard = () => {
             <span className="status-stat-value">{completedTripsCount}</span>
           </div>
         </div>
+
+        <div className="status-stat-divider"></div>
+
+        <Link to="/earnings" className="status-stat-item clickable-stat highlighted-stat">
+          <div className="status-stat-icon-wrapper yellow">
+            {<FaRupeeSign />}
+          </div>
+          <div className="status-stat-info">
+            <span className="status-stat-label">Today's Earnings</span>
+            <span className="status-stat-value">₹{todayEarnings.toFixed(2)}</span>
+          </div>
+        </Link>
       </div>
     </Card>
   )
