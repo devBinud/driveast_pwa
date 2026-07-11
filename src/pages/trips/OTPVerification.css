@@ -104,14 +104,12 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   background: #ffffff;
   color: #000000;
-  transform: scale(1.06);
 }
 
 .otp-cell.active {
   border-color: #09090b;
-  box-shadow: 0 0 0 3px rgba(9, 9, 11, 0.05);
+  box-shadow: 0 0 0 3px rgba(9, 9, 11, 0.15);
   background: #ffffff;
-  animation: otpPulseBorder 1.5s infinite;
 }
 
 .otp-cell.error {
@@ -121,67 +119,13 @@
   color: var(--color-danger);
 }
 
-@keyframes otpPulseBorder {
-  0% {
-    border-color: #e4e4e7;
-    box-shadow: 0 0 0 0 rgba(9, 9, 11, 0.15);
-  }
-  50% {
-    border-color: #09090b;
-    box-shadow: 0 0 0 4px rgba(9, 9, 11, 0.08);
-  }
-  100% {
-    border-color: #e4e4e7;
-    box-shadow: 0 0 0 0 rgba(9, 9, 11, 0);
-  }
-}
-
-/* Custom Numpad styles */
-.numpad-container {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-  width: 100%;
-  padding: var(--spacing-sm);
-  background: rgba(255, 255, 255, 0.01);
-}
-
-.numpad-row {
-  display: flex;
-  gap: var(--spacing-sm);
-}
-
-.numpad-row button {
-  flex: 1;
-  height: 50px;
-  border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--card-border);
-  color: var(--text-primary);
-  font-size: 1.25rem;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all var(--transition-fast);
-}
-
-.numpad-row button:active {
-  background: var(--bg-tertiary);
-  transform: scale(0.97);
-}
-
-.numpad-row button.empty-key {
-  background: transparent;
-  border-color: transparent;
-  cursor: default;
-}
-
-.numpad-row button.delete-key {
-  color: var(--text-secondary);
-}
-
-.numpad-row button.delete-key:active {
-  color: var(--color-danger);
+/* Hidden Input for Native Keyboard */
+.otp-hidden-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
 }

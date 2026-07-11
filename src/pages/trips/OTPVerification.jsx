@@ -14,14 +14,24 @@ export const OTPVerification = () => {
     return <Navigate to="/" replace />
   }
 
-  const handleKeyPress = (num) => {
-    if (otpInput.length < 4) {
-      setOtpInput(otpInput + num)
+  const inputRef = React.useRef(null)
+
+  React.useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus()
     }
+  }, [])
+
+  const handleInputChange = (e) => {
+    const value = e.target.value
+    const cleanValue = value.replace(/\D/g, '').slice(0, 4)
+    setOtpInput(cleanValue)
   }
 
-  const handleDelete = () => {
-    setOtpInput(otpInput.slice(0, -1))
+  const handleCellClick = () => {
+    if (inputRef.current) {
+      inputRef.current.focus()
+    }
   }
 
   const handleVerify = () => {
@@ -55,8 +65,21 @@ export const OTPVerification = () => {
         </div>
       )}
 
+      {/* Hidden input to capture native keyboard events */}
+      <input
+        ref={inputRef}
+        type="text"
+        pattern="\d*"
+        inputMode="numeric"
+        maxLength={4}
+        value={otpInput}
+        onChange={handleInputChange}
+        className="otp-hidden-input"
+        autoFocus
+      />
+
       {/* Input cells display */}
-      <div className="otp-display-cells">
+      <div className="otp-display-cells" onClick={handleCellClick} style={{ cursor: 'text' }}>
         {Array.from({ length: 4 }).map((_, idx) => {
           const char = otpInput[idx] || ''
           const isActive = otpInput.length === idx
@@ -69,32 +92,6 @@ export const OTPVerification = () => {
             </div>
           )
         })}
-      </div>
-
-      {/* Glassmorphic Custom Numpad */}
-      <div className="numpad-container glass-panel">
-        <div className="numpad-row">
-          <button type="button" onClick={() => handleKeyPress('1')}>1</button>
-          <button type="button" onClick={() => handleKeyPress('2')}>2</button>
-          <button type="button" onClick={() => handleKeyPress('3')}>3</button>
-        </div>
-        <div className="numpad-row">
-          <button type="button" onClick={() => handleKeyPress('4')}>4</button>
-          <button type="button" onClick={() => handleKeyPress('5')}>5</button>
-          <button type="button" onClick={() => handleKeyPress('6')}>6</button>
-        </div>
-        <div className="numpad-row">
-          <button type="button" onClick={() => handleKeyPress('7')}>7</button>
-          <button type="button" onClick={() => handleKeyPress('8')}>8</button>
-          <button type="button" onClick={() => handleKeyPress('9')}>9</button>
-        </div>
-        <div className="numpad-row">
-          <button type="button" className="empty-key" disabled></button>
-          <button type="button" onClick={() => handleKeyPress('0')}>0</button>
-          <button type="button" className="delete-key" onClick={handleDelete}>
-            <FiDelete />
-          </button>
-        </div>
       </div>
 
       {/* Continue trigger */}
