@@ -13,7 +13,7 @@ export const PWAInstallModal = () => {
   return (
     <div className="pwa-install-backdrop">
       <div className="pwa-install-card glass-panel animate-fade-in">
-        {/* Close Button (Snoozes 1 Hour) */}
+        {/* Close Button (Snoozes 10 Minutes) */}
         <button
           className="pwa-close-btn"
           onClick={snoozePrompt}
@@ -52,7 +52,7 @@ export const PWAInstallModal = () => {
         </ul>
 
         <div className="pwa-action-buttons">
-          {/* Later / Remind in 1 Hour */}
+          {/* Later / Remind in 10 Minutes */}
           <button
             type="button"
             className="pwa-btn pwa-btn-secondary"

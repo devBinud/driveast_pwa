@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-const SNOOZE_DURATION_MS = 60 * 60 * 1000 // 1 hour in milliseconds
+const SNOOZE_DURATION_MS = 10 * 60 * 1000 // 10 minutes in milliseconds
 
 export const usePWAInstall = () => {
   const [deferredPrompt, setDeferredPrompt] = useState(null)
@@ -78,7 +78,7 @@ export const usePWAInstall = () => {
       setIsInstalled(true)
       setShowPrompt(false)
     } else {
-      // If user cancels native prompt, snooze for 1 hour
+      // If user cancels native prompt, snooze for 10 minutes
       snoozePrompt()
     }
     setDeferredPrompt(null)
