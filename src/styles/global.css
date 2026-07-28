@@ -3,6 +3,9 @@
 /* Core Layouts */
 #root {
   height: 100vh;
+  height: 100dvh;
+  width: 100%;
+  max-width: 100vw;
   display: flex;
   flex-direction: column;
   background-color: var(--bg-primary);
@@ -17,6 +20,16 @@
   gap: var(--spacing-lg);
   min-height: 100%;
   box-sizing: border-box;
+  width: 100%;
+  padding-bottom: calc(var(--nav-height) + var(--spacing-xl) + env(safe-area-inset-bottom, 0px));
+}
+
+/* Guarantee bottom spacing in flex scroll containers */
+.page-container::after {
+  content: '';
+  display: block;
+  height: var(--spacing-md);
+  flex-shrink: 0;
 }
 
 @media (min-width: 768px) {
@@ -32,14 +45,15 @@
 .scroll-container {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   scrollbar-gutter: stable;
-  padding-bottom: calc(var(--nav-height) + var(--spacing-lg));
+  padding-bottom: calc(var(--nav-height) + var(--spacing-xl) + env(safe-area-inset-bottom, 0px));
   -webkit-overflow-scrolling: touch;
 }
 
 /* Extra bottom padding when the floating minimized banner is visible */
 .scroll-container.has-banner {
-  padding-bottom: calc(var(--nav-height) + 72px + var(--spacing-lg));
+  padding-bottom: calc(var(--nav-height) + 72px + var(--spacing-xl) + env(safe-area-inset-bottom, 0px));
 }
 
 /* Animations */

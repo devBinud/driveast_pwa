@@ -14,7 +14,7 @@ export const UpcomingTripDetails = () => {
 
   if (!trip) {
     return (
-      <div className="page-container animate-fade-in upcoming-details-container scroll-container">
+      <div className="page-container animate-fade-in upcoming-details-container">
         <div className="upcoming-header-row">
           <Link to="/trips/upcoming" className="back-link-btn">
             <FiArrowLeft /> Back to List
@@ -34,7 +34,7 @@ export const UpcomingTripDetails = () => {
   const { pickup, drop, date, time, distance, duration, fare, customerName, customerRating, customerAvatar, customerPhone } = trip
 
   return (
-    <div className="page-container animate-fade-in upcoming-details-container scroll-container">
+    <div className="page-container animate-fade-in upcoming-details-container">
       {/* Back Header */}
       <div className="upcoming-header-row">
         <Link to="/trips/upcoming" className="back-link-btn">

@@ -31,7 +31,7 @@ export const Earnings = () => {
   const progressPercent = Math.min(Math.round((todayEarnings / dailyTarget) * 100), 100)
 
   return (
-    <div className="earnings-page page-container scroll-container">
+    <div className="earnings-page page-container">
       {/* Header Row */}
       <div className="earnings-header">
         <button className="btn-back" onClick={() => navigate(-1)} aria-label="Go Back">

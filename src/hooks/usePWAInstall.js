@@ -18,7 +18,17 @@ export const usePWAInstall = () => {
   const isSnoozed = () => {
     const snoozedUntil = localStorage.getItem('pwa_prompt_snoozed_until')
     if (!snoozedUntil) return false
-    return Date.now() < Number(snoozedUntil)
+
+    const snoozedVal = Number(snoozedUntil)
+    const now = Date.now()
+
+    // Clear stale >10-minute snooze timestamp from previous 1-hour logic or expired timestamps
+    if (snoozedVal > now + SNOOZE_DURATION_MS || now >= snoozedVal) {
+      localStorage.removeItem('pwa_prompt_snoozed_until')
+      return false
+    }
+
+    return true
   }
 
   useEffect(() => {
@@ -34,7 +44,7 @@ export const usePWAInstall = () => {
       e.preventDefault()
       setDeferredPrompt(e)
 
-      if (!isStandalone() && !isSnoozed() && localStorage.getItem('pwa_installed') !== 'true') {
+      if (!isStandalone() && !isSnoozed()) {
         setShowPrompt(true)
       }
     }
@@ -51,10 +61,10 @@ export const usePWAInstall = () => {
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
     window.addEventListener('appinstalled', handleAppInstalled)
 
-    // Fallback check for mobile Safari/iOS or browsers that don't emit beforeinstallprompt
-    if (!isStandalone() && !isSnoozed() && localStorage.getItem('pwa_installed') !== 'true') {
+    // Fallback check for mobile Safari/iOS, dev environment, or browsers without beforeinstallprompt event
+    if (!isStandalone() && !isSnoozed()) {
       const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream
-      if (isIOS) {
+      if (isIOS || import.meta.env.DEV) {
         setShowPrompt(true)
       }
     }
@@ -67,6 +77,9 @@ export const usePWAInstall = () => {
 
   const installApp = async () => {
     if (!deferredPrompt) {
+      localStorage.setItem('pwa_installed', 'true')
+      setIsInstalled(true)
+      setShowPrompt(false)
       return false
     }
 
@@ -90,11 +103,19 @@ export const usePWAInstall = () => {
     setShowPrompt(false)
   }
 
+  const resetPWAState = () => {
+    localStorage.removeItem('pwa_prompt_snoozed_until')
+    localStorage.removeItem('pwa_installed')
+    setIsInstalled(false)
+    setShowPrompt(true)
+  }
+
   return {
     isInstalled,
     showPrompt,
     installApp,
     snoozePrompt,
+    resetPWAState,
     hasDeferredPrompt: Boolean(deferredPrompt)
   }
 }

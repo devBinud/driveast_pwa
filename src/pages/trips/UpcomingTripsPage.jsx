@@ -11,7 +11,7 @@ export const UpcomingTripsPage = () => {
   const upcomingTrips = useTripStore((state) => state.upcomingTrips)
 
   return (
-    <div className="page-container animate-fade-in upcoming-page-container scroll-container">
+    <div className="page-container animate-fade-in upcoming-page-container">
       {/* Back Header */}
       <div className="upcoming-header-row">
         <Link to="/" className="back-link-btn">
