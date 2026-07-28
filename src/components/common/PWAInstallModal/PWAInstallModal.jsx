@@ -14,8 +14,8 @@ export const PWAInstallModal = () => {
     <div className="pwa-install-backdrop">
       <div className="pwa-install-card glass-panel animate-fade-in">
         {/* Close Button (Snoozes 1 Hour) */}
-        <button 
-          className="pwa-close-btn" 
+        <button
+          className="pwa-close-btn"
           onClick={snoozePrompt}
           aria-label="Remind Me Later"
         >
@@ -24,9 +24,9 @@ export const PWAInstallModal = () => {
 
         <div className="pwa-install-header">
           <div className="pwa-logo-wrapper">
-            <img 
-              src="/logo/driveast_logo.jpg" 
-              alt="Driveeast App Icon" 
+            <img
+              src="/logo/driveast_logo.jpg"
+              alt="Driveeast App Icon"
               className="pwa-app-icon"
             />
           </div>
@@ -47,25 +47,25 @@ export const PWAInstallModal = () => {
           </li>
           <li>
             <FiCheckCircle className="check-icon" />
-            <span>Faster 1-Tap Home Screen Access</span>
+            <span>Faster 1 Tap Home Screen Access</span>
           </li>
         </ul>
 
         <div className="pwa-action-buttons">
           {/* Later / Remind in 1 Hour */}
-          <button 
-            type="button" 
-            className="pwa-btn pwa-btn-secondary" 
+          <button
+            type="button"
+            className="pwa-btn pwa-btn-secondary"
             onClick={snoozePrompt}
           >
             <FiClock />
-            <span>Later (1 Hr)</span>
+            <span>Later</span>
           </button>
 
           {/* Install Now / Accept */}
-          <button 
-            type="button" 
-            className="pwa-btn pwa-btn-primary" 
+          <button
+            type="button"
+            className="pwa-btn pwa-btn-primary"
             onClick={installApp}
           >
             <FiDownload />

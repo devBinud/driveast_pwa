@@ -7,12 +7,12 @@ function App() {
   return (
     <>
       <AppRoutes />
-      
+
       {/* PWA Install Modal Prompt */}
       <PWAInstallModal />
 
       {/* Toast notifications renderer */}
-      <Toaster 
+      <Toaster
         position="top-center"
         containerStyle={{
           top: 80
