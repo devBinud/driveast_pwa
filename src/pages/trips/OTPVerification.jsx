@@ -1,14 +1,15 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
-import { FiLock, FiDelete, FiAlertCircle } from 'react-icons/fi'
+import { FiLock, FiAlertCircle, FiActivity } from 'react-icons/fi'
 import { useTripStore } from '../../store/tripStore'
 import { Button } from '../../components/common/Button/Button'
-import { Card } from '../../components/common/Card/Card'
+import { Input } from '../../components/common/Input/Input'
 import './OTPVerification.css'
 
 export const OTPVerification = () => {
   const navigate = useNavigate()
-  const { currentTrip, otpInput, otpError, setOtpInput, verifyOtp, startTrip } = useTripStore()
+  const { currentTrip, otpInput, otpError, setOtpInput, verifyOtp, startTrip, isLoadingTrip } = useTripStore()
+  const [startOdo, setStartOdo] = useState('45210')
 
   if (!currentTrip) {
     return <Navigate to="/" replace />
@@ -34,11 +35,11 @@ export const OTPVerification = () => {
     }
   }
 
-  const handleVerify = () => {
+  const handleVerify = async () => {
     if (otpInput.length !== 4) return
-    const verified = verifyOtp()
+    const verified = await verifyOtp(Number(startOdo) || 45210)
     if (verified) {
-      startTrip() // Transition to active state
+      startTrip()
       navigate('/trips/active')
     }
   }
@@ -49,12 +50,11 @@ export const OTPVerification = () => {
         <div className="otp-icon-bg">
           <FiLock />
         </div>
-        <h2>Verify OTP</h2>
-        <p className="otp-desc">Ask the passenger for the 4-digit verification code to begin the trip.</p>
+        <h2>Verify Guest OTP</h2>
+        <p className="otp-desc">Enter passenger 4-digit code and vehicle initial odometer reading to begin trip.</p>
         
-        {/* Test helper */}
         <div className="otp-test-hint">
-          <span>Simulation Tip: Customer OTP is <strong>{currentTrip.otpCode}</strong> (or type <strong>1234</strong>)</span>
+          <span>Simulation Tip: OTP is <strong>{currentTrip.otpCode || '4829'}</strong> (or type <strong>1234</strong>)</span>
         </div>
       </div>
 
@@ -78,7 +78,7 @@ export const OTPVerification = () => {
         autoFocus
       />
 
-      {/* Input cells display */}
+      {/* OTP Input cells display */}
       <div className="otp-display-cells" onClick={handleCellClick} style={{ cursor: 'text' }}>
         {Array.from({ length: 4 }).map((_, idx) => {
           const char = otpInput[idx] || ''
@@ -94,15 +94,29 @@ export const OTPVerification = () => {
         })}
       </div>
 
+      {/* Start Odometer Field */}
+      <div style={{ marginTop: '1.25rem', marginBottom: '1.25rem' }}>
+        <Input
+          label="Start Odometer Reading (KM)"
+          type="number"
+          placeholder="e.g. 45210"
+          value={startOdo}
+          onChange={(e) => setStartOdo(e.target.value)}
+          icon={FiActivity}
+          required
+        />
+      </div>
+
       {/* Continue trigger */}
       <Button 
         variant="success" 
         onClick={handleVerify} 
-        disabled={otpInput.length !== 4} 
+        disabled={otpInput.length !== 4 || !startOdo} 
+        loading={isLoadingTrip}
         fullWidth
         size="lg"
       >
-        Verify & Start Ride
+        Verify OTP & Start Ride
       </Button>
     </div>
   )

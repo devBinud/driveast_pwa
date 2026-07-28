@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { FiNavigation, FiClock, FiStar, FiUser } from 'react-icons/fi'
+import { FiNavigation, FiClock, FiUser } from 'react-icons/fi'
 import { useRequestStore } from '../../../store/requestStore'
 import { useTripStore } from '../../../store/tripStore'
 import { useDriverStore } from '../../../store/driverStore'
@@ -22,8 +22,8 @@ const playIncomingChime = () => {
     gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime)
     gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.45)
 
-    osc.frequency.setValueAtTime(659.25, audioCtx.currentTime) // E5
-    osc.frequency.setValueAtTime(880.00, audioCtx.currentTime + 0.15) // A5
+    osc.frequency.setValueAtTime(659.25, audioCtx.currentTime)
+    osc.frequency.setValueAtTime(880.00, audioCtx.currentTime + 0.15)
 
     osc.start()
     osc.stop(audioCtx.currentTime + 0.45)
@@ -39,7 +39,6 @@ export const RideRequestModal = () => {
   const { currentTrip, setAssignedTrip } = useTripStore()
   const isOnline = useDriverStore((state) => state.isOnline)
 
-  // Track request count to auto-maximize modal when a new request arrives
   const prevCountRef = useRef(requests.length)
   useEffect(() => {
     if (requests.length > prevCountRef.current) {
@@ -48,28 +47,21 @@ export const RideRequestModal = () => {
     prevCountRef.current = requests.length
   }, [requests.length, setMinimized])
 
-  // Active if online, no current trip, and there is at least one request
   const isAvailable = !!(isOnline && !currentTrip && requests.length > 0)
   const isRequestsPage = location.pathname === '/requests'
   const showModal = isAvailable && !isMinimized && !isRequestsPage
 
-  // Web Audio alert and device vibration when an incoming offer modal is active
   useEffect(() => {
     if (showModal) {
-      // Vibrate mobile device initially
       if (navigator.vibrate) {
         navigator.vibrate([400, 200, 400])
       }
-
-      // Play initial chime
       playIncomingChime()
 
-      // Repeat chime every 1.5 seconds
       const chimeInterval = setInterval(() => {
         playIncomingChime()
       }, 1500)
 
-      // Repeat vibration every 3.5 seconds
       const vibrateInterval = setInterval(() => {
         if (navigator.vibrate) {
           navigator.vibrate([300, 150, 300])
@@ -87,23 +79,22 @@ export const RideRequestModal = () => {
     return null
   }
 
-  // Format seconds into MM:SS format
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60)
     const secs = seconds % 60
     return `${mins}:${secs.toString().padStart(2, '0')}`
   }
 
-  const handleDecline = (id, e) => {
+  const handleDecline = async (id, e) => {
     e.stopPropagation()
-    declineRequest(id)
+    await declineRequest(id)
   }
 
-  const handleAccept = (req, e) => {
+  const handleAccept = async (req, e) => {
     e.stopPropagation()
     setAssignedTrip(req)
-    acceptRequest(req.id)
-    navigate('/trips/assigned') // Navigate to Heading to Pickup screen
+    await acceptRequest(req.id)
+    navigate('/trips/assigned')
   }
 
   return (
@@ -124,7 +115,7 @@ export const RideRequestModal = () => {
               </div>
             </div>
             
-            {/* Close / Minimize Button */}
+            {/* Minimize Button */}
             <button 
               type="button" 
               onClick={() => setMinimized(true)}
@@ -141,20 +132,20 @@ export const RideRequestModal = () => {
         {/* Scrollable list of request cards */}
         <div className="request-modal-list scroll-container">
           {requests.map((req) => {
-            const maxTime = 20 // 20 seconds maximum timer
-            const timeLeft = req.timeLeft
+            const maxTime = 900
+            const timeLeft = req.timeLeft || 0
             const percent = Math.min((timeLeft / maxTime) * 100, 100)
 
             const radius = 22
             const circumference = 2 * Math.PI * radius
             const strokeDashoffset = circumference - (percent / 100) * circumference
-            const isUrgent = timeLeft < 5 // under 5 seconds is urgent
+            const isUrgent = timeLeft < 30
 
             return (
               <div key={req.id} className="request-modal-card animate-fade-in">
-                {/* Card Header (Request ID Badge + Timer) */}
+                {/* Card Header */}
                 <div className="request-modal-card-header">
-                  <span className="req-id-badge">{req.id}</span>
+                  <span className="req-id-badge">{req.bookingNumber || req.id}</span>
                   
                   {/* Timer Ring */}
                   <div className="request-modal-timer">
@@ -187,7 +178,7 @@ export const RideRequestModal = () => {
                     <span>Estimated Earnings</span>
                   </div>
                   <div className="modal-fare-amount">
-                    ₹{req.fare.toFixed(2)}
+                    ₹{(Number(req.fare) || 0).toFixed(2)}
                   </div>
                 </div>
 
@@ -214,20 +205,24 @@ export const RideRequestModal = () => {
                 {/* Info Grid & Customer */}
                 <div className="modal-info-grid">
                   <div className="modal-stats">
-                    <div className="modal-stat-item">
-                      <FiNavigation />
-                      <strong>{req.distance} away</strong>
-                    </div>
-                    <div className="modal-stat-item">
-                      <FiClock />
-                      <strong>{req.duration} est.</strong>
-                    </div>
+                    {req.distance && (
+                      <div className="modal-stat-item">
+                        <FiNavigation />
+                        <strong>{req.distance}</strong>
+                      </div>
+                    )}
+                    {req.passengers && (
+                      <div className="modal-stat-item">
+                        <FiClock />
+                        <strong>{req.passengers} Passengers</strong>
+                      </div>
+                    )}
                   </div>
 
                   <div className="modal-customer">
                     <FiUser className="cust-icon" />
                     <div className="cust-det">
-                      <span className="cust-name">{req.customerName}</span>
+                      <span className="cust-name">{req.customerName || 'Lead Traveler'}</span>
                     </div>
                   </div>
                 </div>

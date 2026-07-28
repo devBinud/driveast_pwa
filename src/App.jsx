@@ -1,12 +1,16 @@
 import React from 'react'
 import { Toaster } from 'react-hot-toast'
 import { AppRoutes } from './routes/AppRoutes'
+import { PWAInstallModal } from './components/common/PWAInstallModal/PWAInstallModal'
 
 function App() {
   return (
     <>
       <AppRoutes />
       
+      {/* PWA Install Modal Prompt */}
+      <PWAInstallModal />
+
       {/* Toast notifications renderer */}
       <Toaster 
         position="top-center"

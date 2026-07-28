@@ -2,13 +2,16 @@ import { useDriverStore } from '../store/driverStore'
 
 export const useDriverStatus = () => {
   const { 
-    isOnline, 
+    isOnline,
+    availabilityStatus,
     todayEarnings, 
     acceptanceRate, 
     hoursOnline, 
     completedTripsCount,
     isDutyModalOpen,
+    isLoadingStatus,
     toggleOnline,
+    setStatus,
     setDutyModalOpen,
     addEarnings,
     incrementTrips,
@@ -18,12 +21,15 @@ export const useDriverStatus = () => {
   
   return {
     isOnline,
+    availabilityStatus,
     todayEarnings,
     acceptanceRate,
     hoursOnline,
     completedTripsCount,
     isDutyModalOpen,
+    isLoadingStatus,
     toggleOnline,
+    setStatus,
     setDutyModalOpen,
     addEarnings,
     incrementTrips,

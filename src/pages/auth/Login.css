@@ -28,6 +28,49 @@
   gap: var(--spacing-md);
 }
 
+/* India (+91) Phone Prefix Input Styling */
+.phone-prefix-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.india-prefix-badge {
+  position: absolute;
+  left: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.india-flag-svg {
+  border-radius: 2px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.prefix-code {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #09090b;
+  letter-spacing: 0.02em;
+}
+
+.prefix-divider {
+  width: 1px;
+  height: 16px;
+  background: #d1d5db;
+  margin-left: 2px;
+}
+
+.phone-input-field {
+  padding-left: 5.25rem !important;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
 .login-actions {
   display: flex;
   justify-content: flex-end;
@@ -60,7 +103,19 @@
 }
 
 .login-footer p {
-  font-size: 0.725rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
-  line-height: 1.4;
+  line-height: 1.5;
+}
+
+.auth-legal-link {
+  color: #d97706;
+  font-weight: 600;
+  text-decoration: underline;
+  transition: color var(--transition-fast);
+}
+
+.auth-legal-link:hover {
+  color: #09090b;
+  text-decoration: underline;
 }

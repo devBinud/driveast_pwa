@@ -1,5 +1,4 @@
-import React, { useState } from 'react'
-import { FiTrendingUp, FiMapPin, FiInbox } from 'react-icons/fi'
+import React, { useState, useEffect } from 'react'
 import { useTripStore } from '../../store/tripStore'
 import { TripCard } from '../../components/trips/TripCard/TripCard'
 import { EmptyState } from '../../components/common/EmptyState/EmptyState'
@@ -7,31 +6,34 @@ import { Card } from '../../components/common/Card/Card'
 import './Trips.css'
 
 export const Trips = () => {
-  const trips = useTripStore((state) => state.trips)
+  const { trips, fetchTripsHistory, isLoadingTrip } = useTripStore()
   const [filter, setFilter] = useState('all')
+
+  useEffect(() => {
+    fetchTripsHistory()
+  }, [])
 
   const filteredTrips = trips.filter((t) => {
     if (filter === 'all') return true
     return t.status === filter
   })
 
-  // Calculate stats summary
-  const totalEarnings = trips.reduce((sum, t) => sum + t.fare, 0)
+  const totalEarnings = trips.reduce((sum, t) => sum + (Number(t.fare) || 0), 0)
   const completedCount = trips.length
 
   const cashEarnings = trips
-    .filter((t) => t.paymentMethod === 'Cash')
-    .reduce((sum, t) => sum + t.fare, 0)
+    .filter((t) => String(t.paymentMethod).toUpperCase() === 'CASH')
+    .reduce((sum, t) => sum + (Number(t.fare) || 0), 0)
 
   const onlineEarnings = trips
-    .filter((t) => t.paymentMethod !== 'Cash')
-    .reduce((sum, t) => sum + t.fare, 0)
+    .filter((t) => String(t.paymentMethod).toUpperCase() !== 'CASH')
+    .reduce((sum, t) => sum + (Number(t.fare) || 0), 0)
 
   return (
     <div className="page-container animate-fade-in trips-page-container">
       <div>
-        <h2>Trip History</h2>
-        <p className="trips-sub-label">Review your historical ride performance</p>
+        <h2>Driver Wallet & Trip History</h2>
+        <p className="trips-sub-label">Review your historical ride performance and past collections</p>
       </div>
 
       {/* Summary card */}

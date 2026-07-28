@@ -1,0 +1,176 @@
+.pwa-install-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: var(--spacing-md);
+  animation: fadeIn 0.3s ease;
+}
+
+.pwa-install-card {
+  width: 100%;
+  max-width: 480px;
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  border: 1.5px solid rgba(0, 0, 0, 0.08);
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  position: relative;
+  margin-bottom: var(--spacing-sm);
+}
+
+.pwa-close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #f4f4f5;
+  border: none;
+  color: #52525b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.pwa-close-btn:hover {
+  background: #e4e4e7;
+  color: #09090b;
+}
+
+.pwa-install-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.85rem;
+}
+
+.pwa-logo-wrapper {
+  width: 54px;
+  height: 54px;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e4e4e7;
+}
+
+.pwa-app-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pwa-header-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.pwa-badge {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: #d97706;
+  text-transform: uppercase;
+}
+
+.pwa-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #09090b;
+  margin-top: 2px;
+}
+
+.pwa-description {
+  font-size: 0.875rem;
+  color: #4b5563;
+  line-height: 1.45;
+  margin-bottom: 1rem;
+}
+
+.pwa-feature-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.25rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pwa-feature-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.825rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.pwa-feature-list .check-icon {
+  color: #10b981;
+  font-size: 1rem;
+}
+
+.pwa-action-buttons {
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.pwa-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: none;
+}
+
+.pwa-btn-secondary {
+  background: #f4f4f5;
+  color: #3f3f46;
+  border: 1px solid #e4e4e7;
+}
+
+.pwa-btn-secondary:hover {
+  background: #e4e4e7;
+  color: #09090b;
+}
+
+.pwa-btn-primary {
+  background: #fbbf24;
+  color: #000000;
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+}
+
+.pwa-btn-primary:hover {
+  background: #f59e0b;
+}
+
+@media (max-width: 480px) {
+  .pwa-install-backdrop {
+    padding: var(--spacing-xs);
+  }
+
+  .pwa-install-card {
+    border-radius: var(--radius-md);
+    padding: 1rem 1.15rem;
+  }
+}

@@ -1,6 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { FiNavigation, FiClock, FiStar, FiAlertCircle, FiCalendar } from 'react-icons/fi'
+import { FiNavigation, FiClock, FiAlertCircle, FiCalendar, FiUser } from 'react-icons/fi'
 import { useTripStore } from '../../../store/tripStore'
 import { useDriverStatus } from '../../../hooks/useDriverStatus'
 import { Card } from '../../common/Card/Card'
@@ -37,7 +37,7 @@ export const UpcomingTrips = () => {
               <FiAlertCircle className="empty-icon" />
             </div>
             <h4>You Are Offline</h4>
-            <p>Go online in the header panel to see real-time rider trip requests.</p>
+            <p>Go online in the status panel to receive live dispatches and ride requests.</p>
           </div>
         </Card>
       ) : upcomingTrips.length === 0 ? (
@@ -46,26 +46,30 @@ export const UpcomingTrips = () => {
             <div className="empty-icon-wrapper info-glow">
               <FiCalendar className="empty-icon" />
             </div>
-            <h4>No Upcoming Trips</h4>
-            <p>You have no scheduled bookings at this time.</p>
+            <h4>No Upcoming Scheduled Trips</h4>
+            <p>You currently have no scheduled ride assignments from the server.</p>
           </div>
         </Card>
       ) : (
         <div className="upcoming-trips-list">
           {upcomingTrips.map((trip) => {
-            const { id, pickup, drop, date, time, distance, duration, fare, customerName, customerRating, customerAvatar } = trip
+            const { id, pickup, drop, date, time, distance, duration, fare, customerName, customerAvatar } = trip
             return (
               <Card key={id} className="upcoming-trip-card" padding="none" onClick={() => handleViewDetails(id)}>
                 <div className="upcoming-card-header">
                   <div className="customer-info-sec">
-                    <img src={customerAvatar} alt={customerName} className="customer-avatar-sm" />
+                    {customerAvatar ? (
+                      <img src={customerAvatar} alt={customerName} className="customer-avatar-sm" />
+                    ) : (
+                      <div className="customer-avatar-sm-fallback"><FiUser /></div>
+                    )}
                     <div>
-                      <span className="customer-name-txt">{customerName}</span>
-                      <span className="trip-schedule-time">{date} • {time}</span>
+                      <span className="customer-name-txt">{customerName || 'Lead Traveler'}</span>
+                      <span className="trip-schedule-time">{date || 'Scheduled'} {time ? `• ${time}` : ''}</span>
                     </div>
                   </div>
                   <div className="fare-tag">
-                    <span className="fare-val">₹{fare.toFixed(2)}</span>
+                    <span className="fare-val">₹{(Number(fare) || 0).toFixed(2)}</span>
                   </div>
                 </div>
 
@@ -89,12 +93,16 @@ export const UpcomingTrips = () => {
 
                 <div className="upcoming-card-footer">
                   <div className="trip-meta-stats">
-                    <span className="meta-stat">
-                      <FiNavigation /> {distance}
-                    </span>
-                    <span className="meta-stat">
-                      <FiClock /> {duration}
-                    </span>
+                    {distance && (
+                      <span className="meta-stat">
+                        <FiNavigation /> {distance}
+                      </span>
+                    )}
+                    {duration && (
+                      <span className="meta-stat">
+                        <FiClock /> {duration}
+                      </span>
+                    )}
                   </div>
                   <Button 
                     variant="primary" 

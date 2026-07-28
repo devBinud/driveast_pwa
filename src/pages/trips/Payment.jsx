@@ -7,7 +7,7 @@ import './Payment.css'
 
 export const Payment = () => {
   const navigate = useNavigate()
-  const { currentTrip, paymentMethod, setPaymentMethod, completeTrip } = useTripStore()
+  const { currentTrip, paymentMethod, setPaymentMethod, completeTrip, isLoadingTrip } = useTripStore()
   const { addEarnings, incrementTrips } = useDriverStore()
   const [loading, setLoading] = useState(false)
 
@@ -15,19 +15,17 @@ export const Payment = () => {
     return <Navigate to="/" replace />
   }
 
-  const handleCollect = () => {
+  const handleCollect = async () => {
     setLoading(true)
-    setTimeout(() => {
-      // Complete trip records in history
-      completeTrip()
-      
-      // Update driver statistics in driverStore
-      addEarnings(currentTrip.fare)
-      incrementTrips()
-      
-      setLoading(false)
-      navigate('/trips/completed')
-    }, 1200)
+    // Executes Step 4 (collect-payment) & Step 5 (complete) APIs
+    await completeTrip()
+    
+    // Update local driver stats
+    addEarnings(currentTrip.fare || 3500.00)
+    incrementTrips()
+    
+    setLoading(false)
+    navigate('/trips/completed')
   }
 
   return (
@@ -37,7 +35,7 @@ export const Payment = () => {
         paymentMethod={paymentMethod}
         setPaymentMethod={setPaymentMethod}
         onCollect={handleCollect}
-        loading={loading}
+        loading={loading || isLoadingTrip}
       />
     </div>
   )

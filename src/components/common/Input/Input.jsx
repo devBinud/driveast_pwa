@@ -7,6 +7,8 @@ export const Input = ({
   placeholder,
   error,
   icon: Icon,
+  rightIcon: RightIcon,
+  onRightIconClick,
   disabled = false,
   required = false,
   value,
@@ -28,11 +30,23 @@ export const Input = ({
           disabled={disabled}
           value={value}
           onChange={onChange}
-          className={`input-field ${Icon ? 'with-icon' : ''}`}
+          className={`input-field ${Icon ? 'with-icon' : ''} ${RightIcon ? 'with-right-icon' : ''}`}
           {...props}
         />
+        {RightIcon && (
+          <button
+            type="button"
+            className="input-icon-right"
+            onClick={onRightIconClick}
+            aria-label="Toggle visibility"
+          >
+            <RightIcon />
+          </button>
+        )}
       </div>
       {error && <span className="input-error-msg">{error}</span>}
     </div>
   )
 }
+
+export default Input

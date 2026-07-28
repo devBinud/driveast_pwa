@@ -1,5 +1,7 @@
-import React, { useState } from 'react'
-import { FiWifi, FiWifiOff, FiCoffee, FiCalendar, FiLogOut, FiX, FiAlertCircle } from 'react-icons/fi'
+import React from 'react'
+import { FiWifi, FiWifiOff, FiCoffee, FiCalendar, FiAlertCircle, FiX } from 'react-icons/fi'
+import { useDriverStatus } from '../../../hooks/useDriverStatus'
+import { AvailabilityStatus } from '../../../services/driverService'
 import './DutyStatusModal.css'
 
 const playDutySound = (type) => {
@@ -15,25 +17,19 @@ const playDutySound = (type) => {
     gainNode.connect(audioCtx.destination)
 
     if (type === 'online') {
-      // Pleasant upward double beep (Online indicator)
       osc.type = 'sine'
       gainNode.gain.setValueAtTime(0.12, audioCtx.currentTime)
       gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.38)
-
-      osc.frequency.setValueAtTime(587.33, audioCtx.currentTime) // D5
-      osc.frequency.setValueAtTime(880.00, audioCtx.currentTime + 0.12) // A5
-
+      osc.frequency.setValueAtTime(587.33, audioCtx.currentTime)
+      osc.frequency.setValueAtTime(880.00, audioCtx.currentTime + 0.12)
       osc.start()
       osc.stop(audioCtx.currentTime + 0.38)
-    } else if (type === 'offline') {
-      // Short lower double beep (Offline indicator)
+    } else {
       osc.type = 'triangle'
       gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime)
       gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.28)
-
-      osc.frequency.setValueAtTime(329.63, audioCtx.currentTime) // E4
-      osc.frequency.setValueAtTime(220.00, audioCtx.currentTime + 0.08) // A3
-
+      osc.frequency.setValueAtTime(329.63, audioCtx.currentTime)
+      osc.frequency.setValueAtTime(220.00, audioCtx.currentTime + 0.08)
       osc.start()
       osc.stop(audioCtx.currentTime + 0.28)
     }
@@ -43,18 +39,32 @@ const playDutySound = (type) => {
 }
 
 export const DutyStatusModal = ({ isOnline, onGoOnline, onGoOffline, onClose }) => {
-  const [selected, setSelected] = useState(null)
+  const { availabilityStatus, setStatus, isLoadingStatus } = useDriverStatus()
 
-  const handleOption = (option) => {
-    setSelected(option)
-    if (option === 'online') {
+  const handleSetStatus = async (enumStatus) => {
+    if (enumStatus === AvailabilityStatus.AVAILABLE) {
       playDutySound('online')
-      onGoOnline()
-      setTimeout(onClose, 300)
     } else {
       playDutySound('offline')
-      onGoOffline()
-      setTimeout(onClose, 300)
+    }
+    await setStatus(enumStatus)
+    setTimeout(onClose, 300)
+  }
+
+  const getHeadingText = () => {
+    switch (availabilityStatus) {
+      case AvailabilityStatus.AVAILABLE:
+        return 'You are Online & Active'
+      case AvailabilityStatus.OFFLINE:
+        return 'You are Offline'
+      case AvailabilityStatus.TEMP_UNAVAILABLE:
+        return 'You are Taking a Break'
+      case AvailabilityStatus.ON_LEAVE:
+        return 'You are On Leave'
+      case AvailabilityStatus.ON_TRIP:
+        return 'You are On Active Trip'
+      default:
+        return 'You are Online & Active'
     }
   }
 
@@ -68,9 +78,7 @@ export const DutyStatusModal = ({ isOnline, onGoOnline, onGoOffline, onClose }) 
         <div className="duty-modal-header">
           <div>
             <p className="duty-modal-eyebrow">Duty Status</p>
-            <h3 className="duty-modal-title">
-              {isOnline ? 'You are Online & Active' : 'You are Offline'}
-            </h3>
+            <h3 className="duty-modal-title">{getHeadingText()}</h3>
           </div>
           <button className="duty-modal-close" onClick={onClose} aria-label="Close">
             <FiX />
@@ -82,27 +90,27 @@ export const DutyStatusModal = ({ isOnline, onGoOnline, onGoOffline, onClose }) 
         {/* Options */}
         <div className="duty-modal-options">
 
-          {/* Go Online */}
+          {/* AVAILABLE */}
           <button
-            className={`duty-option-btn online-btn ${isOnline ? 'active-opt' : ''}`}
-            onClick={() => handleOption('online')}
-            disabled={isOnline}
+            className={`duty-option-btn online-btn ${availabilityStatus === AvailabilityStatus.AVAILABLE ? 'active-opt' : ''}`}
+            onClick={() => handleSetStatus(AvailabilityStatus.AVAILABLE)}
+            disabled={isLoadingStatus}
           >
             <div className="duty-opt-icon online-icon">
               <FiWifi />
             </div>
             <div className="duty-opt-text">
               <strong>Go Online</strong>
-              <span>Start receiving ride requests</span>
+              <span>Start receiving new ride requests</span>
             </div>
-            {isOnline && <span className="duty-active-badge">Active</span>}
+            {availabilityStatus === AvailabilityStatus.AVAILABLE && <span className="duty-active-badge">Active</span>}
           </button>
 
-          {/* Go Offline */}
+          {/* OFFLINE */}
           <button
-            className={`duty-option-btn offline-btn ${!isOnline ? 'active-opt' : ''}`}
-            onClick={() => handleOption('offline')}
-            disabled={!isOnline}
+            className={`duty-option-btn offline-btn ${availabilityStatus === AvailabilityStatus.OFFLINE ? 'active-opt' : ''}`}
+            onClick={() => handleSetStatus(AvailabilityStatus.OFFLINE)}
+            disabled={isLoadingStatus}
           >
             <div className="duty-opt-icon offline-icon">
               <FiWifiOff />
@@ -111,15 +119,19 @@ export const DutyStatusModal = ({ isOnline, onGoOnline, onGoOffline, onClose }) 
               <strong>Go Offline</strong>
               <span>Pause receiving new ride requests</span>
             </div>
-            {!isOnline && <span className="duty-active-badge offline-badge">Active</span>}
+            {availabilityStatus === AvailabilityStatus.OFFLINE && <span className="duty-active-badge offline-badge">Active</span>}
           </button>
 
           <div className="duty-options-divider">
             <span>Other Options</span>
           </div>
 
-          {/* Take a Break */}
-          <button className="duty-option-btn neutral-btn" onClick={onClose}>
+          {/* TEMP_UNAVAILABLE */}
+          <button 
+            className={`duty-option-btn neutral-btn ${availabilityStatus === AvailabilityStatus.TEMP_UNAVAILABLE ? 'active-opt' : ''}`} 
+            onClick={() => handleSetStatus(AvailabilityStatus.TEMP_UNAVAILABLE)}
+            disabled={isLoadingStatus}
+          >
             <div className="duty-opt-icon break-icon">
               <FiCoffee />
             </div>
@@ -127,10 +139,15 @@ export const DutyStatusModal = ({ isOnline, onGoOnline, onGoOffline, onClose }) 
               <strong>Take a Break</strong>
               <span>Pause briefly, auto-resume in 30 mins</span>
             </div>
+            {availabilityStatus === AvailabilityStatus.TEMP_UNAVAILABLE && <span className="duty-active-badge">Active</span>}
           </button>
 
-          {/* On Leave */}
-          <button className="duty-option-btn neutral-btn" onClick={onClose}>
+          {/* ON_LEAVE */}
+          <button 
+            className={`duty-option-btn neutral-btn ${availabilityStatus === AvailabilityStatus.ON_LEAVE ? 'active-opt' : ''}`} 
+            onClick={() => handleSetStatus(AvailabilityStatus.ON_LEAVE)}
+            disabled={isLoadingStatus}
+          >
             <div className="duty-opt-icon leave-icon">
               <FiCalendar />
             </div>
@@ -138,6 +155,7 @@ export const DutyStatusModal = ({ isOnline, onGoOnline, onGoOffline, onClose }) 
               <strong>Mark as On Leave</strong>
               <span>No requests for today</span>
             </div>
+            {availabilityStatus === AvailabilityStatus.ON_LEAVE && <span className="duty-active-badge">Active</span>}
           </button>
 
           {/* Report Issue */}

@@ -1,7 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { FiNavigation, FiClock, FiStar, FiCalendar } from 'react-icons/fi'
-import toast from 'react-hot-toast'
+import { FiNavigation, FiClock, FiCalendar } from 'react-icons/fi'
 import { useRequestStore } from '../../store/requestStore'
 import { useTripStore } from '../../store/tripStore'
 import { useDriverStore } from '../../store/driverStore'
@@ -11,69 +10,49 @@ import './Requests.css'
 
 export const Requests = () => {
   const navigate = useNavigate()
-
-  const { requests, declineRequest, acceptRequest, addMockRequest } = useRequestStore()
+  const { requests, fetchPendingRequests, declineRequest, acceptRequest, isLoadingRequests } = useRequestStore()
   const isOnline = useDriverStore((state) => state.isOnline)
+  const { upcomingTrips, setAssignedTrip } = useTripStore()
 
-  const {
-    upcomingTrips,
-    setAssignedTrip
-  } = useTripStore()
+  useEffect(() => {
+    fetchPendingRequests()
+  }, [])
 
-  const handleSimulateRequest = () => {
-    if (!isOnline) {
-      toast.error('You are currently Offline. Please go Online first to receive requests.', {
-        icon: '⚠️',
-        duration: 4000
-      })
-      return
-    }
-    addMockRequest()
-  }
-
-  const handleAccept = (req) => {
+  const handleAccept = async (req) => {
     setAssignedTrip(req)
-    acceptRequest(req.id) // Mark as accepted in simulation and remove from request queue
-    navigate('/trips/assigned') // Navigate to active heading to pickup screen
+    await acceptRequest(req.id)
+    navigate('/trips/assigned')
   }
 
-  const handleDecline = (id) => {
-    declineRequest(id)
+  const handleDecline = async (id) => {
+    await declineRequest(id)
   }
 
   const handleViewDetails = (id) => {
     navigate(`/requests/${id}`)
   }
 
-  // Transition a scheduled upcoming trip to the active trip state
   const startUpcomingTrip = (trip) => {
-    // 1. Remove from upcoming list in store
     useTripStore.setState((state) => ({
       upcomingTrips: state.upcomingTrips.filter((t) => t.id !== trip.id)
     }))
 
-    // 2. Set as active trip
     setAssignedTrip({
-      id: trip.id.replace('SCH-', 'REQ-'),
+      id: trip.id,
       pickup: trip.pickup,
       drop: trip.drop,
       distance: trip.distance,
       duration: trip.duration,
       fare: trip.fare,
-      timeLeft: 600,
       customerName: trip.customerName,
-      customerPhone: trip.customerPhone,
-      customerAvatar: trip.customerAvatar,
-      customerRating: trip.customerRating
+      customerPhone: trip.customerPhone
     })
 
-    // 3. Navigate directly to active heading to pickup screen
     navigate('/trips/assigned')
   }
 
   return (
     <div className="page-container animate-fade-in requests-page-container">
-      {/* Header Info */}
       <div className="requests-header-container">
         <h2>Rides & Bookings</h2>
         <p className="requests-sub">Manage your incoming requests and scheduled bookings</p>
@@ -88,10 +67,8 @@ export const Requests = () => {
         {requests.length === 0 ? (
           <div className="incoming-empty-area">
             <EmptyState
-              title="Waiting for Requests..."
-              description="We will notify you immediately as soon as a new trip becomes available in your area."
-              actionLabel="Simulate Incoming Request"
-              onActionClick={handleSimulateRequest}
+              title={isOnline ? "Waiting for Real-Time Requests..." : "You Are Currently Offline"}
+              description={isOnline ? "We will alert you automatically when a new dispatch is assigned to you." : "Toggle your status to Online in the top status bar to start receiving rides."}
               type="requests"
             />
           </div>
@@ -110,7 +87,6 @@ export const Requests = () => {
         )}
       </div>
 
-      {/* Divider */}
       <div className="requests-section-divider"></div>
 
       {/* Upcoming Trips Section */}
@@ -120,8 +96,8 @@ export const Requests = () => {
         </h3>
         {upcomingTrips.length === 0 ? (
           <EmptyState
-            title="No Upcoming Trips"
-            description="You have no scheduled bookings or upcoming trips assigned to you at the moment."
+            title="No Scheduled Trips"
+            description="You have no upcoming scheduled bookings assigned to you at the moment."
             type="trips"
           />
         ) : (
@@ -133,7 +109,6 @@ export const Requests = () => {
                 onClick={() => navigate(`/trips/upcoming/${trip.id}`)}
                 style={{ cursor: 'pointer' }}
               >
-                {/* Card Header: ID & Scheduled Time */}
                 <div className="request-modal-card-header" style={{ justifyContent: 'space-between', paddingBottom: 'var(--spacing-xs)' }}>
                   <span className="req-id-badge" style={{ background: 'rgba(59, 130, 246, 0.15)', color: '#3b82f6', border: '1px solid rgba(59, 130, 246, 0.2)' }}>
                     {trip.id}
@@ -143,23 +118,20 @@ export const Requests = () => {
                   </span>
                 </div>
 
-                {/* Scheduled Date Section */}
                 <div className="upcoming-date-section" style={{ color: 'var(--text-secondary)', fontSize: '0.825rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '6px', margin: '10px 0 var(--spacing-xs) 0' }}>
                   <FiCalendar style={{ fontSize: '0.9rem' }} />
                   <span>{trip.date}</span>
                 </div>
 
-                {/* Estimated Fare Section */}
                 <div className="modal-fare-section" style={{ margin: 'var(--spacing-xs) 0' }}>
                   <div className="modal-fare-label">
                     <span>Estimated Earnings</span>
                   </div>
                   <div className="modal-fare-amount" style={{ fontSize: '1.45rem' }}>
-                    ₹{trip.fare.toFixed(2)}
+                    ₹{(Number(trip.fare) || 0).toFixed(2)}
                   </div>
                 </div>
 
-                {/* Route Indicator Dots */}
                 <div className="modal-route-details" style={{ margin: 'var(--spacing-sm) 0' }}>
                   <div className="modal-route-indicator">
                     <span className="dot-p"></span>
@@ -178,26 +150,28 @@ export const Requests = () => {
                   </div>
                 </div>
 
-                {/* Navigation Details & Rider Name */}
                 <div className="modal-info-grid" style={{ paddingBottom: 'var(--spacing-sm)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
                   <div className="modal-stats">
-                    <div className="modal-stat-item">
-                      <FiNavigation />
-                      <span>{trip.distance}</span>
-                    </div>
-                    <div className="modal-stat-item">
-                      <FiClock />
-                      <span>{trip.duration}</span>
-                    </div>
+                    {trip.distance && (
+                      <div className="modal-stat-item">
+                        <FiNavigation />
+                        <span>{trip.distance}</span>
+                      </div>
+                    )}
+                    {trip.duration && (
+                      <div className="modal-stat-item">
+                        <FiClock />
+                        <span>{trip.duration}</span>
+                      </div>
+                    )}
                   </div>
                   <div className="modal-customer">
                     <div className="cust-det">
-                      <span className="cust-name" style={{ fontWeight: '700', fontSize: '0.9rem' }}>{trip.customerName}</span>
+                      <span className="cust-name" style={{ fontWeight: '700', fontSize: '0.9rem' }}>{trip.customerName || 'Lead Traveler'}</span>
                     </div>
                   </div>
                 </div>
 
-                {/* Action Trigger */}
                 <div className="upcoming-action-row" style={{ marginTop: 'var(--spacing-md)' }}>
                   <button
                     type="button"

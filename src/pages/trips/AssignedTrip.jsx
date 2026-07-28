@@ -7,15 +7,14 @@ import './AssignedTrip.css'
 
 export const AssignedTrip = () => {
   const navigate = useNavigate()
-  const { currentTrip, startNavigationToPickup, arriveAtPickup } = useTripStore()
+  const { currentTrip, startNavigationToPickup, arriveAtPickup, isLoadingTrip } = useTripStore()
   const [loading, setLoading] = useState(false)
 
-  // Redirect to dashboard if no trip is active
   if (!currentTrip) {
     return <Navigate to="/" replace />
   }
 
-  const handleAction = () => {
+  const handleAction = async () => {
     if (currentTrip.status === 'assigned') {
       setLoading(true)
       setTimeout(() => {
@@ -24,17 +23,15 @@ export const AssignedTrip = () => {
       }, 500)
     } else {
       setLoading(true)
-      setTimeout(() => {
-        arriveAtPickup()
-        setLoading(false)
-        navigate('/trips/otp')
-      }, 800)
+      await arriveAtPickup()
+      setLoading(false)
+      navigate('/trips/otp')
     }
   }
 
   const getButtonLabel = () => {
     if (currentTrip.status === 'assigned') return 'Navigate to Pickup'
-    return 'I Am Arrived'
+    return 'Confirm Arrival at Pickup'
   }
 
   const getStatusLabel = () => {
@@ -44,30 +41,27 @@ export const AssignedTrip = () => {
 
   return (
     <div className="assigned-trip-page page-container animate-fade-in">
-      {/* Header status details */}
       <div className="assigned-status-header">
         <span className="status-badge-inline">{getStatusLabel()}</span>
-        <span className="status-subtitle-inline">Route: {currentTrip.distance} • {currentTrip.duration} away</span>
+        <span className="status-subtitle-inline">Route: {currentTrip.distance || '130 km'} • {currentTrip.duration || '2.5 hrs'}</span>
       </div>
 
-      {/* Main visual status display instead of Map */}
       <div className="assigned-status-view">
         <div className="status-graphic-container">
           <div className="status-pulse-circle">
             <FiCompass className="compass-icon-large animate-spin-slow" />
           </div>
           <h3>{getStatusLabel()}</h3>
-          <p>Drive safely to the customer's location.</p>
+          <p>Drive safely to pickup: {currentTrip.pickup}</p>
         </div>
-        </div>
+      </div>
 
-      {/* Active Trip panel */}
       <div className="assigned-action-panel">
         <ActiveTripCard
           trip={currentTrip}
           primaryActionLabel={getButtonLabel()}
           onPrimaryAction={handleAction}
-          loading={loading}
+          loading={loading || isLoadingTrip}
         />
       </div>
     </div>
