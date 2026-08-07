@@ -1,23 +1,53 @@
-import React, { useState } from 'react'
-import { FiUser, FiTruck, FiSettings, FiLogOut, FiAward, FiPhone, FiMail } from 'react-icons/fi'
-import { useAuth } from '../../hooks/useAuth'
+import React, { useEffect, useState } from 'react'
+import { FiUser, FiTruck, FiSettings, FiLogOut, FiPhone, FiMail, FiFileText, FiRefreshCw } from 'react-icons/fi'
+import { useAuthStore } from '../../store/authStore'
 import { Card } from '../../components/common/Card/Card'
 import { Button } from '../../components/common/Button/Button'
 import './Profile.css'
 
 export const Profile = () => {
-  const { user, logout } = useAuth()
+  const { user, logout, fetchProfile } = useAuthStore()
+  const [loading, setLoading] = useState(!user)
   const [notifications, setNotifications] = useState(true)
 
-  if (!user) return null
+  useEffect(() => {
+    let isMounted = true
+    const loadProfileData = async () => {
+      setLoading(true)
+      await fetchProfile()
+      if (isMounted) setLoading(false)
+    }
+    loadProfileData()
+    return () => { isMounted = false }
+  }, [fetchProfile])
+
+  if (loading && !user) {
+    return (
+      <div className="page-container flex flex-col items-center justify-center min-h-screen text-center">
+        <FiRefreshCw className="animate-spin text-3xl text-amber-500 mb-3" style={{ animation: 'spin 1s linear infinite' }} />
+        <p className="text-secondary font-medium">Loading driver profile...</p>
+      </div>
+    )
+  }
+
+  const driver = user || {
+    id: 'Not Provided',
+    name: 'Not Provided',
+    phone: 'Not Provided',
+    email: 'Not Provided',
+    licenseNumber: 'Not Provided',
+    vehicleModel: 'Not Provided',
+    vehicleNumber: 'Not Provided',
+    avatar: 'https://ui-avatars.com/api/?name=Driver&background=fbbf24&color=000000&bold=true'
+  }
 
   return (
     <div className="page-container animate-fade-in profile-page-container">
       {/* Profile Header card */}
       <div className="profile-hero-card text-center">
-        <img src={user.avatar} alt={user.name} className="profile-avatar-large" />
-        <h2 className="profile-name-title">{user.name}</h2>
-        <span className="profile-id-sub">{user.id}</span>
+        <img src={driver.avatar} alt={driver.name} className="profile-avatar-large" />
+        <h2 className="profile-name-title">{driver.name}</h2>
+        <span className="profile-id-sub">{driver.id}</span>
       </div>
 
       {/* Driver contact card info */}
@@ -27,12 +57,16 @@ export const Profile = () => {
         </h3>
         <div className="profile-info-rows">
           <div className="profile-info-row">
-            <span className="info-lbl">Email Address</span>
-            <span>{user.email}</span>
+            <span className="info-lbl"><FiPhone /> Phone Number</span>
+            <span>{driver.phone || 'Not Provided'}</span>
           </div>
           <div className="profile-info-row">
-            <span className="info-lbl">Phone Number</span>
-            <span>{user.phone}</span>
+            <span className="info-lbl"><FiMail /> Email Address</span>
+            <span>{driver.email || 'Not Provided'}</span>
+          </div>
+          <div className="profile-info-row">
+            <span className="info-lbl"><FiFileText /> Driver License No.</span>
+            <span className="fw-semibold">{driver.licenseNumber || 'Not Provided'}</span>
           </div>
         </div>
       </Card>
@@ -45,15 +79,17 @@ export const Profile = () => {
         <div className="profile-info-rows">
           <div className="profile-info-row">
             <span className="info-lbl">Vehicle Model</span>
-            <span>{user.vehicleModel}</span>
+            <span>{driver.vehicleModel || 'Not Provided'}</span>
           </div>
           <div className="profile-info-row">
             <span className="info-lbl">License Plate</span>
-            <span className="license-plate-badge">{user.vehicleNumber}</span>
+            <span className="license-plate-badge">{driver.vehicleNumber || 'Not Provided'}</span>
           </div>
           <div className="profile-info-row">
             <span className="info-lbl">Status</span>
-            <span className="text-success font-semibold">Documents Verified</span>
+            <span className="text-success font-semibold">
+              {driver.isActive ? 'Documents Verified' : 'Account Inactive'}
+            </span>
           </div>
         </div>
       </Card>

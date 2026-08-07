@@ -46,24 +46,28 @@ export const useAuthStore = create((set, get) => ({
   fetchProfile: async () => {
     try {
       const res = await authService.getProfile()
+      console.log('🔔 [PROFILE API RESPONSE] /api/v1/driver/me:', res)
       if (res?.success && res?.data) {
         const d = res.data
-        set({
-          user: {
-            id: d.id,
-            name: d.name,
-            phone: d.phone,
-            availabilityStatus: d.availability_status,
-            currentLat: d.current_lat,
-            currentLng: d.current_lng,
-            isActive: d.is_active,
-            avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(d.name || 'Driver')}&background=fbbf24&color=000000&bold=true`
-          }
-        })
+        const userObj = {
+          id: d.id || 'Not Provided',
+          name: d.name || 'Not Provided',
+          phone: d.phone || 'Not Provided',
+          email: d.email || d.driver_email || d.user_email || 'Not Provided',
+          licenseNumber: d.license_number || d.license_no || d.dl_number || d.driver_license || 'Not Provided',
+          vehicleModel: d.assigned_vehicle?.vehicle_name || d.vehicle_name || d.vehicle_model || 'Not Provided',
+          vehicleNumber: d.assigned_vehicle?.registration_number || d.registration_number || d.vehicle_number || 'Not Provided',
+          availabilityStatus: d.availability_status || 'AVAILABLE',
+          currentLat: d.current_lat,
+          currentLng: d.current_lng,
+          isActive: d.is_active !== undefined ? d.is_active : true,
+          avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(d.name || 'Driver')}&background=fbbf24&color=000000&bold=true`
+        }
+        set({ user: userObj })
         return d
       }
     } catch (err) {
-      console.error('Failed to fetch profile from API:', err)
+      console.warn('Failed to fetch profile from API endpoint:', err)
     }
     return null
   },

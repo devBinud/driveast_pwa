@@ -2,9 +2,33 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
+const terminalLoggerPlugin = () => ({
+  name: 'terminal-logger',
+  configureServer(server) {
+    server.middlewares.use('/__terminal_log', (req, res) => {
+      let body = ''
+      req.on('data', chunk => { body += chunk })
+      req.on('end', () => {
+        try {
+          const payload = JSON.parse(body)
+          console.log('\n--------------------------------------------------')
+          console.log(`📡 [API RESPONSE LOG] ${payload.method} ${payload.url} (${payload.timestamp})`)
+          console.log(JSON.stringify(payload.data, null, 2))
+          console.log('--------------------------------------------------\n')
+        } catch (err) {
+          console.log('📡 [API LOG]:', body)
+        }
+        res.setHeader('Content-Type', 'text/plain')
+        res.end('OK')
+      })
+    })
+  }
+})
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
+    terminalLoggerPlugin(),
     react(),
     VitePWA({
       registerType: 'autoUpdate',

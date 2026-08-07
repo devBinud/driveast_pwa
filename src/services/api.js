@@ -25,11 +25,40 @@ api.interceptors.request.use(
 // Response Interceptor: Extract data envelope and normalize response errors
 api.interceptors.response.use(
   (response) => {
+    if (import.meta.env.DEV) {
+      try {
+        fetch('/__terminal_log', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            url: response.config.url,
+            method: response.config.method?.toUpperCase() || 'GET',
+            data: response.data,
+            timestamp: new Date().toLocaleTimeString()
+          })
+        }).catch(() => {})
+      } catch (e) {}
+    }
     return response.data
   },
   (error) => {
     const status = error.response?.status
     const serverMessage = error.response?.data?.message
+
+    if (import.meta.env.DEV) {
+      try {
+        fetch('/__terminal_log', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            url: error.config?.url || 'API_ENDPOINT',
+            method: error.config?.method?.toUpperCase() || 'GET',
+            data: { error: true, status, message: error.message, serverMessage, data: error.response?.data },
+            timestamp: new Date().toLocaleTimeString()
+          })
+        }).catch(() => {})
+      } catch (e) {}
+    }
 
     let userFriendlyMessage = serverMessage
 

@@ -93,6 +93,16 @@
 
 .info-lbl {
   color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.info-lbl svg {
+  flex-shrink: 0;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
 }
 
 .license-plate-badge {
