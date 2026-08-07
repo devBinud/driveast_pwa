@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { FiUser, FiTruck, FiSettings, FiLogOut, FiPhone, FiMail, FiFileText, FiRefreshCw } from 'react-icons/fi'
+import { FiUser, FiTruck, FiSettings, FiLogOut, FiPhone, FiMail, FiFileText, FiRefreshCw, FiInfo } from 'react-icons/fi'
 import { useAuthStore } from '../../store/authStore'
 import { Card } from '../../components/common/Card/Card'
 import { Button } from '../../components/common/Button/Button'
@@ -112,6 +112,48 @@ export const Profile = () => {
               className="toggle-switch-checkbox"
             />
           </div>
+        </div>
+      </Card>
+
+      {/* App Info & PWA Version Card */}
+      <Card className="profile-section-card">
+        <h3 className="profile-card-title">
+          <FiInfo /> About App & PWA Status
+        </h3>
+        <div className="profile-info-rows">
+          <div className="profile-info-row">
+            <span className="info-lbl">App Name</span>
+            <span className="fw-semibold">Driveast Partner PWA</span>
+          </div>
+          <div className="profile-info-row">
+            <span className="info-lbl">PWA Version</span>
+            <span className="badge badge-success">v1.3.0</span>
+          </div>
+          <div className="profile-info-row">
+            <span className="info-lbl">Service Worker</span>
+            <span className="text-success font-semibold">Active & Synced</span>
+          </div>
+        </div>
+
+        <div style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px dashed var(--card-border)' }}>
+          <Button 
+            variant="secondary"
+            fullWidth
+            size="sm"
+            icon={FiRefreshCw}
+            onClick={() => {
+              if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then((registrations) => {
+                  for (let registration of registrations) {
+                    registration.update()
+                  }
+                })
+              }
+              window.location.reload(true)
+            }}
+          >
+            Check Updates & Force Refresh App
+          </Button>
         </div>
       </Card>
 
