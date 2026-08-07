@@ -237,17 +237,30 @@ export const useTripStore = create((set, get) => ({
     try {
       const historyRes = await tripService.getTrips({ history: true, upcoming: false })
       if (historyRes?.success && Array.isArray(historyRes.data)) {
-        const mappedTrips = historyRes.data.map(item => ({
-          id: item.id,
-          bookingId: item.booking_id,
-          bookingNumber: item.booking?.booking_number,
-          pickup: item.booking?.pickup_location || item.pickup,
-          drop: item.booking?.drop_location || item.drop,
-          date: item.completed_at ? new Date(item.completed_at).toLocaleDateString() : 'Today',
-          fare: item.booking?.total_amount || 0,
-          status: item.status?.toLowerCase() || 'completed',
-          customerName: item.booking?.lead_traveler_name || 'Guest'
-        }))
+        const mappedTrips = historyRes.data.map(item => {
+          const timestamp = item.completed_at || item.assigned_at || item.arrived_at || item.created_at
+          const formattedDate = timestamp ? new Date(timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Today'
+          const formattedTime = timestamp ? new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''
+          const dist = item.total_distance_km ? `${item.total_distance_km} km` : (item.start_odometer && item.end_odometer ? `${item.end_odometer - item.start_odometer} km` : null)
+          const displayId = item.booking?.booking_number || (item.booking_id ? `BK-${item.booking_id.slice(0, 8).toUpperCase()}` : `BK-${item.id?.slice(0, 8).toUpperCase()}`)
+
+          return {
+            id: displayId,
+            assignmentId: item.id,
+            bookingId: item.booking_id,
+            bookingNumber: item.booking?.booking_number,
+            pickup: item.booking?.pickup_location || item.pickup || '',
+            drop: item.booking?.drop_location || item.drop || '',
+            date: formattedDate,
+            time: formattedTime,
+            distance: dist,
+            duration: (item.completed_at && item.started_at) ? `${Math.round((new Date(item.completed_at) - new Date(item.started_at)) / 60000)} mins` : null,
+            fare: item.booking?.total_amount || 0,
+            status: item.status?.toLowerCase() || 'completed',
+            paymentMethod: item.payment_method || item.booking?.payment_method || 'CASH',
+            customerName: item.booking?.lead_traveler_name || 'Guest'
+          }
+        })
         set({ trips: mappedTrips })
       }
     } catch (err) {

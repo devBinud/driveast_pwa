@@ -14,17 +14,17 @@ export const Earnings = () => {
   // Dynamic calculations from trip history
   const todayDateString = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
 
-  // Filter completed trips completed today or fall back to mock trips to display a rich list
-  const todayTrips = trips.filter(t => t.status === 'completed')
+  // Filter completed trips
+  const todayTrips = trips.filter(t => String(t.status).toLowerCase() === 'completed')
 
   // Calculate Cash vs UPI splits
   const cashTotal = todayTrips
-    .filter(t => t.paymentMethod === 'Cash')
-    .reduce((sum, t) => sum + t.fare, 0)
+    .filter(t => String(t.paymentMethod).toUpperCase() === 'CASH')
+    .reduce((sum, t) => sum + (Number(t.fare) || 0), 0)
 
   const onlineTotal = todayTrips
-    .filter(t => t.paymentMethod !== 'Cash')
-    .reduce((sum, t) => sum + t.fare, 0)
+    .filter(t => String(t.paymentMethod).toUpperCase() !== 'CASH')
+    .reduce((sum, t) => sum + (Number(t.fare) || 0), 0)
 
   // Earnings Target calculation
   const dailyTarget = 1500

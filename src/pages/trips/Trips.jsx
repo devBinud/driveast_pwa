@@ -6,7 +6,7 @@ import { Card } from '../../components/common/Card/Card'
 import './Trips.css'
 
 export const Trips = () => {
-  const { trips, fetchTripsHistory, isLoadingTrip } = useTripStore()
+  const { trips, fetchTripsHistory } = useTripStore()
   const [filter, setFilter] = useState('all')
 
   useEffect(() => {
@@ -18,14 +18,16 @@ export const Trips = () => {
     return t.status === filter
   })
 
-  const totalEarnings = trips.reduce((sum, t) => sum + (Number(t.fare) || 0), 0)
-  const completedCount = trips.length
+  const completedTrips = trips.filter((t) => String(t.status).toLowerCase() === 'completed')
 
-  const cashEarnings = trips
+  const totalEarnings = completedTrips.reduce((sum, t) => sum + (Number(t.fare) || 0), 0)
+  const completedCount = completedTrips.length
+
+  const cashEarnings = completedTrips
     .filter((t) => String(t.paymentMethod).toUpperCase() === 'CASH')
     .reduce((sum, t) => sum + (Number(t.fare) || 0), 0)
 
-  const onlineEarnings = trips
+  const onlineEarnings = completedTrips
     .filter((t) => String(t.paymentMethod).toUpperCase() !== 'CASH')
     .reduce((sum, t) => sum + (Number(t.fare) || 0), 0)
 
@@ -55,7 +57,7 @@ export const Trips = () => {
         <div className="summary-col-divider"></div>
         <div className="summary-col">
           <span className="summary-col-lbl">Total Trips</span>
-          <h3>{completedCount} rides</h3>
+          <h3>{completedCount} {completedCount === 1 ? 'ride' : 'rides'}</h3>
         </div>
       </Card>
 
