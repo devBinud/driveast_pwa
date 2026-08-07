@@ -32,11 +32,17 @@ export const usePWAInstall = () => {
   }
 
   useEffect(() => {
-    // 1. Check if already installed
-    if (isStandalone() || localStorage.getItem('pwa_installed') === 'true') {
+    // 1. Check if currently running inside standalone PWA window
+    if (isStandalone()) {
       setIsInstalled(true)
       setShowPrompt(false)
       return
+    }
+
+    // If visiting in normal browser tab, clear old pwa_installed flag in case user uninstalled the app
+    if (localStorage.getItem('pwa_installed') === 'true' && !isStandalone()) {
+      localStorage.removeItem('pwa_installed')
+      setIsInstalled(false)
     }
 
     // 2. Listen for Chrome / Android beforeinstallprompt event
@@ -61,12 +67,9 @@ export const usePWAInstall = () => {
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
     window.addEventListener('appinstalled', handleAppInstalled)
 
-    // Fallback check for mobile Safari/iOS, dev environment, or browsers without beforeinstallprompt event
+    // Fallback check for mobile browsers
     if (!isStandalone() && !isSnoozed()) {
-      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream
-      if (isIOS || import.meta.env.DEV) {
-        setShowPrompt(true)
-      }
+      setShowPrompt(true)
     }
 
     return () => {
