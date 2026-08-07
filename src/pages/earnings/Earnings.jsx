@@ -26,10 +26,6 @@ export const Earnings = () => {
     .filter(t => String(t.paymentMethod).toUpperCase() !== 'CASH')
     .reduce((sum, t) => sum + (Number(t.fare) || 0), 0)
 
-  // Earnings Target calculation
-  const dailyTarget = 1500
-  const progressPercent = Math.min(Math.round((todayEarnings / dailyTarget) * 100), 100)
-
   return (
     <div className="earnings-page page-container">
       {/* Header Row */}
@@ -60,17 +56,6 @@ export const Earnings = () => {
               <span className="metric-lbl">Hours Online</span>
               <span className="metric-val">{hoursOnline}h</span>
             </div>
-          </div>
-        </div>
-
-        {/* Daily Target Progress */}
-        <div className="target-progress-container">
-          <div className="target-progress-lbl">
-            <span>Daily Target: <strong>₹{dailyTarget}</strong></span>
-            <span>{progressPercent}% Achieved</span>
-          </div>
-          <div className="progress-bar-track">
-            <div className="progress-bar-fill" style={{ width: `${progressPercent}%` }}></div>
           </div>
         </div>
       </Card>

@@ -105,9 +105,9 @@ export const Profile = () => {
               <strong>Ride Alerts</strong>
               <span>Sound on incoming requests</span>
             </div>
-            <input 
-              type="checkbox" 
-              checked={notifications} 
+            <input
+              type="checkbox"
+              checked={notifications}
               onChange={() => setNotifications(!notifications)}
               className="toggle-switch-checkbox"
             />
@@ -118,7 +118,7 @@ export const Profile = () => {
       {/* App Info & PWA Version Card */}
       <Card className="profile-section-card">
         <h3 className="profile-card-title">
-          <FiInfo /> About App & PWA Status
+          <FiInfo /> About App
         </h3>
         <div className="profile-info-rows">
           <div className="profile-info-row">
@@ -126,17 +126,13 @@ export const Profile = () => {
             <span className="fw-semibold">Driveast Partner PWA</span>
           </div>
           <div className="profile-info-row">
-            <span className="info-lbl">PWA Version</span>
+            <span className="info-lbl">App Version</span>
             <span className="badge badge-success">v1.3.0</span>
-          </div>
-          <div className="profile-info-row">
-            <span className="info-lbl">Service Worker</span>
-            <span className="text-success font-semibold">Active & Synced</span>
           </div>
         </div>
 
         <div style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px dashed var(--card-border)' }}>
-          <Button 
+          <Button
             variant="secondary"
             fullWidth
             size="sm"
@@ -158,10 +154,10 @@ export const Profile = () => {
       </Card>
 
       {/* Logout button */}
-      <Button 
-        variant="danger" 
-        onClick={logout} 
-        fullWidth 
+      <Button
+        variant="danger"
+        onClick={logout}
+        fullWidth
         size="lg"
         icon={FiLogOut}
       >
