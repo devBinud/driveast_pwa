@@ -49,14 +49,19 @@ export const useAuthStore = create((set, get) => ({
       console.log('🔔 [PROFILE API RESPONSE] /api/v1/driver/me:', res)
       if (res?.success && res?.data) {
         const d = res.data
+        const isAddressEmail = Boolean(d.address && d.address.includes('@'))
         const userObj = {
           id: d.id || 'Not Provided',
           name: d.name || 'Not Provided',
           phone: d.phone || 'Not Provided',
-          email: d.email || d.driver_email || d.user_email || 'Not Provided',
+          email: d.email || (isAddressEmail ? d.address : null) || d.driver_email || d.user_email || 'Not Provided',
+          address: !isAddressEmail && d.address ? d.address : null,
           licenseNumber: d.license_number || d.license_no || d.dl_number || d.driver_license || 'Not Provided',
           vehicleModel: d.assigned_vehicle?.vehicle_name || d.vehicle_name || d.vehicle_model || 'Not Provided',
           vehicleNumber: d.assigned_vehicle?.registration_number || d.registration_number || d.vehicle_number || 'Not Provided',
+          vehicleType: d.assigned_vehicle?.vehicle_type || d.vehicle_type || 'Not Provided',
+          seatCapacity: d.assigned_vehicle?.seat_capacity || d.seat_capacity || null,
+          fuelType: d.assigned_vehicle?.fuel_type || d.fuel_type || 'Not Provided',
           availabilityStatus: d.availability_status || 'AVAILABLE',
           currentLat: d.current_lat,
           currentLng: d.current_lng,

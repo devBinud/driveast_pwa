@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { FiUser, FiTruck, FiSettings, FiLogOut, FiPhone, FiMail, FiFileText, FiRefreshCw, FiInfo } from 'react-icons/fi'
+import { FiUser, FiTruck, FiSettings, FiLogOut, FiPhone, FiMail, FiFileText, FiRefreshCw, FiInfo, FiMapPin } from 'react-icons/fi'
 import { useAuthStore } from '../../store/authStore'
 import { Card } from '../../components/common/Card/Card'
 import { Button } from '../../components/common/Button/Button'
@@ -35,9 +35,14 @@ export const Profile = () => {
     name: 'Not Provided',
     phone: 'Not Provided',
     email: 'Not Provided',
+    address: null,
     licenseNumber: 'Not Provided',
     vehicleModel: 'Not Provided',
     vehicleNumber: 'Not Provided',
+    vehicleType: 'Not Provided',
+    seatCapacity: null,
+    fuelType: 'Not Provided',
+    availabilityStatus: 'AVAILABLE',
     avatar: 'https://ui-avatars.com/api/?name=Driver&background=fbbf24&color=000000&bold=true'
   }
 
@@ -47,7 +52,6 @@ export const Profile = () => {
       <div className="profile-hero-card text-center">
         <img src={driver.avatar} alt={driver.name} className="profile-avatar-large" />
         <h2 className="profile-name-title">{driver.name}</h2>
-        <span className="profile-id-sub">{driver.id}</span>
       </div>
 
       {/* Driver contact card info */}
@@ -58,15 +62,21 @@ export const Profile = () => {
         <div className="profile-info-rows">
           <div className="profile-info-row">
             <span className="info-lbl"><FiPhone /> Phone Number</span>
-            <span>{driver.phone || 'Not Provided'}</span>
+            <span className="profile-row-val">{driver.phone || 'Not Provided'}</span>
           </div>
           <div className="profile-info-row">
             <span className="info-lbl"><FiMail /> Email Address</span>
-            <span>{driver.email || 'Not Provided'}</span>
+            <span className="profile-row-val">{driver.email || 'Not Provided'}</span>
           </div>
+          {driver.address && (
+            <div className="profile-info-row">
+              <span className="info-lbl"><FiMapPin /> Address</span>
+              <span className="profile-row-val">{driver.address}</span>
+            </div>
+          )}
           <div className="profile-info-row">
             <span className="info-lbl"><FiFileText /> Driver License No.</span>
-            <span className="fw-semibold">{driver.licenseNumber || 'Not Provided'}</span>
+            <span className="profile-row-val font-semibold">{driver.licenseNumber || 'Not Provided'}</span>
           </div>
         </div>
       </Card>
@@ -79,14 +89,34 @@ export const Profile = () => {
         <div className="profile-info-rows">
           <div className="profile-info-row">
             <span className="info-lbl">Vehicle Model</span>
-            <span>{driver.vehicleModel || 'Not Provided'}</span>
+            <span className="profile-row-val">{driver.vehicleModel || 'Not Provided'}</span>
           </div>
           <div className="profile-info-row">
             <span className="info-lbl">License Plate</span>
             <span className="license-plate-badge">{driver.vehicleNumber || 'Not Provided'}</span>
           </div>
+          {driver.vehicleType && driver.vehicleType !== 'Not Provided' && (
+            <div className="profile-info-row">
+              <span className="info-lbl">Vehicle Type</span>
+              <span className="profile-row-val">{driver.vehicleType}</span>
+            </div>
+          )}
+          {driver.seatCapacity && (
+            <div className="profile-info-row">
+              <span className="info-lbl">Seating Capacity</span>
+              <span className="profile-row-val">{driver.seatCapacity} Seats</span>
+            </div>
+          )}
+          {driver.fuelType && driver.fuelType !== 'Not Provided' && (
+            <div className="profile-info-row">
+              <span className="info-lbl">Fuel Type</span>
+              <span className="profile-row-val" style={{ textTransform: 'capitalize' }}>
+                {String(driver.fuelType).toLowerCase()}
+              </span>
+            </div>
+          )}
           <div className="profile-info-row">
-            <span className="info-lbl">Status</span>
+            <span className="info-lbl">Verification Status</span>
             <span className="text-success font-semibold">
               {driver.isActive ? 'Documents Verified' : 'Account Inactive'}
             </span>

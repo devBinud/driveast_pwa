@@ -120,6 +120,16 @@
   font-size: 1.1rem;
   font-weight: 800;
   color: #ffffff;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+}
+
+.metric-unit {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-left: 3px;
 }
 
 /* Daily Target Progress */
@@ -169,12 +179,6 @@
   display: flex;
   gap: var(--spacing-md);
   align-items: flex-start;
-  transition: all var(--transition-normal);
-}
-
-.breakdown-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md) !important;
 }
 
 .breakdown-icon-wrapper {

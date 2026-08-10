@@ -1,6 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FiArrowLeft, FiTrendingUp, FiClock, FiCreditCard } from 'react-icons/fi'
+import { FaIndianRupeeSign } from 'react-icons/fa6'
 import { useDriverStore } from '../../store/driverStore'
 import { useTripStore } from '../../store/tripStore'
 import { Card } from '../../components/common/Card/Card'
@@ -54,7 +55,9 @@ export const Earnings = () => {
             </div>
             <div className="metric-box">
               <span className="metric-lbl">Hours Online</span>
-              <span className="metric-val">{hoursOnline}h</span>
+              <span className="metric-val">
+                {hoursOnline} <span className="metric-unit">{hoursOnline === 1 ? 'hr' : 'hrs'}</span>
+              </span>
             </div>
           </div>
         </div>
@@ -64,7 +67,7 @@ export const Earnings = () => {
       <div className="earnings-breakdown-grid">
         <Card className="breakdown-card cash">
           <div className="breakdown-icon-wrapper">
-            {/* <FiIndianRupee /> */}
+            <FaIndianRupeeSign />
           </div>
           <div className="breakdown-details">
             <span className="breakdown-lbl">Cash Collections</span>

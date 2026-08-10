@@ -110,8 +110,39 @@
   border: 1px solid var(--card-border);
   padding: 3px 8px;
   border-radius: var(--radius-sm);
-  font-weight: 700;
+  font-weight: 600;
   color: var(--text-primary);
+  font-family: monospace;
+  font-size: 0.85rem;
+}
+
+.profile-row-val {
+  color: var(--text-primary);
+  font-size: 0.875rem;
+}
+
+.profile-badge-pill {
+  background: rgba(251, 191, 36, 0.12);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  color: #b45309;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: 0.775rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.profile-fuel-badge {
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  color: #2563eb;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: 0.775rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 /* Toggles settings */

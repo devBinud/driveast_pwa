@@ -28,7 +28,7 @@
 
 /* Soft grey fill for the empty incoming tab area */
 .incoming-empty-area {
-  background: #f4f4f5;
+  background: #fff;
   border-radius: var(--radius-lg);
   border: 1.5px dashed #d4d4d8;
   padding: var(--spacing-lg) var(--spacing-md);
@@ -93,6 +93,7 @@
     transform: scale(0.9);
     opacity: 0;
   }
+
   100% {
     transform: scale(1);
     opacity: 1;
@@ -103,7 +104,8 @@
 .sub-tabs-container {
   display: flex;
   width: 100%;
-  border-bottom: 2px solid #e4e4e7; /* Full-width bottom border */
+  border-bottom: 2px solid #e4e4e7;
+  /* Full-width bottom border */
   padding: 0;
   margin: var(--spacing-md) 0 var(--spacing-sm) 0;
   gap: var(--spacing-md);
@@ -125,7 +127,8 @@
   justify-content: center;
   gap: 8px;
   border-bottom: 2px solid transparent;
-  margin-bottom: -2px; /* Align to container border */
+  margin-bottom: -2px;
+  /* Align to container border */
   transition: color 0.15s ease, border-color 0.15s ease;
   border-radius: 0;
   flex: 1;
@@ -133,8 +136,10 @@
 
 .sub-tab-pill.active {
   background: transparent;
-  color: #d97706; /* Amber active text */
-  border-bottom-color: #d97706; /* Amber active bottom line */
+  color: #d97706;
+  /* Amber active text */
+  border-bottom-color: #d97706;
+  /* Amber active bottom line */
   box-shadow: none;
 }
 
@@ -157,6 +162,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -264,4 +270,3 @@
   margin: var(--spacing-lg) 0;
   width: 100%;
 }
-

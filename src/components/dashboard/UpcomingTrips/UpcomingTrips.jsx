@@ -1,6 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { FiNavigation, FiClock, FiAlertCircle, FiCalendar, FiUser } from 'react-icons/fi'
+import { FiNavigation, FiClock, FiWifiOff, FiCalendar, FiUser } from 'react-icons/fi'
 import { useTripStore } from '../../../store/tripStore'
 import { useDriverStatus } from '../../../hooks/useDriverStatus'
 import { Card } from '../../common/Card/Card'
@@ -34,7 +34,7 @@ export const UpcomingTrips = () => {
         <Card className="upcoming-empty-card" padding="lg">
           <div className="empty-card-content">
             <div className="empty-icon-wrapper offline-glow">
-              <FiAlertCircle className="empty-icon" />
+              <FiWifiOff className="empty-icon" />
             </div>
             <h4>You Are Offline</h4>
             <p>Go online in the status panel to receive live dispatches and ride requests.</p>

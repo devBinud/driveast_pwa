@@ -31,6 +31,11 @@ export const Trips = () => {
     .filter((t) => String(t.paymentMethod).toUpperCase() !== 'CASH')
     .reduce((sum, t) => sum + (Number(t.fare) || 0), 0)
 
+  const formatCurrency = (val) => {
+    const num = Number(val) || 0
+    return '₹' + num.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  }
+
   return (
     <div className="page-container animate-fade-in trips-page-container">
       <div>
@@ -38,26 +43,23 @@ export const Trips = () => {
         <p className="trips-sub-label">Review your historical ride performance and past collections</p>
       </div>
 
-      {/* Summary card */}
+      {/* Summary card (2x2 Grid) */}
       <Card className="trips-summary-card" padding="none" style={{ marginTop: 'var(--spacing-md)' }}>
         <div className="summary-col">
           <span className="summary-col-lbl">Total Revenue</span>
-          <h3>₹{totalEarnings.toFixed(2)}</h3>
+          <h3 className="summary-col-val">{formatCurrency(totalEarnings)}</h3>
         </div>
-        <div className="summary-col-divider"></div>
         <div className="summary-col">
           <span className="summary-col-lbl">Cash Collected</span>
-          <h3 className="text-success">₹{cashEarnings.toFixed(2)}</h3>
+          <h3 className="summary-col-val text-success">{formatCurrency(cashEarnings)}</h3>
         </div>
-        <div className="summary-col-divider"></div>
         <div className="summary-col">
           <span className="summary-col-lbl">Online Settled</span>
-          <h3>₹{onlineEarnings.toFixed(2)}</h3>
+          <h3 className="summary-col-val">{formatCurrency(onlineEarnings)}</h3>
         </div>
-        <div className="summary-col-divider"></div>
         <div className="summary-col">
           <span className="summary-col-lbl">Total Trips</span>
-          <h3>{completedCount} {completedCount === 1 ? 'ride' : 'rides'}</h3>
+          <h3 className="summary-col-val">{completedCount} {completedCount === 1 ? 'ride' : 'rides'}</h3>
         </div>
       </Card>
 
