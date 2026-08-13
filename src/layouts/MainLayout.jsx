@@ -5,6 +5,7 @@ import { useNotifications } from '../hooks/useNotifications'
 import { useRequestStore } from '../store/requestStore'
 import { useTripStore } from '../store/tripStore'
 import { useDriverStore } from '../store/driverStore'
+import { useWalletStore } from '../store/walletStore'
 import { websocketService } from '../services/websocketService'
 import { BottomNavigation } from '../components/navigation/BottomNavigation/BottomNavigation'
 import { RideRequestModal } from '../components/requests/RideRequestModal/RideRequestModal'
@@ -20,6 +21,7 @@ export const MainLayout = () => {
   const { requests, isMinimized, setMinimized } = useRequestStore()
   const currentTrip = useTripStore((state) => state.currentTrip)
   const initTripWebSocketListeners = useTripStore((state) => state.initWebSocketListeners)
+  const fetchWalletSummary = useWalletStore((state) => state.fetchSummary)
 
   const { 
     isOnline, 
@@ -39,6 +41,7 @@ export const MainLayout = () => {
       const cleanupWs = initWebSocketListeners()
       const cleanupTripWs = initTripWebSocketListeners()
       fetchPendingRequests()
+      fetchWalletSummary()
 
       // Safety-net polling: the WebSocket push can silently fail to reach this device
       // (dropped connection, backgrounded app/OS throttling, server-side delivery issue)

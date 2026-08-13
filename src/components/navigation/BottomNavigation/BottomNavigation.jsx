@@ -1,20 +1,23 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { FiHome, FiCompass, FiMapPin, FiUser } from 'react-icons/fi'
+import { FiHome, FiCompass, FiMapPin, FiCreditCard, FiUser } from 'react-icons/fi'
 import { useRequestStore } from '../../../store/requestStore'
 import { useTripStore } from '../../../store/tripStore'
+import { useWalletStore } from '../../../store/walletStore'
 import './BottomNavigation.css'
 
 export const BottomNavigation = () => {
   const location = useLocation()
   const requests = useRequestStore((state) => state.requests)
   const currentTrip = useTripStore((state) => state.currentTrip)
+  const outstandingCount = useWalletStore((state) => state.summary.outstandingBookingsCount)
   const activePath = location.pathname
 
   const navItems = [
     { label: 'Home', path: '/', icon: FiHome },
     { label: 'Rides', path: '/requests', icon: FiCompass, badge: requests.length > 0 ? requests.length : null },
     { label: 'History', path: '/trips', icon: FiMapPin },
+    { label: 'Wallet', path: '/wallet', icon: FiCreditCard, badge: outstandingCount > 0 ? outstandingCount : null },
     { label: 'Profile', path: '/profile', icon: FiUser }
   ]
 
