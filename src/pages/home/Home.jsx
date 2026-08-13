@@ -1,15 +1,24 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { FiChevronRight, FiNavigation } from 'react-icons/fi'
+import { FaIndianRupeeSign } from 'react-icons/fa6'
 import { useAuth } from '../../hooks/useAuth'
 import { useTripStore } from '../../store/tripStore'
+import { useWalletStore } from '../../store/walletStore'
 import { StatusCard } from '../../components/dashboard/StatusCard/StatusCard'
 import { UpcomingTrips } from '../../components/dashboard/UpcomingTrips/UpcomingTrips'
+import { Card } from '../../components/common/Card/Card'
 import './Home.css'
 
 export const Home = () => {
   const { user } = useAuth()
   const currentTrip = useTripStore((state) => state.currentTrip)
+  const walletSummary = useWalletStore((state) => state.summary)
+  const fetchWalletSummary = useWalletStore((state) => state.fetchSummary)
+
+  useEffect(() => {
+    fetchWalletSummary()
+  }, [])
 
   const getGreeting = () => {
     const hr = new Date().getHours()
@@ -61,6 +70,26 @@ export const Home = () => {
 
       {/* Driver Status Toggle */}
       <StatusCard />
+
+      {/* Wallet Quick Access */}
+      <Link to="/wallet" className="wallet-quick-link">
+        <Card interactive className="wallet-quick-card">
+          <div className={`wallet-quick-icon ${walletSummary.outstandingAmount > 0 ? 'due' : 'clear'}`}>
+            <FaIndianRupeeSign />
+          </div>
+          <div className="wallet-quick-info">
+            <span className="wallet-quick-label">
+              {walletSummary.outstandingAmount > 0 ? 'Outstanding to Admin' : 'Wallet & Settlements'}
+            </span>
+            <span className="wallet-quick-value">
+              {walletSummary.outstandingAmount > 0
+                ? `₹${walletSummary.outstandingAmount.toFixed(2)}`
+                : 'All settled up'}
+            </span>
+          </div>
+          <FiChevronRight className="wallet-quick-arrow" />
+        </Card>
+      </Link>
 
       {/* Upcoming Trips List */}
       <UpcomingTrips />

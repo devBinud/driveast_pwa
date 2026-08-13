@@ -76,3 +76,63 @@
 .banner-arrow {
   font-size: 1.25rem;
 }
+
+/* Wallet Quick Access Card */
+.wallet-quick-link {
+  text-decoration: none;
+  display: block;
+}
+
+.wallet-quick-card {
+  display: flex !important;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) !important;
+}
+
+.wallet-quick-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.wallet-quick-icon.due {
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+}
+
+.wallet-quick-icon.clear {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.wallet-quick-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.wallet-quick-label {
+  font-size: 0.725rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.wallet-quick-value {
+  font-size: 1.05rem;
+  font-weight: 850;
+  color: var(--text-primary);
+}
+
+.wallet-quick-arrow {
+  font-size: 1.25rem;
+  color: var(--text-muted);
+}

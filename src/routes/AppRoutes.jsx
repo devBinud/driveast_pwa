@@ -20,6 +20,7 @@ import { Profile } from '../pages/profile/Profile'
 import { UpcomingTripsPage } from '../pages/trips/UpcomingTripsPage'
 import { UpcomingTripDetails } from '../pages/trips/UpcomingTripDetails'
 import { Earnings } from '../pages/earnings/Earnings'
+import { Wallet } from '../pages/wallet/Wallet'
 
 export const AppRoutes = () => {
   return (
@@ -47,6 +48,7 @@ export const AppRoutes = () => {
           <Route path="/trips/upcoming/:id" element={<UpcomingTripDetails />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/earnings" element={<Earnings />} />
+          <Route path="/wallet" element={<Wallet />} />
         </Route>
 
         {/* Fallback */}

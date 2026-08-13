@@ -428,6 +428,94 @@ This screen leads the driver through 5 step-by-step trip execution actions:
 }
 ```
 
+#### 🔹 API Action: Fetch Outstanding Cash Wallet Summary
+Cash collected on `CASH` bookings is owed back to admin until verified. This is the hero
+stat at the top of the Wallet screen ("Outstanding to Admin").
+- **Method:** `GET`
+- **Endpoint URL:** `/api/v1/driver/me/wallet/summary`
+- **Auth Required:** Yes
+- **Response Payload (`200 OK`):**
+```json
+{
+  "success": true,
+  "data": {
+    "outstanding_amount": 1063848.0,
+    "outstanding_bookings_count": 1,
+    "last_settlement_date": null
+  },
+  "message": "Operation description"
+}
+```
+
+#### 🔹 API Action: Fetch Outstanding / Payment-Submitted Bookings
+Bookings still owed to admin (`OUTSTANDING`) or already submitted and awaiting admin
+verification (`PAYMENT_SUBMITTED`). Powers the "Outstanding Bookings" list.
+- **Method:** `GET`
+- **Endpoint URL:** `/api/v1/driver/me/wallet/bookings`
+- **Auth Required:** Yes
+- **Response Payload (`200 OK`):**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+      "booking_number": "BK-20260729-0001",
+      "lead_traveler_name": "Monster Kachari",
+      "pickup_location": "Guwahati Club, Guwahati, AS, India",
+      "drop_location": "Nagaland, India",
+      "completed_at": "2026-07-29T05:54:00Z",
+      "cash_collected_amount": 1063848.0,
+      "settlement_status": "OUTSTANDING",
+      "payment_method": null,
+      "transaction_reference": null,
+      "submitted_at": null,
+      "remarks": null
+    }
+  ],
+  "message": "Operation description"
+}
+```
+
+#### 🔹 API Action: Submit Payment for a Booking
+Driver submits a booking's cash as paid; moves it to `PAYMENT_SUBMITTED` pending admin
+verification (admin then marks it `COLLECTED` or `WAIVED`, or rejects it back to
+`OUTSTANDING`). This is the "Pay" / "Pay Outstanding" action.
+- **Method:** `POST`
+- **Endpoint URL:** `/api/v1/driver/me/wallet/bookings/{booking_id}/pay`
+- **Auth Required:** Yes
+- **Request Body JSON:**
+```json
+{
+  "payment_method": "CASH",
+  "remarks": "Handed to admin in person"
+}
+```
+*(`payment_method` options: `"CASH"`, `"ONLINE"`; `remarks` optional)*
+- **Response Payload (`200 OK`):**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+    "booking_number": "BK-20260729-0001",
+    "settlement_status": "PAYMENT_SUBMITTED",
+    "payment_method": "CASH",
+    "submitted_at": "2026-07-29T11:24:00Z"
+  },
+  "message": "Payment submitted successfully. Waiting for admin verification."
+}
+```
+
+#### 🔹 API Action: Fetch Full Wallet History
+All bookings with any settlement status (`OUTSTANDING`, `PAYMENT_SUBMITTED`, `COLLECTED`,
+`WAIVED`) — powers the "Wallet History" table.
+- **Method:** `GET`
+- **Endpoint URL:** `/api/v1/driver/me/wallet/history`
+- **Auth Required:** Yes
+- **Response Payload (`200 OK`):** Same item shape as the outstanding-bookings endpoint above,
+  including settled/waived entries.
+
 ---
 
 ## 3. Admin CRM Portal — Screen-by-Screen API Mapping
@@ -735,6 +823,7 @@ This screen leads the driver through 5 step-by-step trip execution actions:
 | **`RequestStatus`** | `SENT`, `ACCEPTED`, `REJECTED`, `EXPIRED`, `CANCELLED` | Instant ride request status |
 | **`AssignmentStatus`** | `ASSIGNED`, `ACCEPTED`, `ARRIVED`, `STARTED`, `COMPLETED`, `CANCELLED`, `REJECTED` | Trip execution stage |
 | **`BookingStatus`** | `DRAFT`, `PENDING_ADMIN_REVIEW`, `PENDING_MANUAL_ASSIGNMENT`, `CONFIRMED`, `IN_PROGRESS`, `COMPLETED`, `CANCELLED` | Overall booking lifecycle |
+| **`SettlementStatus`** | `OUTSTANDING`, `PAYMENT_SUBMITTED`, `COLLECTED`, `WAIVED` | Cash-collected-on-behalf-of-admin settlement status |
 
 ---
 

@@ -1,0 +1,266 @@
+/* Wallet.css */
+
+.wallet-page {
+  max-width: 500px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.wallet-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+/* Hero card */
+.wallet-hero-card {
+  background: #111113 !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(251, 191, 36, 0.3) !important;
+  box-shadow: var(--shadow-glow-primary), 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+  padding: var(--spacing-lg) !important;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.wallet-hero-top {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.wallet-hero-top .hero-stat-lbl {
+  font-size: 0.775rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.wallet-hero-top .hero-stat-val {
+  font-size: 2.3rem;
+  font-weight: 900;
+  color: var(--color-primary);
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+
+.wallet-hero-metrics {
+  display: flex;
+  gap: var(--spacing-md);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: var(--spacing-md) 0;
+}
+
+.wallet-hero-metrics .metric-box {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.wallet-hero-metrics .metric-lbl {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.wallet-hero-metrics .metric-val {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #ffffff;
+  text-align: center;
+}
+
+/* Sections */
+.wallet-section {
+  margin-top: var(--spacing-lg);
+}
+
+.wallet-section .section-heading {
+  font-size: 1rem;
+  font-weight: 850;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--spacing-md);
+}
+
+.empty-transactions {
+  padding: var(--spacing-xl);
+  text-align: center;
+}
+
+.empty-transactions .empty-msg {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+/* Outstanding booking cards */
+.wallet-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.wallet-item {
+  padding: var(--spacing-md) !important;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.wallet-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px dashed var(--card-border);
+  padding-bottom: var(--spacing-sm);
+}
+
+.wallet-item-id {
+  font-family: monospace;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+}
+
+.wallet-item-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.wallet-item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-md);
+  font-size: 0.8rem;
+}
+
+.wallet-item-row .profile-row-val {
+  text-align: right;
+  max-width: 60%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wallet-item-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--spacing-sm);
+  border-top: 1px dashed var(--card-border);
+}
+
+.wallet-cash-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.wallet-cash-amount {
+  font-size: 1.1rem;
+  font-weight: 850;
+  color: var(--color-success);
+}
+
+/* Inline payment method selector */
+.wallet-pay-flow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding-top: var(--spacing-sm);
+  border-top: 1px dashed var(--card-border);
+}
+
+.wallet-method-toggle {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.method-chip {
+  flex: 1;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
+  color: var(--text-secondary);
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.method-chip.active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--text-inverse);
+}
+
+.wallet-pay-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.wallet-pay-actions > * {
+  flex: 1;
+}
+
+/* Wallet history list */
+.wallet-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.wallet-history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md) !important;
+  border-radius: var(--radius-md) !important;
+}
+
+.wallet-history-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.wallet-history-date {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.wallet-history-booking {
+  font-family: monospace;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+}
+
+.wallet-history-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.wallet-history-amount {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
