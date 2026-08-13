@@ -86,9 +86,11 @@ export const useNotifications = () => {
       // and the request modal is not active (active when driver is online and not on a trip)
       const showModal = isOnline && !currentTrip
       if (location.pathname !== '/requests' && !showModal) {
+        const dropLabel = latestReq.drop ? latestReq.drop.split(',')[0] : 'destination'
+        const fareLabel = (latestReq.fare || 0).toFixed(2)
         showToastNotification(
           'New Request Available',
-          `Ride to ${latestReq.drop.split(',')[0]} (${latestReq.distance}) for ₹${latestReq.fare.toFixed(2)}`,
+          `Ride to ${dropLabel} for ₹${fareLabel}`,
           'warning'
         )
       }
