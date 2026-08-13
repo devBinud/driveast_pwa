@@ -1,0 +1,218 @@
+/* SettlementPaymentModal.css — Bottom Sheet Popup (matches DutyStatusModal) */
+
+.settlement-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: settlementBackdropFadeIn 0.2s ease-out;
+}
+
+@keyframes settlementBackdropFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.settlement-modal-sheet {
+  background: #ffffff;
+  border-radius: 24px 24px 0 0;
+  width: 100%;
+  max-width: 520px;
+  padding: 12px 20px 36px;
+  box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.12);
+  animation: settlementSheetSlideUp 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+  box-sizing: border-box;
+}
+
+@keyframes settlementSheetSlideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.settlement-modal-handle {
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: #e4e4e7;
+  margin: 0 auto 16px;
+}
+
+/* Header */
+.settlement-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 4px;
+}
+
+.settlement-modal-eyebrow {
+  font-size: 0.725rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #a1a1aa;
+  margin: 0 0 3px;
+}
+
+.settlement-modal-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #09090b;
+  margin: 0;
+}
+
+.settlement-modal-close {
+  background: #f4f4f5;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  color: #71717a;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s;
+  padding: 0;
+}
+
+.settlement-modal-close:hover {
+  background: #e4e4e7;
+}
+
+.settlement-modal-divider {
+  border: none;
+  border-top: 1.5px dashed #e4e4e7;
+  margin-left: -20px !important;
+  margin-right: -20px !important;
+  margin-top: 12px !important;
+  margin-bottom: 16px !important;
+  width: calc(100% + 40px) !important;
+  box-sizing: border-box !important;
+}
+
+/* Booking info box */
+.settlement-modal-info-box {
+  background: #f9f9f9;
+  border: 1.5px solid #f0f0f0;
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-md);
+}
+
+.settlement-info-right {
+  text-align: right;
+}
+
+.settlement-info-lbl {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #a1a1aa;
+  margin: 0 0 2px;
+}
+
+.settlement-info-val {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #09090b;
+  font-family: monospace;
+  margin: 0;
+}
+
+.settlement-info-amount {
+  font-size: 0.95rem;
+  font-weight: 850;
+  color: var(--color-success);
+  font-family: monospace;
+  margin: 0;
+}
+
+/* Form */
+.settlement-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.settlement-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.settlement-form-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #71717a;
+}
+
+.settlement-select,
+.settlement-textarea {
+  width: 100%;
+  background: #f9f9f9;
+  border: 1.5px solid #f0f0f0;
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #09090b;
+  box-sizing: border-box;
+  transition: border-color 0.15s;
+  font-family: inherit;
+}
+
+.settlement-textarea {
+  font-weight: 400;
+  resize: none;
+}
+
+.settlement-textarea::placeholder {
+  color: #a1a1aa;
+}
+
+.settlement-select:focus,
+.settlement-textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.settlement-submit-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--color-success);
+  color: #ffffff;
+  border: none;
+  border-radius: 16px;
+  font-weight: 800;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.25);
+  transition: all 0.15s;
+}
+
+.settlement-submit-btn:hover:not(:disabled) {
+  background: #0d9668;
+}
+
+.settlement-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

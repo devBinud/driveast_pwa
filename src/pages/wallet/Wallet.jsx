@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { FiArrowLeft, FiCreditCard, FiCheckCircle } from 'react-icons/fi'
+import { FiArrowLeft, FiCreditCard } from 'react-icons/fi'
 import toast from 'react-hot-toast'
 import { useWalletStore } from '../../store/walletStore'
 import { Card } from '../../components/common/Card/Card'
 import { Button } from '../../components/common/Button/Button'
 import { Loader } from '../../components/common/Loader/Loader'
 import { EmptyState } from '../../components/common/EmptyState/EmptyState'
+import { SettlementPaymentModal } from '../../components/wallet/SettlementPaymentModal/SettlementPaymentModal'
 import './Wallet.css'
 
 const STATUS_META = {
@@ -25,37 +26,27 @@ export const Wallet = () => {
   const navigate = useNavigate()
   const { summary, outstandingBookings, history, isLoading, isPaying, fetchAll, payBooking } = useWalletStore()
 
-  const [payingBookingId, setPayingBookingId] = useState(null)
-  const [paymentMethod, setPaymentMethod] = useState('CASH')
+  const [activePayBooking, setActivePayBooking] = useState(null)
 
   useEffect(() => {
     fetchAll()
   }, [])
 
-  const openPayFlow = (bookingId) => {
-    setPayingBookingId(bookingId)
-    setPaymentMethod('CASH')
-  }
-
-  const handleConfirmPay = async (bookingId) => {
-    try {
-      await payBooking(bookingId, paymentMethod)
-      toast.success('Payment submitted. Waiting for admin verification.')
-      setPayingBookingId(null)
-    } catch (err) {
-      toast.error(err?.message || 'Failed to submit payment')
-    }
-  }
-
   const payableBookings = outstandingBookings.filter((b) => b.status === 'OUTSTANDING')
 
   const handlePayOutstandingClick = () => {
     if (payableBookings.length === 0) return
-    const target = payableBookings[0]
-    openPayFlow(target.id)
-    setTimeout(() => {
-      document.getElementById(`wallet-booking-${target.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    }, 100)
+    setActivePayBooking(payableBookings[0])
+  }
+
+  const handleSubmitSettlement = async (bookingId, paymentMethod, remarks) => {
+    try {
+      await payBooking(bookingId, paymentMethod, remarks)
+      toast.success('Payment submitted. Waiting for admin verification.')
+      setActivePayBooking(null)
+    } catch (err) {
+      toast.error(err?.message || 'Failed to submit payment')
+    }
   }
 
   return (
@@ -117,7 +108,7 @@ export const Wallet = () => {
               const statusMeta = STATUS_META[b.status] || { label: b.status, className: 'badge-info' }
               const isPending = b.status === 'PAYMENT_SUBMITTED'
               return (
-                <Card key={b.id} id={`wallet-booking-${b.id}`} className="wallet-item">
+                <Card key={b.id} className="wallet-item">
                   <div className="wallet-item-header">
                     <span className="wallet-item-id">{b.bookingNumber}</span>
                     <span className={`badge ${statusMeta.className}`}>{statusMeta.label}</span>
@@ -150,48 +141,12 @@ export const Wallet = () => {
 
                     {isPending ? (
                       <span className="badge badge-info">Awaiting Verification</span>
-                    ) : payingBookingId !== b.id ? (
-                      <Button variant="primary" size="sm" onClick={() => openPayFlow(b.id)}>
+                    ) : (
+                      <Button variant="primary" size="sm" onClick={() => setActivePayBooking(b)}>
                         Pay
                       </Button>
-                    ) : null}
+                    )}
                   </div>
-
-                  {payingBookingId === b.id && !isPending && (
-                    <div className="wallet-pay-flow">
-                      <span className="info-lbl">Select Payment Method</span>
-                      <div className="wallet-method-toggle">
-                        <button
-                          type="button"
-                          className={`method-chip ${paymentMethod === 'CASH' ? 'active' : ''}`}
-                          onClick={() => setPaymentMethod('CASH')}
-                        >
-                          Cash
-                        </button>
-                        <button
-                          type="button"
-                          className={`method-chip ${paymentMethod === 'ONLINE' ? 'active' : ''}`}
-                          onClick={() => setPaymentMethod('ONLINE')}
-                        >
-                          Online
-                        </button>
-                      </div>
-                      <div className="wallet-pay-actions">
-                        <Button variant="secondary" size="sm" onClick={() => setPayingBookingId(null)}>
-                          Cancel
-                        </Button>
-                        <Button
-                          variant="success"
-                          size="sm"
-                          loading={isPaying}
-                          icon={FiCheckCircle}
-                          onClick={() => handleConfirmPay(b.id)}
-                        >
-                          Confirm Payment
-                        </Button>
-                      </div>
-                    </div>
-                  )}
                 </Card>
               )
             })}
@@ -231,6 +186,13 @@ export const Wallet = () => {
           </div>
         )}
       </div>
+
+      <SettlementPaymentModal
+        booking={activePayBooking}
+        isSubmitting={isPaying}
+        onClose={() => setActivePayBooking(null)}
+        onSubmit={handleSubmitSettlement}
+      />
     </div>
   )
 }

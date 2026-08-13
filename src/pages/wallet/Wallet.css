@@ -176,48 +176,6 @@
   color: var(--color-success);
 }
 
-/* Inline payment method selector */
-.wallet-pay-flow {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-  padding-top: var(--spacing-sm);
-  border-top: 1px dashed var(--card-border);
-}
-
-.wallet-method-toggle {
-  display: flex;
-  gap: var(--spacing-sm);
-}
-
-.method-chip {
-  flex: 1;
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--card-border);
-  background: var(--card-bg);
-  color: var(--text-secondary);
-  font-weight: 700;
-  font-size: 0.8rem;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-.method-chip.active {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-  color: var(--text-inverse);
-}
-
-.wallet-pay-actions {
-  display: flex;
-  gap: var(--spacing-sm);
-}
-
-.wallet-pay-actions > * {
-  flex: 1;
-}
-
 /* Wallet history list */
 .wallet-history-list {
   display: flex;

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
 import { FiChevronRight, FiNavigation } from 'react-icons/fi'
 import { FaIndianRupeeSign } from 'react-icons/fa6'
@@ -13,12 +13,9 @@ import './Home.css'
 export const Home = () => {
   const { user } = useAuth()
   const currentTrip = useTripStore((state) => state.currentTrip)
+  // Populated centrally by MainLayout on login so the bottom-nav badge and this card
+  // both stay in sync without each page re-fetching independently.
   const walletSummary = useWalletStore((state) => state.summary)
-  const fetchWalletSummary = useWalletStore((state) => state.fetchSummary)
-
-  useEffect(() => {
-    fetchWalletSummary()
-  }, [])
 
   const getGreeting = () => {
     const hr = new Date().getHours()
