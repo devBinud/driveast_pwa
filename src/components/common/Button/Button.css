@@ -76,7 +76,7 @@
 
 .btn-danger {
   background: var(--color-danger);
-  color: var(--text-inverse);
+  color: #ffffff;
 }
 
 .btn-danger:hover:not(:disabled) {
