@@ -1,5 +1,7 @@
 import { create } from 'zustand'
+import toast from 'react-hot-toast'
 import { tripService } from '../services/tripService'
+import { websocketService } from '../services/websocketService'
 
 export const useTripStore = create((set, get) => ({
   trips: [],
@@ -323,5 +325,25 @@ export const useTripStore = create((set, get) => ({
 
   clearCurrentTrip: () => set({ currentTrip: null }),
 
-  cancelTrip: () => set({ currentTrip: null })
+  cancelTrip: () => set({ currentTrip: null }),
+
+  /**
+   * Listens for a guest cancelling the booking mid-assignment (already accepted/en route).
+   * The WhatsApp message tells the driver too, but without this the app itself would keep
+   * showing an assigned/active trip for a ride that no longer exists.
+   */
+  initWebSocketListeners: () => {
+    const unbindCancelled = websocketService.on('trip_cancelled', (data) => {
+      const { currentTrip } = get()
+      if (!currentTrip) return
+      if (currentTrip.bookingId === data.booking_id || currentTrip.id === data.booking_id) {
+        set({ currentTrip: null })
+        toast.error('This booking was cancelled by the guest.')
+      }
+    })
+
+    return () => {
+      unbindCancelled()
+    }
+  }
 }))

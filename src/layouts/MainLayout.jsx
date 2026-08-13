@@ -19,7 +19,8 @@ export const MainLayout = () => {
   const initWebSocketListeners = useRequestStore((state) => state.initWebSocketListeners)
   const { requests, isMinimized, setMinimized } = useRequestStore()
   const currentTrip = useTripStore((state) => state.currentTrip)
-  
+  const initTripWebSocketListeners = useTripStore((state) => state.initWebSocketListeners)
+
   const { 
     isOnline, 
     toggleOnline, 
@@ -36,10 +37,21 @@ export const MainLayout = () => {
         websocketService.connectDriverWs(token)
       }
       const cleanupWs = initWebSocketListeners()
+      const cleanupTripWs = initTripWebSocketListeners()
       fetchPendingRequests()
+
+      // Safety-net polling: the WebSocket push can silently fail to reach this device
+      // (dropped connection, backgrounded app/OS throttling, server-side delivery issue)
+      // with nothing visibly wrong in the UI. Poll periodically so a new request still
+      // shows up within a few seconds even if the real-time push never arrives.
+      const pollInterval = setInterval(() => {
+        fetchPendingRequests()
+      }, 6000)
 
       return () => {
         if (cleanupWs) cleanupWs()
+        if (cleanupTripWs) cleanupTripWs()
+        clearInterval(pollInterval)
       }
     }
   }, [isAuthenticated, token])

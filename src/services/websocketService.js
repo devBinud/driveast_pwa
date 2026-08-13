@@ -7,6 +7,9 @@ class WebSocketService {
     this.whatsappWs = null
     this.pingTimer = null
     this.listeners = new Map()
+    this.driverReconnectTimer = null
+    this.driverToken = null
+    this.driverWsClosedIntentionally = false
   }
 
   // Subscribe to WebSocket event types
@@ -39,12 +42,19 @@ class WebSocketService {
    * Connection URL: wss://api.driveast.com/api/v1/driver/ws?token=<DRIVER_JWT_TOKEN>
    */
   connectDriverWs(token) {
+    if (this.driverReconnectTimer) {
+      clearTimeout(this.driverReconnectTimer)
+      this.driverReconnectTimer = null
+    }
+    this.driverToken = token
+    this.driverWsClosedIntentionally = false
+
     if (this.driverWs) {
       this.driverWs.close()
     }
 
     const wsUrl = `${WS_BASE_URL}/driver/ws${token ? `?token=${encodeURIComponent(token)}` : ''}`
-    
+
     try {
       this.driverWs = new WebSocket(wsUrl)
 
@@ -58,7 +68,7 @@ class WebSocketService {
         try {
           const data = JSON.parse(event.data)
           if (data.type === 'pong') return
-          
+
           if (data.type) {
             this.emit(data.type, data)
           }
@@ -74,10 +84,33 @@ class WebSocketService {
       this.driverWs.onclose = () => {
         console.log('Driver WebSocket connection closed')
         this.stopPingPong()
+        // Auto-reconnect unless this was an intentional disconnect (e.g. logout).
+        // Ride requests only arrive over this connection with a 60s response window --
+        // without reconnecting, a dropped connection (network switch, phone sleep) would
+        // silently leave the driver deaf to new requests until they reopen the app.
+        if (!this.driverWsClosedIntentionally && this.driverToken) {
+          this.driverReconnectTimer = setTimeout(() => {
+            this.connectDriverWs(this.driverToken)
+          }, 3000)
+        }
       }
     } catch (err) {
       console.warn('Could not establish Driver WebSocket connection:', err)
     }
+  }
+
+  disconnectDriverWs() {
+    this.driverWsClosedIntentionally = true
+    this.driverToken = null
+    if (this.driverReconnectTimer) {
+      clearTimeout(this.driverReconnectTimer)
+      this.driverReconnectTimer = null
+    }
+    if (this.driverWs) {
+      this.driverWs.close()
+      this.driverWs = null
+    }
+    this.stopPingPong()
   }
 
   startPingPong() {
@@ -133,8 +166,7 @@ class WebSocketService {
   }
 
   disconnectAll() {
-    this.stopPingPong()
-    if (this.driverWs) this.driverWs.close()
+    this.disconnectDriverWs()
     if (this.fleetWs) this.fleetWs.close()
     if (this.whatsappWs) this.whatsappWs.close()
   }
