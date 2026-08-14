@@ -4,9 +4,7 @@ import { driverService, AvailabilityStatus } from '../services/driverService'
 export const useDriverStore = create((set, get) => ({
   isOnline: false,
   availabilityStatus: AvailabilityStatus.OFFLINE,
-  todayEarnings: 0.00,
   hoursOnline: 0.0,
-  completedTripsCount: 0,
   isDutyModalOpen: false,
   isLoadingStatus: false,
   statusError: null,
@@ -57,18 +55,8 @@ export const useDriverStore = create((set, get) => ({
   },
 
   setDutyModalOpen: (isOpen) => set({ isDutyModalOpen: isOpen }),
-  
-  addEarnings: (amount) => 
-    set((state) => ({ 
-      todayEarnings: Math.round((state.todayEarnings + amount) * 100) / 100 
-    })),
-    
-  incrementTrips: () => 
-    set((state) => ({ 
-      completedTripsCount: state.completedTripsCount + 1 
-    })),
-    
-  updateHours: (hours) => 
+
+  updateHours: (hours) =>
     set((state) => ({ 
       hoursOnline: Math.round((state.hoursOnline + hours) * 10) / 10 
     }))

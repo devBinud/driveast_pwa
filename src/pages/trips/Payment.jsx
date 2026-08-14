@@ -1,14 +1,13 @@
 import React, { useState } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
+import toast from 'react-hot-toast'
 import { useTripStore } from '../../store/tripStore'
-import { useDriverStore } from '../../store/driverStore'
 import { PaymentCard } from '../../components/trips/PaymentCard/PaymentCard'
 import './Payment.css'
 
 export const Payment = () => {
   const navigate = useNavigate()
-  const { currentTrip, paymentMethod, setPaymentMethod, completeTrip, isLoadingTrip } = useTripStore()
-  const { addEarnings, incrementTrips } = useDriverStore()
+  const { currentTrip, paymentMethod, setPaymentMethod, completeTrip, isLoadingTrip, tripError } = useTripStore()
   const [loading, setLoading] = useState(false)
 
   if (!currentTrip) {
@@ -17,15 +16,19 @@ export const Payment = () => {
 
   const handleCollect = async () => {
     setLoading(true)
-    // Executes Step 4 (collect-payment) & Step 5 (complete) APIs
-    await completeTrip()
-    
-    // Update local driver stats
-    addEarnings(currentTrip.fare || 3500.00)
-    incrementTrips()
-    
-    setLoading(false)
-    navigate('/trips/completed')
+    try {
+      // Executes Step 4 (collect-payment) & Step 5 (complete) APIs. completeTrip()
+      // already adds the finished trip into local trip history itself (with the
+      // correct, backend-recalculated fare), so today's earnings/trip count -- both
+      // now derived from that same trip list, see useDriverStatus -- update
+      // automatically without a separate local counter to keep in sync by hand.
+      await completeTrip()
+      navigate('/trips/completed')
+    } catch (err) {
+      toast.error(tripError || err?.message || 'Failed to collect payment. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (

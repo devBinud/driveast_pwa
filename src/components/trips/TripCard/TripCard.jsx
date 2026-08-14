@@ -1,12 +1,15 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { FiClock } from 'react-icons/fi'
 import { Card } from '../../common/Card/Card'
 import { StatusBadge } from '../../common/StatusBadge/StatusBadge'
 import './TripCard.css'
 
 export const TripCard = ({ trip }) => {
+  const navigate = useNavigate()
   const {
     id,
+    assignmentId,
     pickup,
     drop,
     date,
@@ -20,8 +23,12 @@ export const TripCard = ({ trip }) => {
 
   const isCancelled = status?.toLowerCase() === 'cancelled' || status?.toLowerCase() === 'canceled' || status?.toLowerCase() === 'rejected'
 
+  const handleOpenDetails = () => {
+    if (assignmentId) navigate(`/trips/history/${assignmentId}`)
+  }
+
   return (
-    <Card className="trip-card-item" padding="none">
+    <Card className="trip-card-item" padding="none" onClick={handleOpenDetails}>
       <div className="trip-card-header">
         <div className="trip-header-meta">
           <span className="trip-id-text">{id}</span>

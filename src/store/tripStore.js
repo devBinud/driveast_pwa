@@ -164,12 +164,21 @@ export const useTripStore = create((set, get) => ({
       })
 
       if (res?.success) {
+        // end-trip recalculates the real fare server-side from actual distance
+        // travelled (booking.total_amount in the response) -- currentTrip.fare was
+        // never updated with it, so the Payment screen kept showing (and sending to
+        // collect-payment) the original pre-trip estimate instead of what the guest
+        // actually owes. res.data.total_distance_km also isn't a real field on this
+        // response (DriverAssignmentResponseSchema has no such key, so it was always
+        // undefined) -- compute it from the odometer readings instead.
+        const recalculatedFare = res.data?.booking?.total_amount
         set({
           currentTrip: {
             ...currentTrip,
             status: 'payment_pending',
             endOdometer: endOdo,
-            totalDistanceKm: res.data?.total_distance_km
+            totalDistanceKm: endOdo - (Number(currentTrip.startOdometer) || 0),
+            fare: recalculatedFare != null ? Number(recalculatedFare) : currentTrip.fare
           },
           isLoadingTrip: false
         })
@@ -231,12 +240,18 @@ export const useTripStore = create((set, get) => ({
       
       const completedTrip = {
         id: assignmentId,
+        assignmentId,
         bookingId: currentTrip.bookingId,
         bookingNumber: currentTrip.bookingNumber,
         pickup: currentTrip.pickup,
         drop: currentTrip.drop,
         date: new Date().toLocaleDateString(),
         time: new Date().toLocaleTimeString(),
+        // Real backend completion timestamp, not a client-generated one -- consistent
+        // with what a later fetchTripsHistory() refetch will show, and needed so
+        // "today's earnings" (derived from this list, see useDriverStatus) can
+        // actually identify this trip as having happened today.
+        completedAtRaw: res.data?.completed_at || new Date().toISOString(),
         fare: currentTrip.fare,
         status: 'completed',
         paymentMethod: paymentMethod || 'CASH',
@@ -281,6 +296,10 @@ export const useTripStore = create((set, get) => ({
             drop: item.booking?.drop_location || item.drop || '',
             date: formattedDate,
             time: formattedTime,
+            // Raw ISO timestamp, kept alongside the formatted display strings above so
+            // "today's" trips/earnings can be derived reliably elsewhere (formattedDate
+            // is locale text, not filterable).
+            completedAtRaw: item.completed_at || null,
             distance: dist,
             duration: (item.completed_at && item.started_at) ? `${Math.round((new Date(item.completed_at) - new Date(item.started_at)) / 60000)} mins` : null,
             fare: item.booking?.total_amount || 0,
@@ -318,10 +337,16 @@ export const useTripStore = create((set, get) => ({
   },
 
   /**
-   * Fetch Detailed Assignment Data
+   * Fetch full details for a single past/completed trip (tapped from History).
+   * Stored separately from currentTrip -- that field tracks the driver's own
+   * in-progress trip through the accept/arrive/otp/active flow, and overwriting it
+   * here to show a read-only historical record would corrupt that flow if a driver
+   * ever viewed trip history while genuinely mid-trip.
    */
+  selectedTripDetails: null,
+
   fetchTripDetails: async (assignmentId) => {
-    set({ isLoadingTrip: true, tripError: null })
+    set({ isLoadingTrip: true, tripError: null, selectedTripDetails: null })
     try {
       const res = await tripService.getTripDetails(assignmentId)
       if (res?.success && res.data) {
@@ -331,15 +356,27 @@ export const useTripStore = create((set, get) => ({
           bookingId: item.booking_id,
           status: item.status,
           startOdometer: item.start_odometer,
+          startOdometerImageUrl: item.start_odometer_image_url,
           endOdometer: item.end_odometer,
+          endOdometerImageUrl: item.end_odometer_image_url,
+          distanceKm: (item.end_odometer != null && item.start_odometer != null)
+            ? item.end_odometer - item.start_odometer
+            : null,
+          assignedAt: item.assigned_at,
+          arrivedAt: item.arrived_at,
+          startedAt: item.started_at,
+          completedAt: item.completed_at,
           pickup: item.booking?.pickup_location,
           drop: item.booking?.drop_location,
           fare: item.booking?.total_amount,
+          totalPaid: item.booking?.total_paid,
           customerName: item.booking?.lead_traveler_name,
           customerPhone: item.booking?.lead_traveler_phone,
-          bookingNumber: item.booking?.booking_number
+          bookingNumber: item.booking?.booking_number,
+          pickupDate: item.booking?.pickup_date,
+          pickupTime: item.booking?.pickup_time
         }
-        set({ currentTrip: mappedTrip, isLoadingTrip: false })
+        set({ selectedTripDetails: mappedTrip, isLoadingTrip: false })
         return item
       }
     } catch (err) {
