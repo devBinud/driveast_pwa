@@ -43,7 +43,21 @@ api.interceptors.response.use(
   },
   (error) => {
     const status = error.response?.status
-    const serverMessage = error.response?.data?.message
+    // FastAPI's default exception shape is {"detail": "..."} (a plain string for
+    // BadRequestException/NotFoundException/etc., or an array of {msg, loc, ...}
+    // objects for a 422 Pydantic validation error) -- not {"message": "..."} the way
+    // this app's own StandardResponse success envelope is shaped. Only ever reading
+    // .message here meant every specific backend error (wrong OTP, expired OTP,
+    // odometer sanity check, missing required field, ...) silently fell through to
+    // axios's generic "Request failed with status code NNN", with no way to tell
+    // what actually went wrong.
+    const rawDetail = error.response?.data?.detail
+    const detailMessage = typeof rawDetail === 'string'
+      ? rawDetail
+      : Array.isArray(rawDetail)
+        ? rawDetail.map((d) => d?.msg || d).filter(Boolean).join('; ')
+        : null
+    const serverMessage = error.response?.data?.message || detailMessage
 
     if (import.meta.env.DEV) {
       try {
