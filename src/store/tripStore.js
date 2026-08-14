@@ -98,14 +98,20 @@ export const useTripStore = create((set, get) => ({
     if (!currentTrip) return false
 
     const assignmentId = currentTrip.assignmentId || currentTrip.id
-    const startOdo = startOdometerValue || get().startOdometer
+    // Backend requires a whole integer (odometer readings are billed in whole km) --
+    // many vehicle odometers display one decimal place, and without rounding here a
+    // driver typing what they actually see (e.g. 45230.5) gets a 422 with no
+    // explanation, since Pydantic rejects a fractional value for an int field outright.
+    // Rounded once and reused for both the API call and local state, so what's shown
+    // in the app always matches what the backend actually recorded.
+    const startOdo = Math.round(Number(startOdometerValue || get().startOdometer))
 
     set({ isLoadingTrip: true, tripError: null })
 
     try {
       const res = await tripService.verifyOtp(assignmentId, {
         otp: otpInput,
-        start_odometer: Number(startOdo),
+        start_odometer: startOdo,
         start_odometer_image_url: startOdometerImageUrl
       })
 
@@ -144,13 +150,16 @@ export const useTripStore = create((set, get) => ({
     if (!currentTrip) return
 
     const assignmentId = currentTrip.assignmentId || currentTrip.id
-    const endOdo = endOdometerValue || get().endOdometer
+    // Same rounding as verifyOtp's start_odometer, and for the same reason: rounded
+    // once and reused for both the API call and local state so the displayed value
+    // always matches what the backend actually recorded.
+    const endOdo = Math.round(Number(endOdometerValue || get().endOdometer))
 
     set({ isLoadingTrip: true, tripError: null })
 
     try {
       const res = await tripService.endTrip(assignmentId, {
-        end_odometer: Number(endOdo),
+        end_odometer: endOdo,
         end_odometer_image_url: endOdometerImageUrl
       })
 
