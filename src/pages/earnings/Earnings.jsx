@@ -2,21 +2,33 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FiArrowLeft, FiTrendingUp, FiClock, FiCreditCard } from 'react-icons/fi'
 import { FaIndianRupeeSign } from 'react-icons/fa6'
-import { useDriverStore } from '../../store/driverStore'
+import { useDriverStatus } from '../../hooks/useDriverStatus'
 import { useTripStore } from '../../store/tripStore'
 import { Card } from '../../components/common/Card/Card'
 import './Earnings.css'
 
+const isSameLocalDay = (isoString) => {
+  if (!isoString) return false
+  const d = new Date(isoString)
+  const now = new Date()
+  return d.getFullYear() === now.getFullYear() &&
+    d.getMonth() === now.getMonth() &&
+    d.getDate() === now.getDate()
+}
+
 export const Earnings = () => {
   const navigate = useNavigate()
-  const { todayEarnings, hoursOnline, completedTripsCount } = useDriverStore()
+  const { todayEarnings, hoursOnline, completedTripsCount } = useDriverStatus()
   const { trips } = useTripStore()
 
-  // Dynamic calculations from trip history
-  const todayDateString = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
-
-  // Filter completed trips
-  const todayTrips = trips.filter(t => String(t.status).toLowerCase() === 'completed')
+  // "Today's Trip Earnings" below was filtering only by completed status, with
+  // nothing checking the date at all -- despite the heading and variable name, it
+  // showed every completed trip ever, not just today's. completedAtRaw (the real ISO
+  // timestamp, not the pre-formatted display string) is what actually lets this be
+  // filtered correctly.
+  const todayTrips = trips.filter(
+    (t) => String(t.status).toLowerCase() === 'completed' && isSameLocalDay(t.completedAtRaw)
+  )
 
   // Calculate Cash vs UPI splits
   const cashTotal = todayTrips
@@ -99,7 +111,7 @@ export const Earnings = () => {
         ) : (
           <div className="transaction-list">
             {todayTrips.map((trip) => {
-              const isCash = trip.paymentMethod === 'Cash'
+              const isCash = String(trip.paymentMethod).toUpperCase() === 'CASH'
               return (
                 <div key={trip.id} className="transaction-item glass-panel">
                   <div className="tx-header">
@@ -124,7 +136,7 @@ export const Earnings = () => {
                       <span className={`tx-method-badge ${isCash ? 'cash-badge' : 'online-badge'}`}>
                         {trip.paymentMethod}
                       </span>
-                      <span className="tx-amount">₹{trip.fare.toFixed(2)}</span>
+                      <span className="tx-amount">₹{Number(trip.fare || 0).toFixed(2)}</span>
                     </div>
                   </div>
                 </div>
