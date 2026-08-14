@@ -370,6 +370,7 @@ export const useTripStore = create((set, get) => ({
           drop: item.booking?.drop_location,
           fare: item.booking?.total_amount,
           totalPaid: item.booking?.total_paid,
+          paymentMethod: item.booking?.payment_method,
           customerName: item.booking?.lead_traveler_name,
           customerPhone: item.booking?.lead_traveler_phone,
           bookingNumber: item.booking?.booking_number,
