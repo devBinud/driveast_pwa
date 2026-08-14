@@ -32,8 +32,17 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.js',
+      injectManifest: {
+        // service worker is a hand-written ES module (`type: 'module'` below),
+        // so let esbuild bundle its imports (workbox-precaching) at build time
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}']
+      },
       devOptions: {
-        enabled: true
+        enabled: true,
+        type: 'module'
       },
       includeAssets: [
         'favicon.ico',

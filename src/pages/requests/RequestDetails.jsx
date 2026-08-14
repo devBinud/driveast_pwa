@@ -1,6 +1,7 @@
 import React from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { FiArrowLeft } from 'react-icons/fi'
+import toast from 'react-hot-toast'
 import { useRequestStore } from '../../store/requestStore'
 import { useTripStore } from '../../store/tripStore'
 import { RequestDetails as DetailsComponent } from '../../components/requests/RequestDetails/RequestDetails'
@@ -12,15 +13,24 @@ export const RequestDetails = () => {
   const navigate = useNavigate()
   const requests = useRequestStore((state) => state.requests)
   const declineRequest = useRequestStore((state) => state.declineRequest)
+  const acceptRequest = useRequestStore((state) => state.acceptRequest)
   const setAssignedTrip = useTripStore((state) => state.setAssignedTrip)
 
   const request = requests.find((req) => req.id === id)
 
-  const handleAccept = () => {
+  const handleAccept = async () => {
     if (!request) return
-    setAssignedTrip(request)
-    declineRequest(request.id)
-    navigate('/trips/assigned')
+    try {
+      // Was previously calling declineRequest here (rejecting the ride on the backend)
+      // while showing the driver a fake "assigned" screen with request.id standing in
+      // for a real assignment id. Every subsequent trip action then 404'd since no
+      // DriverAssignment was ever created.
+      const result = await acceptRequest(request.id)
+      setAssignedTrip({ ...request, assignmentId: result?.assignment_id })
+      navigate('/trips/assigned')
+    } catch (err) {
+      toast.error(err?.message || 'Failed to accept this ride. Please try again.')
+    }
   }
 
   const handleDecline = () => {

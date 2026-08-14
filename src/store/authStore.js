@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { authService } from '../services/authService'
 import { websocketService } from '../services/websocketService'
+import { pushNotificationService } from '../services/pushNotificationService'
 
 const initialToken = localStorage.getItem('driveast_token') || null
 
@@ -20,6 +21,10 @@ export const useAuthStore = create((set, get) => ({
         set({ token, isAuthenticated: true, error: null })
         websocketService.connectDriverWs(token)
         await get().fetchProfile()
+        // Also called from MainLayout's mount effect (covers page reload with an
+        // existing session); safe to call again here since it's idempotent --
+        // subscribe() reuses the existing PushSubscription if one is already active.
+        pushNotificationService.subscribe()
         set({ isLoading: false })
         return true
       }
@@ -34,6 +39,14 @@ export const useAuthStore = create((set, get) => ({
   },
 
   logout: async () => {
+    // Must run before authService.logout() clears the token -- unsubscribing
+    // the backend record is an authenticated call.
+    try {
+      await pushNotificationService.unsubscribe()
+    } catch (e) {
+      // best-effort; a stale subscription row is harmless (send_web_push_to_driver
+      // drops it on the next 404/410 from the push service)
+    }
     try {
       await authService.logout()
     } catch (e) {

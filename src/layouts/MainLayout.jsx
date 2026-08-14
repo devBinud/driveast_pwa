@@ -7,6 +7,7 @@ import { useTripStore } from '../store/tripStore'
 import { useDriverStore } from '../store/driverStore'
 import { useWalletStore } from '../store/walletStore'
 import { websocketService } from '../services/websocketService'
+import { pushNotificationService } from '../services/pushNotificationService'
 import { BottomNavigation } from '../components/navigation/BottomNavigation/BottomNavigation'
 import { RideRequestModal } from '../components/requests/RideRequestModal/RideRequestModal'
 import { DutyStatusModal } from '../components/dashboard/StatusCard/DutyStatusModal'
@@ -42,6 +43,7 @@ export const MainLayout = () => {
       const cleanupTripWs = initTripWebSocketListeners()
       fetchPendingRequests()
       fetchWalletSummary()
+      pushNotificationService.subscribe()
 
       // Safety-net polling: the WebSocket push can silently fail to reach this device
       // (dropped connection, backgrounded app/OS throttling, server-side delivery issue)
