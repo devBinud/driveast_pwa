@@ -75,6 +75,8 @@ export const useAuthStore = create((set, get) => ({
           vehicleType: d.assigned_vehicle?.vehicle_type || d.vehicle_type || 'Not Provided',
           seatCapacity: d.assigned_vehicle?.seat_capacity || d.seat_capacity || null,
           fuelType: d.assigned_vehicle?.fuel_type || d.fuel_type || 'Not Provided',
+          perKmPrice: d.assigned_vehicle?.per_km_price ?? null,
+          driverAllowance: d.assigned_vehicle?.driver_allowance ?? null,
           availabilityStatus: d.availability_status || 'AVAILABLE',
           currentLat: d.current_lat,
           currentLng: d.current_lng,
