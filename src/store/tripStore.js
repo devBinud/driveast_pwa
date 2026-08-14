@@ -78,7 +78,7 @@ export const useTripStore = create((set, get) => ({
   /**
    * Step 2: Verify Guest OTP & Record Start Odometer
    */
-  verifyOtp: async (startOdometerValue) => {
+  verifyOtp: async (startOdometerValue, startOdometerImageUrl) => {
     const { currentTrip, otpInput } = get()
     if (!currentTrip) return false
 
@@ -90,7 +90,8 @@ export const useTripStore = create((set, get) => ({
     try {
       const res = await tripService.verifyOtp(assignmentId, {
         otp: otpInput,
-        start_odometer: Number(startOdo)
+        start_odometer: Number(startOdo),
+        start_odometer_image_url: startOdometerImageUrl
       })
 
       if (res?.success) {
@@ -123,7 +124,7 @@ export const useTripStore = create((set, get) => ({
   /**
    * Step 3: End Trip (Record Final Odometer Reading)
    */
-  endTrip: async (endOdometerValue) => {
+  endTrip: async (endOdometerValue, endOdometerImageUrl) => {
     const { currentTrip } = get()
     if (!currentTrip) return
 
@@ -134,7 +135,8 @@ export const useTripStore = create((set, get) => ({
 
     try {
       const res = await tripService.endTrip(assignmentId, {
-        end_odometer: Number(endOdo)
+        end_odometer: Number(endOdo),
+        end_odometer_image_url: endOdometerImageUrl
       })
 
       if (res?.success) {

@@ -4,12 +4,14 @@ import { FiNavigation, FiActivity } from 'react-icons/fi'
 import { useTripStore } from '../../store/tripStore'
 import { ActiveTripCard } from '../../components/trips/ActiveTripCard/ActiveTripCard'
 import { Input } from '../../components/common/Input/Input'
+import { OdometerPhotoCapture } from '../../components/trips/OdometerPhotoCapture/OdometerPhotoCapture'
 import './ActiveTrip.css'
 
 export const ActiveTrip = () => {
   const navigate = useNavigate()
   const { currentTrip, endTrip, isLoadingTrip } = useTripStore()
   const [endOdo, setEndOdo] = useState('45340')
+  const [endOdoImageUrl, setEndOdoImageUrl] = useState(null)
   const [loading, setLoading] = useState(false)
   const [showOdoModal, setShowOdoModal] = useState(false)
 
@@ -22,8 +24,9 @@ export const ActiveTrip = () => {
   }
 
   const handleConfirmEndTrip = async () => {
+    if (!endOdoImageUrl) return
     setLoading(true)
-    await endTrip(Number(endOdo) || 45340)
+    await endTrip(Number(endOdo) || 45340, endOdoImageUrl)
     setLoading(false)
     navigate('/trips/payment')
   }
@@ -60,18 +63,23 @@ export const ActiveTrip = () => {
             icon={FiActivity}
             required
           />
+          <OdometerPhotoCapture
+            label="Final Odometer Photo"
+            imageUrl={endOdoImageUrl}
+            onUploaded={setEndOdoImageUrl}
+          />
           <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
-            <button 
-              className="btn btn-secondary" 
+            <button
+              className="btn btn-secondary"
               onClick={() => setShowOdoModal(false)}
               style={{ flex: 1 }}
             >
               Back
             </button>
-            <button 
-              className="btn btn-primary" 
+            <button
+              className="btn btn-primary"
               onClick={handleConfirmEndTrip}
-              disabled={loading || isLoadingTrip || !endOdo}
+              disabled={loading || isLoadingTrip || !endOdo || !endOdoImageUrl}
               style={{ flex: 1 }}
             >
               Confirm & End Trip
