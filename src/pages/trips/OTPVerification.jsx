@@ -4,12 +4,14 @@ import { FiLock, FiAlertCircle, FiActivity } from 'react-icons/fi'
 import { useTripStore } from '../../store/tripStore'
 import { Button } from '../../components/common/Button/Button'
 import { Input } from '../../components/common/Input/Input'
+import { OdometerPhotoCapture } from '../../components/trips/OdometerPhotoCapture/OdometerPhotoCapture'
 import './OTPVerification.css'
 
 export const OTPVerification = () => {
   const navigate = useNavigate()
   const { currentTrip, otpInput, otpError, setOtpInput, verifyOtp, startTrip, isLoadingTrip } = useTripStore()
   const [startOdo, setStartOdo] = useState('45210')
+  const [startOdoImageUrl, setStartOdoImageUrl] = useState(null)
 
   if (!currentTrip) {
     return <Navigate to="/" replace />
@@ -36,8 +38,8 @@ export const OTPVerification = () => {
   }
 
   const handleVerify = async () => {
-    if (otpInput.length !== 4) return
-    const verified = await verifyOtp(Number(startOdo) || 45210)
+    if (otpInput.length !== 4 || !startOdoImageUrl) return
+    const verified = await verifyOtp(Number(startOdo) || 45210, startOdoImageUrl)
     if (verified) {
       startTrip()
       navigate('/trips/active')
@@ -107,11 +109,17 @@ export const OTPVerification = () => {
         />
       </div>
 
+      <OdometerPhotoCapture
+        label="Start Odometer Photo"
+        imageUrl={startOdoImageUrl}
+        onUploaded={setStartOdoImageUrl}
+      />
+
       {/* Continue trigger */}
-      <Button 
-        variant="success" 
-        onClick={handleVerify} 
-        disabled={otpInput.length !== 4 || !startOdo} 
+      <Button
+        variant="success"
+        onClick={handleVerify}
+        disabled={otpInput.length !== 4 || !startOdo || !startOdoImageUrl}
         loading={isLoadingTrip}
         fullWidth
         size="lg"
