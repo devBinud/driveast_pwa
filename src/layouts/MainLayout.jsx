@@ -1,7 +1,9 @@
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import { Outlet, Navigate, Link, useLocation } from 'react-router-dom'
+import { FiRefreshCw } from 'react-icons/fi'
 import { useAuthStore } from '../store/authStore'
 import { useNotifications } from '../hooks/useNotifications'
+import { usePullToRefresh } from '../hooks/usePullToRefresh'
 import { useRequestStore } from '../store/requestStore'
 import { useTripStore } from '../store/tripStore'
 import { useDriverStore } from '../store/driverStore'
@@ -13,6 +15,11 @@ import { RideRequestModal } from '../components/requests/RideRequestModal/RideRe
 import { DutyStatusModal } from '../components/dashboard/StatusCard/DutyStatusModal'
 import './MainLayout.css'
 
+// Pull-to-refresh is only meaningful on the 4 main bottom-nav tabs -- sub-screens
+// (request details, trip flow steps, profile) have no independent "refresh my data"
+// action, and enabling it there would just be confusing.
+const PULL_TO_REFRESH_ROUTES = new Set(['/', '/requests', '/trips', '/wallet'])
+
 export const MainLayout = () => {
   const { isAuthenticated, token, fetchProfile } = useAuthStore()
   const location = useLocation()
@@ -22,20 +29,27 @@ export const MainLayout = () => {
   const { requests, isMinimized, setMinimized } = useRequestStore()
   const currentTrip = useTripStore((state) => state.currentTrip)
   const initTripWebSocketListeners = useTripStore((state) => state.initWebSocketListeners)
+  const fetchTripsHistory = useTripStore((state) => state.fetchTripsHistory)
   const fetchWalletSummary = useWalletStore((state) => state.fetchSummary)
+  const fetchWalletAll = useWalletStore((state) => state.fetchAll)
 
-  const { 
-    isOnline, 
-    toggleOnline, 
-    isDutyModalOpen, 
-    setDutyModalOpen 
+  const {
+    isOnline,
+    toggleOnline,
+    isDutyModalOpen,
+    setDutyModalOpen,
+    syncStatus
   } = useDriverStore()
   
   useNotifications()
 
   useEffect(() => {
     if (isAuthenticated) {
-      fetchProfile()
+      fetchProfile().then((profile) => {
+        if (profile?.availability_status) {
+          syncStatus(profile.availability_status)
+        }
+      })
       if (token) {
         websocketService.connectDriverWs(token)
       }
@@ -68,6 +82,33 @@ export const MainLayout = () => {
     return () => clearInterval(interval)
   }, [tickTimers])
 
+  const scrollContainerRef = useRef(null)
+
+  const handlePullToRefresh = useCallback(async () => {
+    switch (location.pathname) {
+      case '/':
+        await Promise.all([fetchWalletSummary(), fetchTripsHistory(), fetchPendingRequests()])
+        break
+      case '/requests':
+        await fetchPendingRequests()
+        break
+      case '/trips':
+        await fetchTripsHistory()
+        break
+      case '/wallet':
+        await fetchWalletAll()
+        break
+      default:
+        break
+    }
+  }, [location.pathname, fetchWalletSummary, fetchTripsHistory, fetchPendingRequests, fetchWalletAll])
+
+  const { pullDistance, isRefreshing, threshold } = usePullToRefresh(
+    scrollContainerRef,
+    handlePullToRefresh,
+    PULL_TO_REFRESH_ROUTES.has(location.pathname)
+  )
+
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />
   }
@@ -93,7 +134,18 @@ export const MainLayout = () => {
       </header>
 
       {/* Main Content Area */}
-      <main className={`main-content scroll-container${showMinimizedBar ? ' has-banner' : ''}`}>
+      <main
+        ref={scrollContainerRef}
+        className={`main-content scroll-container${showMinimizedBar ? ' has-banner' : ''}`}
+      >
+        {(pullDistance > 0 || isRefreshing) && (
+          <div
+            className="pull-to-refresh-indicator"
+            style={{ height: `${isRefreshing ? threshold : pullDistance}px` }}
+          >
+            <FiRefreshCw className={isRefreshing || pullDistance >= threshold ? 'spinning' : ''} />
+          </div>
+        )}
         <Outlet />
       </main>
 
