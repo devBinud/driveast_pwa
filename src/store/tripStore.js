@@ -76,6 +76,21 @@ export const useTripStore = create((set, get) => ({
   setPaymentMethod: (method) => set({ paymentMethod: method }),
 
   /**
+   * Driver taps "Navigate to Pickup" -- purely a local UI state transition (no
+   * backend call exists for this), swapping the AssignedTrip screen's button from
+   * "Navigate to Pickup" to "Confirm Arrival at Pickup". Was previously destructured
+   * from this store by AssignedTrip.jsx without ever being defined here -- calling
+   * undefined() threw inside handleAction's setTimeout, which happened before the
+   * setLoading(false) right after it, leaving the button stuck in its loading state
+   * forever.
+   */
+  startNavigationToPickup: () => {
+    set((state) => ({
+      currentTrip: state.currentTrip ? { ...state.currentTrip, status: 'navigating' } : null
+    }))
+  },
+
+  /**
    * Step 2: Verify Guest OTP & Record Start Odometer
    */
   verifyOtp: async (startOdometerValue, startOdometerImageUrl) => {

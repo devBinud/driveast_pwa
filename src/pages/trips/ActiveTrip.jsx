@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
-import { FiNavigation, FiActivity } from 'react-icons/fi'
+import { FiNavigation, FiActivity, FiMapPin } from 'react-icons/fi'
 import { useTripStore } from '../../store/tripStore'
 import { ActiveTripCard } from '../../components/trips/ActiveTripCard/ActiveTripCard'
+import { Button } from '../../components/common/Button/Button'
 import { Input } from '../../components/common/Input/Input'
 import { OdometerPhotoCapture } from '../../components/trips/OdometerPhotoCapture/OdometerPhotoCapture'
 import './ActiveTrip.css'
@@ -17,6 +18,17 @@ export const ActiveTrip = () => {
 
   if (!currentTrip) {
     return <Navigate to="/" replace />
+  }
+
+  // Same pattern as AssignedTrip's pickup navigation: dir_action=navigate auto-starts
+  // turn-by-turn guidance instead of just dropping a pin.
+  const handleNavigateToDrop = () => {
+    const { dropLat, dropLng, drop } = currentTrip
+    const destination = (dropLat && dropLng)
+      ? `${dropLat},${dropLng}`
+      : encodeURIComponent(drop || '')
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${destination}&travelmode=driving&dir_action=navigate`
+    window.open(url, '_blank', 'noopener')
   }
 
   const handleEndTripClick = () => {
@@ -90,6 +102,17 @@ export const ActiveTrip = () => {
 
       {!showOdoModal && (
         <div className="active-action-panel">
+          <div style={{ marginBottom: '0.75rem' }}>
+            <Button
+              variant="secondary"
+              icon={FiMapPin}
+              onClick={handleNavigateToDrop}
+              fullWidth
+              size="lg"
+            >
+              Navigate to Drop Location
+            </Button>
+          </div>
           <ActiveTripCard
             trip={currentTrip}
             primaryActionLabel="Tap to End Trip"
