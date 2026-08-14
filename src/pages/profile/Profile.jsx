@@ -115,6 +115,18 @@ export const Profile = () => {
               </span>
             </div>
           )}
+          {driver.perKmPrice != null && (
+            <div className="profile-info-row">
+              <span className="info-lbl">Per KM Rate</span>
+              <span className="profile-row-val font-semibold">₹{Number(driver.perKmPrice).toFixed(2)} / km</span>
+            </div>
+          )}
+          {driver.driverAllowance != null && (
+            <div className="profile-info-row">
+              <span className="info-lbl">Driver Allowance</span>
+              <span className="profile-row-val">₹{Number(driver.driverAllowance).toFixed(2)} / day</span>
+            </div>
+          )}
           <div className="profile-info-row">
             <span className="info-lbl">Verification Status</span>
             <span className="text-success font-semibold">
