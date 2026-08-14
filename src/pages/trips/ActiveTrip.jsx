@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
 import { FiNavigation, FiActivity, FiMapPin } from 'react-icons/fi'
+import toast from 'react-hot-toast'
 import { useTripStore } from '../../store/tripStore'
 import { ActiveTripCard } from '../../components/trips/ActiveTripCard/ActiveTripCard'
 import { Button } from '../../components/common/Button/Button'
@@ -38,9 +39,17 @@ export const ActiveTrip = () => {
   const handleConfirmEndTrip = async () => {
     if (!endOdoImageUrl) return
     setLoading(true)
-    await endTrip(Number(endOdo) || 45340, endOdoImageUrl)
+    // endTrip() resolves to the response data on success, or undefined on failure
+    // (it sets tripError internally and swallows the error) -- this must be checked
+    // before navigating, or a failed request (e.g. a validation 422) silently sends
+    // the driver to the Payment screen as if the trip had actually ended.
+    const result = await endTrip(Number(endOdo) || 45340, endOdoImageUrl)
     setLoading(false)
-    navigate('/trips/payment')
+    if (result) {
+      navigate('/trips/payment')
+    } else {
+      toast.error(useTripStore.getState().tripError || 'Failed to end trip. Please try again.')
+    }
   }
 
   return (
@@ -70,6 +79,8 @@ export const ActiveTrip = () => {
           <Input
             label="Final Odometer Reading (KM)"
             type="number"
+            step="1"
+            inputMode="numeric"
             value={endOdo}
             onChange={(e) => setEndOdo(e.target.value)}
             icon={FiActivity}
@@ -80,22 +91,26 @@ export const ActiveTrip = () => {
             imageUrl={endOdoImageUrl}
             onUploaded={setEndOdoImageUrl}
           />
-          <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
-            <button
-              className="btn btn-secondary"
-              onClick={() => setShowOdoModal(false)}
-              style={{ flex: 1 }}
-            >
-              Back
-            </button>
-            <button
-              className="btn btn-primary"
+          <div style={{ marginTop: '1.25rem' }}>
+            <Button
+              variant="primary"
               onClick={handleConfirmEndTrip}
-              disabled={loading || isLoadingTrip || !endOdo || !endOdoImageUrl}
-              style={{ flex: 1 }}
+              disabled={!endOdo || !endOdoImageUrl}
+              loading={loading || isLoadingTrip}
+              fullWidth
+              size="lg"
             >
               Confirm & End Trip
-            </button>
+            </Button>
+            <div style={{ textAlign: 'center', marginTop: '0.75rem' }}>
+              <Button
+                variant="ghost"
+                onClick={() => setShowOdoModal(false)}
+                size="sm"
+              >
+                Back
+              </Button>
+            </div>
           </div>
         </div>
       )}

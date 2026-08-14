@@ -101,6 +101,8 @@ export const OTPVerification = () => {
         <Input
           label="Start Odometer Reading (KM)"
           type="number"
+          step="1"
+          inputMode="numeric"
           placeholder="e.g. 45210"
           value={startOdo}
           onChange={(e) => setStartOdo(e.target.value)}
