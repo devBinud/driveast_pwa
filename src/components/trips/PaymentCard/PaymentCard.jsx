@@ -30,10 +30,10 @@ export const PaymentCard = ({
         <span className="selector-title">Select Payment Mode</span>
         <div className="payment-modes-grid">
           
-          <button 
+          <button
             type="button"
-            className={`payment-mode-btn ${paymentMethod === 'Cash' ? 'active' : ''}`}
-            onClick={() => setPaymentMethod('Cash')}
+            className={`payment-mode-btn ${paymentMethod === 'CASH' ? 'active' : ''}`}
+            onClick={() => setPaymentMethod('CASH')}
           >
             <span className="mode-circle"></span>
             <div className="mode-details">
@@ -42,10 +42,10 @@ export const PaymentCard = ({
             </div>
           </button>
 
-          <button 
+          <button
             type="button"
-            className={`payment-mode-btn ${paymentMethod === 'Online Wallet' ? 'active' : ''}`}
-            onClick={() => setPaymentMethod('Online Wallet')}
+            className={`payment-mode-btn ${paymentMethod === 'ONLINE' ? 'active' : ''}`}
+            onClick={() => setPaymentMethod('ONLINE')}
           >
             <span className="mode-circle"></span>
             <div className="mode-details">

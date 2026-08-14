@@ -11,6 +11,7 @@ import { Home } from '../pages/home/Home'
 import { Requests } from '../pages/requests/Requests'
 import { RequestDetails } from '../pages/requests/RequestDetails'
 import { Trips } from '../pages/trips/Trips'
+import { TripDetails } from '../pages/trips/TripDetails'
 import { AssignedTrip } from '../pages/trips/AssignedTrip'
 import { OTPVerification } from '../pages/trips/OTPVerification'
 import { ActiveTrip } from '../pages/trips/ActiveTrip'
@@ -39,6 +40,7 @@ export const AppRoutes = () => {
           <Route path="/requests" element={<Requests />} />
           <Route path="/requests/:id" element={<RequestDetails />} />
           <Route path="/trips" element={<Trips />} />
+          <Route path="/trips/history/:id" element={<TripDetails />} />
           <Route path="/trips/assigned" element={<AssignedTrip />} />
           <Route path="/trips/otp" element={<OTPVerification />} />
           <Route path="/trips/active" element={<ActiveTrip />} />
