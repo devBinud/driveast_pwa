@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { FiNavigation, FiClock, FiUser } from 'react-icons/fi'
+import toast from 'react-hot-toast'
 import { useRequestStore } from '../../../store/requestStore'
 import { useTripStore } from '../../../store/tripStore'
 import { useDriverStore } from '../../../store/driverStore'
@@ -92,9 +93,20 @@ export const RideRequestModal = () => {
 
   const handleAccept = async (req, e) => {
     e.stopPropagation()
-    setAssignedTrip(req)
-    await acceptRequest(req.id)
-    navigate('/trips/assigned')
+    try {
+      // acceptRequest resolves with { assignment_id, booking_id, status } from the
+      // backend. That assignment_id is the real DriverAssignment id -- distinct from
+      // req.id (the DriverBookingRequest id for the pending offer). Wiring req.id into
+      // currentTrip.assignmentId here (as this used to do, before acceptRequest even
+      // ran) meant every subsequent trip action -- arrive, verify-otp, end-trip -- was
+      // called against an id that only ever matched a request row, never an
+      // assignment, so the backend correctly 404'd every time.
+      const result = await acceptRequest(req.id)
+      setAssignedTrip({ ...req, assignmentId: result?.assignment_id })
+      navigate('/trips/assigned')
+    } catch (err) {
+      toast.error(err?.message || 'Failed to accept this ride. Please try again.')
+    }
   }
 
   return (

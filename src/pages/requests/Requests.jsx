@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FiNavigation, FiClock, FiCalendar } from 'react-icons/fi'
+import toast from 'react-hot-toast'
 import { useRequestStore } from '../../store/requestStore'
 import { useTripStore } from '../../store/tripStore'
 import { useDriverStore } from '../../store/driverStore'
@@ -19,9 +20,17 @@ export const Requests = () => {
   }, [])
 
   const handleAccept = async (req) => {
-    setAssignedTrip(req)
-    await acceptRequest(req.id)
-    navigate('/trips/assigned')
+    try {
+      // See RideRequestModal.jsx's handleAccept for why order matters here: req.id is
+      // the pending DriverBookingRequest's id, not the DriverAssignment id the trip
+      // endpoints (arrive/verify-otp/end-trip) actually key off. That id only exists
+      // once acceptRequest resolves.
+      const result = await acceptRequest(req.id)
+      setAssignedTrip({ ...req, assignmentId: result?.assignment_id })
+      navigate('/trips/assigned')
+    } catch (err) {
+      toast.error(err?.message || 'Failed to accept this ride. Please try again.')
+    }
   }
 
   const handleDecline = async (id) => {
