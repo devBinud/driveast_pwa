@@ -17,6 +17,24 @@ export const useDriverStore = create((set, get) => ({
     await get().setStatus(nextStatus)
   },
 
+  /**
+   * Syncs local state to match the backend's actual availability_status, without
+   * making a network call of its own. isOnline/availabilityStatus otherwise only
+   * ever start from the hardcoded OFFLINE default and are never touched again until
+   * the driver manually taps the duty toggle -- so any full page reload (including
+   * the Profile tab's "Check Updates & Force Refresh App") reset this local state to
+   * OFFLINE regardless of the driver's real backend status, and since
+   * RideRequestModal only opens when isOnline is true, an actually-AVAILABLE driver
+   * would silently stop seeing new ride request popups after every refresh.
+   */
+  syncStatus: (status) => {
+    if (!status) return
+    set({
+      availabilityStatus: status,
+      isOnline: status === AvailabilityStatus.AVAILABLE || status === AvailabilityStatus.ON_TRIP
+    })
+  },
+
   setStatus: async (status) => {
     set({ isLoadingStatus: true, statusError: null })
     try {

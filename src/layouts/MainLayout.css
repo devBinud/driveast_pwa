@@ -282,3 +282,22 @@
     opacity: 0.6;
   }
 }
+
+.pull-to-refresh-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: height 0.15s ease-out;
+  color: var(--color-secondary);
+  font-size: 1.25rem;
+}
+
+.pull-to-refresh-indicator svg.spinning {
+  animation: pullToRefreshSpin 0.7s linear infinite;
+}
+
+@keyframes pullToRefreshSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
