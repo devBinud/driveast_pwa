@@ -172,12 +172,17 @@ export const useTripStore = create((set, get) => ({
         // response (DriverAssignmentResponseSchema has no such key, so it was always
         // undefined) -- compute it from the odometer readings instead.
         const recalculatedFare = res.data?.booking?.total_amount
+        const distanceKm = endOdo - (Number(currentTrip.startOdometer) || 0)
         set({
           currentTrip: {
             ...currentTrip,
             status: 'payment_pending',
             endOdometer: endOdo,
-            totalDistanceKm: endOdo - (Number(currentTrip.startOdometer) || 0),
+            totalDistanceKm: distanceKm,
+            // TripCompleted.jsx (and AssignedTrip.jsx's route line) read `distance` as
+            // a display string, not `totalDistanceKm` -- that mismatch left both
+            // screens blank even though the raw km figure was being tracked correctly.
+            distance: `${distanceKm} km`,
             fare: recalculatedFare != null ? Number(recalculatedFare) : currentTrip.fare
           },
           isLoadingTrip: false
@@ -223,8 +228,13 @@ export const useTripStore = create((set, get) => ({
 
   /**
    * Step 5: Complete Trip Assignment
+   * @param {boolean} verifiedOnline - true when a real Payment row already exists
+   * at SUCCESS status (QR flow, confirmed server-side by Razorpay's webhook) --
+   * skips collect-payment entirely so a second, unverified payment record never
+   * gets fabricated for the same trip. False (default) keeps the original
+   * cash/self-reported path.
    */
-  completeTrip: async () => {
+  completeTrip: async (verifiedOnline = false) => {
     const { currentTrip, paymentMethod, startOdometer, endOdometer } = get()
     if (!currentTrip) return
 
@@ -232,12 +242,23 @@ export const useTripStore = create((set, get) => ({
     set({ isLoadingTrip: true, tripError: null })
 
     try {
-      await tripService.collectPayment(assignmentId, {
-        amount: Number(currentTrip.fare || 0),
-        payment_method: paymentMethod || 'CASH'
-      })
+      if (!verifiedOnline) {
+        await tripService.collectPayment(assignmentId, {
+          amount: Number(currentTrip.fare || 0),
+          payment_method: paymentMethod || 'CASH'
+        })
+      }
       const res = await tripService.completeTrip(assignmentId)
-      
+      const completedAtRaw = res.data?.completed_at || new Date().toISOString()
+
+      // Same formula fetchTripsHistory() uses for past trips (completed_at - started_at
+      // in whole minutes), computed here too so TripCompleted.jsx has a real value to
+      // show immediately instead of waiting on a later history refetch.
+      const durationMins = currentTrip.startedAt
+        ? Math.round((new Date(completedAtRaw) - new Date(currentTrip.startedAt)) / 60000)
+        : null
+      const duration = durationMins != null ? `${durationMins} mins` : null
+
       const completedTrip = {
         id: assignmentId,
         assignmentId,
@@ -251,7 +272,9 @@ export const useTripStore = create((set, get) => ({
         // with what a later fetchTripsHistory() refetch will show, and needed so
         // "today's earnings" (derived from this list, see useDriverStatus) can
         // actually identify this trip as having happened today.
-        completedAtRaw: res.data?.completed_at || new Date().toISOString(),
+        completedAtRaw,
+        distance: currentTrip.distance,
+        duration,
         fare: currentTrip.fare,
         status: 'completed',
         paymentMethod: paymentMethod || 'CASH',
@@ -262,7 +285,7 @@ export const useTripStore = create((set, get) => ({
 
       set((state) => ({
         trips: [completedTrip, ...state.trips],
-        currentTrip: { ...currentTrip, status: 'completed' },
+        currentTrip: { ...currentTrip, status: 'completed', distance: currentTrip.distance, duration },
         isLoadingTrip: false
       }))
       return res?.data

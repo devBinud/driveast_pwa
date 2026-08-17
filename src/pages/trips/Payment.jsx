@@ -14,15 +14,16 @@ export const Payment = () => {
     return <Navigate to="/" replace />
   }
 
-  const handleCollect = async () => {
+  const handleCollect = async (verifiedOnline = false) => {
     setLoading(true)
     try {
-      // Executes Step 4 (collect-payment) & Step 5 (complete) APIs. completeTrip()
-      // already adds the finished trip into local trip history itself (with the
-      // correct, backend-recalculated fare), so today's earnings/trip count -- both
-      // now derived from that same trip list, see useDriverStatus -- update
-      // automatically without a separate local counter to keep in sync by hand.
-      await completeTrip()
+      // Executes Step 4 (collect-payment, skipped when verifiedOnline) & Step 5
+      // (complete) APIs. completeTrip() already adds the finished trip into local
+      // trip history itself (with the correct, backend-recalculated fare), so
+      // today's earnings/trip count -- both now derived from that same trip list,
+      // see useDriverStatus -- update automatically without a separate local
+      // counter to keep in sync by hand.
+      await completeTrip(verifiedOnline)
       navigate('/trips/completed')
     } catch (err) {
       toast.error(tripError || err?.message || 'Failed to collect payment. Please try again.')
