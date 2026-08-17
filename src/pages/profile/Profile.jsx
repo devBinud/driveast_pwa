@@ -8,7 +8,15 @@ import './Profile.css'
 export const Profile = () => {
   const { user, logout, fetchProfile } = useAuthStore()
   const [loading, setLoading] = useState(!user)
-  const [notifications, setNotifications] = useState(true)
+  const [notifications, setNotifications] = useState(() => {
+    const saved = localStorage.getItem('ride_alerts_enabled')
+    return saved !== null ? saved === 'true' : true
+  })
+
+  const handleToggleNotifications = (val) => {
+    setNotifications(val)
+    localStorage.setItem('ride_alerts_enabled', val ? 'true' : 'false')
+  }
 
   useEffect(() => {
     let isMounted = true
@@ -93,7 +101,7 @@ export const Profile = () => {
           </div>
           <div className="profile-info-row">
             <span className="info-lbl">License Plate</span>
-            <span className="license-plate-badge">{driver.vehicleNumber || 'Not Provided'}</span>
+            <span className="profile-row-val font-semibold">{driver.vehicleNumber || 'Not Provided'}</span>
           </div>
           {driver.vehicleType && driver.vehicleType !== 'Not Provided' && (
             <div className="profile-info-row">
@@ -150,7 +158,7 @@ export const Profile = () => {
             <input
               type="checkbox"
               checked={notifications}
-              onChange={() => setNotifications(!notifications)}
+              onChange={(e) => handleToggleNotifications(e.target.checked)}
               className="toggle-switch-checkbox"
             />
           </div>
@@ -171,27 +179,6 @@ export const Profile = () => {
             <span className="info-lbl">App Version</span>
             <span className="badge badge-success">v1.3.0</span>
           </div>
-        </div>
-
-        <div style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px dashed var(--card-border)' }}>
-          <Button
-            variant="secondary"
-            fullWidth
-            size="sm"
-            icon={FiRefreshCw}
-            onClick={() => {
-              if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.getRegistrations().then((registrations) => {
-                  for (let registration of registrations) {
-                    registration.update()
-                  }
-                })
-              }
-              window.location.reload(true)
-            }}
-          >
-            Check Updates & Force Refresh App
-          </Button>
         </div>
       </Card>
 

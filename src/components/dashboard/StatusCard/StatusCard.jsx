@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { FiAward, FiNavigation, FiMapPin, FiAlertCircle } from 'react-icons/fi'
+import { FiAward, FiNavigation, FiMapPin, FiAlertCircle, FiRefreshCw } from 'react-icons/fi'
 import { FaRupeeSign } from 'react-icons/fa'
 import { useDriverStatus } from '../../../hooks/useDriverStatus'
 import { useAuthStore } from '../../../store/authStore'
@@ -12,7 +12,7 @@ import './StatusCard.css'
 export const StatusCard = () => {
   const { isOnline, availabilityStatus, todayEarnings, completedTripsCount, setDutyModalOpen } = useDriverStatus()
   const { user } = useAuthStore()
-  const { isTracking, permissionDenied } = useLocation()
+  const { locationDetails, permissionDenied, requestLocation } = useLocation()
 
   const getStatusHeading = () => {
     switch (availabilityStatus) {
@@ -108,21 +108,65 @@ export const StatusCard = () => {
         </Link>
       </div>
 
-      {/* GPS Location Status Indicator Bar */}
+      {/* Current Location & Dispatch Area Section */}
       {isOnline && (
-        <div className="gps-sync-status">
+        <div className={`status-location-section ${permissionDenied ? 'denied' : 'active'}`}>
           {permissionDenied ? (
-            <>
-              <FiAlertCircle style={{ color: '#ef4444', fontSize: '1rem' }} />
-              <span style={{ color: '#ef4444' }}>
-                GPS Location Denied — Enable location in browser settings to receive dispatches
-              </span>
-            </>
+            <div className="location-denied-row">
+              <div className="location-denied-info">
+                <FiAlertCircle className="location-denied-icon" />
+                <div className="location-denied-text">
+                  <strong>Location Access Disabled</strong>
+                  <span>Enable browser GPS to receive ride requests</span>
+                </div>
+              </div>
+              <button 
+                type="button" 
+                className="location-retry-action-btn" 
+                onClick={(e) => {
+                  e.stopPropagation()
+                  requestLocation()
+                }}
+              >
+                <FiRefreshCw />
+                <span>Enable GPS</span>
+              </button>
+            </div>
           ) : (
-            <>
-              <span className="gps-ping-dot"></span>
-              <span>GPS Live Tracking Active — Pinging location to dispatch server</span>
-            </>
+            <div className="status-location-panel">
+              <div className="location-panel-left">
+                <div className="location-icon-bubble">
+                  <FiMapPin />
+                </div>
+                <div className="location-text-col">
+                  <span className="location-kicker">CURRENT DISPATCH LOCATION</span>
+                  <h4 className="location-place-title">
+                    {locationDetails?.placeName || 'Guwahati'}
+                  </h4>
+                  <span className="location-city-subtitle">
+                    {locationDetails?.cityName || 'Assam, India'}
+                  </span>
+                </div>
+              </div>
+
+              <div className="location-panel-right">
+                <div className="gps-live-pill">
+                  <span className="gps-pulse-dot"></span>
+                  <span>LIVE GPS</span>
+                </div>
+                <button 
+                  type="button" 
+                  className="location-refresh-btn" 
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    requestLocation()
+                  }}
+                  title="Recalibrate & Refresh Location"
+                >
+                  <FiRefreshCw />
+                </button>
+              </div>
+            </div>
           )}
         </div>
       )}
@@ -130,3 +174,4 @@ export const StatusCard = () => {
   )
 }
 export default StatusCard
+

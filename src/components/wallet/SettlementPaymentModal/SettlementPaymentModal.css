@@ -1,10 +1,10 @@
-/* SettlementPaymentModal.css — Bottom Sheet Popup (matches DutyStatusModal) */
+/* SettlementPaymentModal.css: Bottom Sheet Popup (matches DutyStatusModal) */
 
 .settlement-modal-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 9998;
-  background: rgba(0, 0, 0, 0.4);
+  z-index: 99999;
+  background: rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   display: flex;
@@ -23,10 +23,12 @@
   border-radius: 24px 24px 0 0;
   width: 100%;
   max-width: 520px;
-  padding: 12px 20px 36px;
-  box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.12);
+  padding: 12px 20px calc(24px + env(safe-area-inset-bottom, 0px));
+  box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.16);
   animation: settlementSheetSlideUp 0.28s cubic-bezier(0.32, 0.72, 0, 1);
   box-sizing: border-box;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 @keyframes settlementSheetSlideUp {

@@ -78,7 +78,7 @@
   --header-height: 72px;
   --nav-height: 76px;
 
-  /* Shared container max-width — header, body, footer all use this */
+  /* Shared container max-width: header, body, footer all use this */
   --container-max-width: 1230px;
   --container-padding: var(--spacing-lg);
 

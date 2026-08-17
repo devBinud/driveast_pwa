@@ -178,25 +178,194 @@
   align-self: stretch;
 }
 
-.gps-sync-status {
+/* Location Section inside Duty Card */
+.status-location-section {
+  padding: 14px var(--spacing-lg);
+  border-top: 1px solid var(--card-border);
+  background: rgba(255, 255, 255, 0.02);
+  transition: all var(--transition-fast);
+}
+
+.status-location-section.active {
+  background: rgba(16, 185, 129, 0.03);
+}
+
+.status-location-section.denied {
+  background: rgba(239, 68, 68, 0.04);
+}
+
+.status-location-panel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-md);
+  width: 100%;
+}
+
+.location-panel-left {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px var(--spacing-lg);
-  border-top: 1px dashed var(--card-border);
-  background: rgba(16, 185, 129, 0.03);
-  font-size: 0.75rem;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.location-icon-bubble {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-full);
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.location-text-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 2px;
+}
+
+.location-kicker {
+  font-size: 0.65rem;
   font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.location-place-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -0.01em;
+}
+
+.location-city-subtitle {
+  font-size: 0.775rem;
+  font-weight: 500;
   color: var(--text-secondary);
 }
 
-.gps-ping-dot {
-  width: 6px;
-  height: 6px;
+.location-panel-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.gps-live-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  padding: 5px 10px;
+  border-radius: var(--radius-full);
+}
+
+.gps-live-pill span {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #059669;
+  letter-spacing: 0.04em;
+}
+
+.gps-pulse-dot {
+  width: 7px;
+  height: 7px;
   background-color: #10b981;
   border-radius: 50%;
   box-shadow: 0 0 6px #10b981;
   animation: gps-ping 1.5s infinite;
+}
+
+.location-refresh-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  background: #ffffff;
+  border: 1.5px solid var(--card-border);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all var(--transition-fast);
+}
+
+.location-refresh-btn:hover {
+  background: #f4f4f5;
+  color: var(--color-primary-hover);
+  border-color: #d4d4d8;
+  transform: rotate(45deg);
+}
+
+/* Denied state */
+.location-denied-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-md);
+  width: 100%;
+}
+
+.location-denied-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.location-denied-icon {
+  color: #ef4444;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.location-denied-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.location-denied-text strong {
+  font-size: 0.825rem;
+  color: #dc2626;
+}
+
+.location-denied-text span {
+  font-size: 0.725rem;
+  color: var(--text-secondary);
+}
+
+.location-retry-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: #ffffff;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: var(--radius-full);
+  color: #dc2626;
+  font-size: 0.775rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.location-retry-action-btn:hover {
+  background: #fef2f2;
+  border-color: #ef4444;
 }
 
 @keyframes gps-ping {

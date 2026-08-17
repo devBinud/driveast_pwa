@@ -1,4 +1,5 @@
 import React from 'react'
+import { createPortal } from 'react-dom'
 import { FiWifi, FiWifiOff, FiCoffee, FiCalendar, FiAlertCircle, FiX } from 'react-icons/fi'
 import { useDriverStatus } from '../../../hooks/useDriverStatus'
 import { AvailabilityStatus } from '../../../services/driverService'
@@ -68,7 +69,7 @@ export const DutyStatusModal = ({ isOnline, onGoOnline, onGoOffline, onClose }) 
     }
   }
 
-  return (
+  const modalContent = (
     <div className="duty-modal-backdrop" onClick={onClose}>
       <div className="duty-modal-sheet" onClick={(e) => e.stopPropagation()}>
         {/* Drag handle */}
@@ -172,6 +173,9 @@ export const DutyStatusModal = ({ isOnline, onGoOnline, onGoOffline, onClose }) 
       </div>
     </div>
   )
+
+  return createPortal(modalContent, document.body)
 }
 
 export default DutyStatusModal
+

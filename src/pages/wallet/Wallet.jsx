@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { FiArrowLeft, FiCreditCard } from 'react-icons/fi'
+import { FiArrowLeft, FiCreditCard, FiSliders, FiChevronDown, FiCheck } from 'react-icons/fi'
 import toast from 'react-hot-toast'
 import { useWalletStore } from '../../store/walletStore'
 import { Card } from '../../components/common/Card/Card'
@@ -17,6 +17,13 @@ const STATUS_META = {
   WAIVED: { label: 'Waived', className: 'badge-success' }
 }
 
+const SORT_OPTIONS = [
+  { value: 'DATE_DESC', label: 'Newest First' },
+  { value: 'DATE_ASC', label: 'Oldest First' },
+  { value: 'AMOUNT_DESC', label: 'Highest Amount' },
+  { value: 'AMOUNT_ASC', label: 'Lowest Amount' }
+]
+
 const formatDate = (value) => {
   if (!value) return '-'
   return new Date(value).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })
@@ -27,10 +34,31 @@ export const Wallet = () => {
   const { summary, outstandingBookings, history, isLoading, isPaying, fetchAll, payBooking } = useWalletStore()
 
   const [activePayBooking, setActivePayBooking] = useState(null)
+  const [historyFilter, setHistoryFilter] = useState('ALL') // 'ALL' | 'SETTLED' | 'OUTSTANDING' | 'PENDING'
+  const [historySort, setHistorySort] = useState('DATE_DESC') // 'DATE_DESC' | 'DATE_ASC' | 'AMOUNT_DESC' | 'AMOUNT_ASC'
+  const [isSortOpen, setIsSortOpen] = useState(false)
+  const sortRef = useRef(null)
 
   useEffect(() => {
     fetchAll()
   }, [])
+
+  // Close sort menu on click outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (sortRef.current && !sortRef.current.contains(e.target)) {
+        setIsSortOpen(false)
+      }
+    }
+    if (isSortOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+      document.addEventListener('touchstart', handleClickOutside)
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('touchstart', handleClickOutside)
+    }
+  }, [isSortOpen])
 
   const payableBookings = outstandingBookings.filter((b) => b.status === 'OUTSTANDING')
 
@@ -48,6 +76,52 @@ export const Wallet = () => {
       toast.error(err?.message || 'Failed to submit payment')
     }
   }
+
+  // Calculate counts for filter chips
+  const historyCounts = useMemo(() => {
+    return {
+      all: history.length,
+      settled: history.filter((i) => i.status === 'COLLECTED' || i.status === 'WAIVED').length,
+      outstanding: history.filter((i) => i.status === 'OUTSTANDING').length,
+      pending: history.filter((i) => i.status === 'PAYMENT_SUBMITTED').length
+    }
+  }, [history])
+
+  // Filter & sort history list
+  const filteredHistory = useMemo(() => {
+    let list = [...history]
+
+    // Filter
+    if (historyFilter === 'SETTLED') {
+      list = list.filter((item) => item.status === 'COLLECTED' || item.status === 'WAIVED')
+    } else if (historyFilter === 'OUTSTANDING') {
+      list = list.filter((item) => item.status === 'OUTSTANDING')
+    } else if (historyFilter === 'PENDING') {
+      list = list.filter((item) => item.status === 'PAYMENT_SUBMITTED')
+    }
+
+    // Sort
+    list.sort((a, b) => {
+      const dateA = new Date(a.completedAt || 0).getTime()
+      const dateB = new Date(b.completedAt || 0).getTime()
+      const amtA = Number(a.cashCollected || 0)
+      const amtB = Number(b.cashCollected || 0)
+
+      switch (historySort) {
+        case 'DATE_ASC':
+          return dateA - dateB
+        case 'AMOUNT_DESC':
+          return amtB - amtA
+        case 'AMOUNT_ASC':
+          return amtA - amtB
+        case 'DATE_DESC':
+        default:
+          return dateB - dateA
+      }
+    })
+
+    return list
+  }, [history, historyFilter, historySort])
 
   return (
     <div className="wallet-page page-container animate-fade-in">
@@ -156,7 +230,83 @@ export const Wallet = () => {
 
       {/* Wallet history section */}
       <div className="wallet-section">
-        <h3 className="section-heading">Wallet History</h3>
+        <div className="wallet-section-header-row">
+          <h3 className="section-heading">Wallet History</h3>
+          
+          {/* Custom Sleek Sort Dropdown */}
+          <div className="wallet-sort-container" ref={sortRef}>
+            <button
+              type="button"
+              className={`wallet-sort-trigger ${isSortOpen ? 'active' : ''}`}
+              onClick={() => setIsSortOpen(!isSortOpen)}
+              aria-haspopup="listbox"
+              aria-expanded={isSortOpen}
+            >
+              <FiSliders className="sort-icon-left" />
+              <span>{SORT_OPTIONS.find((opt) => opt.value === historySort)?.label || 'Sort'}</span>
+              <FiChevronDown className={`sort-chevron ${isSortOpen ? 'open' : ''}`} />
+            </button>
+
+            {isSortOpen && (
+              <div className="wallet-sort-dropdown-menu" role="listbox">
+                {SORT_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    role="option"
+                    aria-selected={historySort === opt.value}
+                    className={`wallet-sort-option ${historySort === opt.value ? 'selected' : ''}`}
+                    onClick={() => {
+                      setHistorySort(opt.value)
+                      setIsSortOpen(false)
+                    }}
+                  >
+                    <span>{opt.label}</span>
+                    {historySort === opt.value && <FiCheck className="sort-check-icon" />}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Filter Pills */}
+        <div className="wallet-filter-pills-bar">
+          <button
+            type="button"
+            className={`wallet-filter-pill ${historyFilter === 'ALL' ? 'active' : ''}`}
+            onClick={() => setHistoryFilter('ALL')}
+          >
+            <span>All</span>
+            <span className="filter-count-badge">{historyCounts.all}</span>
+          </button>
+          <button
+            type="button"
+            className={`wallet-filter-pill ${historyFilter === 'SETTLED' ? 'active' : ''}`}
+            onClick={() => setHistoryFilter('SETTLED')}
+          >
+            <span>Settled</span>
+            <span className="filter-count-badge">{historyCounts.settled}</span>
+          </button>
+          <button
+            type="button"
+            className={`wallet-filter-pill ${historyFilter === 'OUTSTANDING' ? 'active' : ''}`}
+            onClick={() => setHistoryFilter('OUTSTANDING')}
+          >
+            <span>Outstanding</span>
+            <span className="filter-count-badge">{historyCounts.outstanding}</span>
+          </button>
+          {historyCounts.pending > 0 && (
+            <button
+              type="button"
+              className={`wallet-filter-pill ${historyFilter === 'PENDING' ? 'active' : ''}`}
+              onClick={() => setHistoryFilter('PENDING')}
+            >
+              <span>Pending</span>
+              <span className="filter-count-badge info">{historyCounts.pending}</span>
+            </button>
+          )}
+        </div>
 
         {isLoading ? (
           <Loader type="skeleton" count={3} />
@@ -166,9 +316,20 @@ export const Wallet = () => {
             title="No Wallet Activity Yet"
             description="Your settled and submitted payments will appear here."
           />
+        ) : filteredHistory.length === 0 ? (
+          <div className="wallet-empty-filter glass-panel">
+            <p>No {historyFilter.toLowerCase()} transactions found.</p>
+            <button 
+              type="button" 
+              className="wallet-reset-filter-btn" 
+              onClick={() => setHistoryFilter('ALL')}
+            >
+              Show All Transactions
+            </button>
+          </div>
         ) : (
           <div className="wallet-history-list">
-            {history.map((item) => {
+            {filteredHistory.map((item) => {
               const statusMeta = STATUS_META[item.status] || { label: item.status, className: 'badge-info' }
               return (
                 <div key={item.id} className="wallet-history-item glass-panel">
@@ -177,7 +338,7 @@ export const Wallet = () => {
                     <span className="wallet-history-booking">{item.bookingNumber}</span>
                   </div>
                   <div className="wallet-history-side">
-                    <span className="wallet-history-amount">₹{item.cashCollected.toFixed(2)}</span>
+                    <span className="wallet-history-amount">₹{Number(item.cashCollected || 0).toFixed(2)}</span>
                     <span className={`badge ${statusMeta.className}`}>{statusMeta.label}</span>
                   </div>
                 </div>
@@ -197,3 +358,4 @@ export const Wallet = () => {
   )
 }
 export default Wallet
+

@@ -13,6 +13,9 @@ const playIncomingChime = () => {
     if (!AudioContextClass) return
 
     const audioCtx = new AudioContextClass()
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume().catch(() => {})
+    }
     const osc = audioCtx.createOscillator()
     const gainNode = audioCtx.createGain()
 
@@ -54,13 +57,19 @@ export const RideRequestModal = () => {
 
   useEffect(() => {
     if (showModal) {
+      const isAlertSoundEnabled = localStorage.getItem('ride_alerts_enabled') !== 'false'
+
       if (navigator.vibrate) {
         navigator.vibrate([400, 200, 400])
       }
-      playIncomingChime()
+      if (isAlertSoundEnabled) {
+        playIncomingChime()
+      }
 
       const chimeInterval = setInterval(() => {
-        playIncomingChime()
+        if (isAlertSoundEnabled) {
+          playIncomingChime()
+        }
       }, 1500)
 
       const vibrateInterval = setInterval(() => {

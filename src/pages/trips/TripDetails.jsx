@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import { FiArrowLeft, FiPhone, FiInfo, FiActivity, FiCheckCircle } from 'react-icons/fi'
+import { FiArrowLeft, FiInfo, FiActivity, FiCheckCircle } from 'react-icons/fi'
 import { useTripStore } from '../../store/tripStore'
 import { Card } from '../../components/common/Card/Card'
 import { StatusBadge } from '../../components/common/StatusBadge/StatusBadge'
@@ -17,7 +17,7 @@ export const TripDetails = () => {
   }, [id])
 
   const formatDateTime = (iso) => {
-    if (!iso) return '—'
+    if (!iso) return '-'
     return new Date(iso).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })
   }
 
@@ -84,11 +84,11 @@ export const TripDetails = () => {
             <div className="addresses-col">
               <div className="address-item">
                 <span className="addr-lbl">Pickup Location</span>
-                <p className="addr-val-txt">{pickup || '—'}</p>
+                <p className="addr-val-txt">{pickup || '-'}</p>
               </div>
               <div className="address-item">
                 <span className="addr-lbl">Dropoff Location</span>
-                <p className="addr-val-txt">{drop || '—'}</p>
+                <p className="addr-val-txt">{drop || '-'}</p>
               </div>
             </div>
           </div>
@@ -96,11 +96,11 @@ export const TripDetails = () => {
           <div className="route-meta-grid">
             <div className="route-meta-item">
               <span className="meta-lbl">Distance Travelled</span>
-              <p className="meta-val">{distanceKm != null ? `${distanceKm} km` : '—'}</p>
+              <p className="meta-val">{distanceKm != null ? `${distanceKm} km` : '-'}</p>
             </div>
             <div className="route-meta-item">
               <span className="meta-lbl">Payment Method</span>
-              <p className="meta-val">{paymentMethod || '—'}</p>
+              <p className="meta-val">{paymentMethod || '-'}</p>
             </div>
           </div>
         </div>
@@ -139,14 +139,14 @@ export const TripDetails = () => {
           <div className="odometer-records-grid">
             <div className="odometer-record-item">
               <span className="meta-lbl">Starting Odometer</span>
-              <p className="meta-val"><FiActivity /> {startOdometer != null ? `${startOdometer} km` : '—'}</p>
+              <p className="meta-val"><FiActivity /> {startOdometer != null ? `${startOdometer} km` : '-'}</p>
               {startOdometerImageUrl && (
                 <img src={startOdometerImageUrl} alt="Starting odometer" className="odometer-record-photo" />
               )}
             </div>
             <div className="odometer-record-item">
               <span className="meta-lbl">Ending Odometer</span>
-              <p className="meta-val"><FiActivity /> {endOdometer != null ? `${endOdometer} km` : '—'}</p>
+              <p className="meta-val"><FiActivity /> {endOdometer != null ? `${endOdometer} km` : '-'}</p>
               {endOdometerImageUrl && (
                 <img src={endOdometerImageUrl} alt="Ending odometer" className="odometer-record-photo" />
               )}
@@ -168,23 +168,6 @@ export const TripDetails = () => {
             </div>
           </div>
         </div>
-
-        {/* Customer Details */}
-        {(customerName || customerPhone) && (
-          <div className="details-customer-section">
-            <h4 className="details-sec-title">Rider Details</h4>
-            <div className="customer-info-card glass-panel">
-              <div className="customer-text-meta">
-                <h5>{customerName || 'Guest'}</h5>
-              </div>
-              {customerPhone && (
-                <a href={`tel:${customerPhone}`} className="call-cust-btn">
-                  <FiPhone />
-                </a>
-              )}
-            </div>
-          </div>
-        )}
       </Card>
     </div>
   )

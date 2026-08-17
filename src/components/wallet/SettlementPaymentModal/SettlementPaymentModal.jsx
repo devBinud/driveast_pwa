@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { createPortal } from 'react-dom'
 import { FiSend, FiX } from 'react-icons/fi'
 import './SettlementPaymentModal.css'
 
@@ -19,7 +20,7 @@ export const SettlementPaymentModal = ({ booking, isSubmitting, onClose, onSubmi
     onSubmit(booking.id, paymentMethod, remarks)
   }
 
-  return (
+  const modalContent = (
     <div className="settlement-modal-backdrop" onClick={onClose}>
       <div className="settlement-modal-sheet" onClick={(e) => e.stopPropagation()}>
         {/* Drag handle */}
@@ -86,6 +87,9 @@ export const SettlementPaymentModal = ({ booking, isSubmitting, onClose, onSubmi
       </div>
     </div>
   )
+
+  return createPortal(modalContent, document.body)
 }
 
 export default SettlementPaymentModal
+
