@@ -130,6 +130,83 @@
   margin-top: 1px;
 }
 
+/* Live QR panel */
+.payment-qr-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-lg);
+  background: #fff;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--card-border);
+}
+
+.payment-qr-image {
+  width: 200px;
+  height: 200px;
+  border-radius: var(--radius-sm);
+}
+
+.payment-qr-hint {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #334155;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+
+.payment-qr-status {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: 0.825rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.payment-qr-status .spin {
+  animation: payment-qr-spin 1s linear infinite;
+}
+
+@keyframes payment-qr-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.payment-qr-timer {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.payment-qr-cancel {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: var(--spacing-xs);
+}
+
+.payment-qr-cancel:hover {
+  color: var(--color-danger, #ef4444);
+}
+
+.payment-qr-expired {
+  color: var(--color-warning);
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
 /* Info Box */
 .payment-info-box {
   display: flex;
