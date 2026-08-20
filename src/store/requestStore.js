@@ -2,6 +2,17 @@ import { create } from 'zustand'
 import { driverService } from '../services/driverService'
 import { websocketService } from '../services/websocketService'
 
+// Real driving duration in minutes -> a readable string. Backend already excludes
+// this (and estimated_distance_km) entirely when a booking was never actually
+// geocoded, so callers only ever see this for real routes.
+const formatDurationMin = (mins) => {
+  if (mins == null) return null
+  if (mins < 60) return `${mins} mins`
+  const h = Math.floor(mins / 60)
+  const m = mins % 60
+  return m > 0 ? `${h}h ${m}m` : `${h}h`
+}
+
 export const useRequestStore = create((set, get) => ({
   requests: [],
   isMinimized: false,
@@ -25,6 +36,8 @@ export const useRequestStore = create((set, get) => ({
           drop: req.booking?.drop_location || 'Dropoff Location',
           dropLat: req.booking?.drop_lat,
           dropLng: req.booking?.drop_lng,
+          distance: req.booking?.estimated_distance_km != null ? `${req.booking.estimated_distance_km} km` : null,
+          duration: formatDurationMin(req.booking?.estimated_duration_min),
           fare: req.booking?.total_amount || 0,
           customerName: req.booking?.lead_traveler_name || 'Guest',
           customerPhone: req.booking?.lead_traveler_phone || '',
