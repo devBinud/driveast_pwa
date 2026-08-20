@@ -43,7 +43,9 @@ export const AssignedTrip = () => {
     <div className="assigned-trip-page page-container animate-fade-in">
       <div className="assigned-status-header">
         <span className="status-badge-inline">{isNavigating ? 'Navigating to Pickup' : 'Heading to Pickup'}</span>
-        <span className="status-subtitle-inline">Route: {currentTrip.distance || '130 km'} • {currentTrip.duration || '2.5 hrs'}</span>
+        {(currentTrip.distance || currentTrip.duration) && (
+          <span className="status-subtitle-inline">Route: {currentTrip.distance || '—'} • {currentTrip.duration || '—'}</span>
+        )}
       </div>
 
       <div className="assigned-status-view">

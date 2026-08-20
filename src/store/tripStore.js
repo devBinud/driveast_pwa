@@ -3,6 +3,17 @@ import toast from 'react-hot-toast'
 import { tripService } from '../services/tripService'
 import { websocketService } from '../services/websocketService'
 
+// Real driving duration in minutes -> a readable string. Backend already excludes
+// estimated_distance_km/estimated_duration_min entirely when a booking was never
+// actually geocoded, so callers only ever see this for real routes.
+const formatDurationMin = (mins) => {
+  if (mins == null) return null
+  if (mins < 60) return `${mins} mins`
+  const h = Math.floor(mins / 60)
+  const m = mins % 60
+  return m > 0 ? `${h}h ${m}m` : `${h}h`
+}
+
 export const useTripStore = create((set, get) => ({
   trips: [],
   upcomingTrips: [],
@@ -346,6 +357,8 @@ export const useTripStore = create((set, get) => ({
           drop: item.booking?.drop_location,
           date: item.booking?.pickup_date,
           time: item.booking?.pickup_time,
+          distance: item.booking?.estimated_distance_km != null ? `${item.booking.estimated_distance_km} km` : null,
+          duration: formatDurationMin(item.booking?.estimated_duration_min),
           fare: item.booking?.total_amount,
           customerName: item.booking?.lead_traveler_name,
           customerPhone: item.booking?.lead_traveler_phone
