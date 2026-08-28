@@ -130,10 +130,9 @@
   margin-top: 1px;
 }
 
-/* Live QR panel */
+/* Live QR panel -- this card holds ONLY the QR image, nothing else */
 .payment-qr-panel {
   display: flex;
-  flex-direction: column;
   background: #fff;
   border-radius: var(--radius-md);
   border: 1px solid var(--card-border);
@@ -146,14 +145,15 @@
   display: block;
 }
 
-/* Separate section below the QR: status + the cancel action */
+/* A fully separate card below the QR: status + the cancel action */
 .payment-qr-footer {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--spacing-sm);
-  padding: var(--spacing-md) var(--spacing-lg) var(--spacing-lg);
-  border-top: 1px solid var(--card-border);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--card-border);
   background: #fafafa;
 }
 
