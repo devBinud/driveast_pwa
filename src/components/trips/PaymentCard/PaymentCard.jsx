@@ -141,15 +141,17 @@ export const PaymentCard = ({
       {qr && qrStatus !== 'expired' && (
         <div className="payment-qr-panel">
           <img src={qr.image_url} alt="Razorpay UPI QR Code" className="payment-qr-image" />
-          <p className="payment-qr-hint">Ask the customer to scan with any UPI app (GPay / PhonePe / Paytm)</p>
-          <div className="payment-qr-status">
-            <FiLoader className="spin" />
-            <span>Waiting for payment…</span>
-            <span className="payment-qr-timer"><FiClock /> {mm}:{ss}</span>
+          <div className="payment-qr-footer">
+            <p className="payment-qr-hint">Ask the customer to scan with any UPI app (GPay / PhonePe / Paytm)</p>
+            <div className="payment-qr-status">
+              <FiLoader className="spin" />
+              <span>Waiting for payment…</span>
+              <span className="payment-qr-timer"><FiClock /> {mm}:{ss}</span>
+            </div>
+            <button type="button" className="payment-qr-cancel" onClick={resetQR}>
+              <FiX /> Cancel &amp; choose a different method
+            </button>
           </div>
-          <button type="button" className="payment-qr-cancel" onClick={resetQR}>
-            <FiX /> Cancel &amp; choose a different method
-          </button>
         </div>
       )}
 

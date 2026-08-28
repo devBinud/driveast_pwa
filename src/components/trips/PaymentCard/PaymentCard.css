@@ -134,21 +134,27 @@
 .payment-qr-panel {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-lg);
   background: #fff;
   border-radius: var(--radius-md);
   border: 1px solid var(--card-border);
+  overflow: hidden;
 }
 
 .payment-qr-image {
   width: 100%;
-  max-width: 260px;
   height: auto;
   display: block;
-  border-radius: var(--radius-sm);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* Separate section below the QR: status + the cancel action */
+.payment-qr-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-lg) var(--spacing-lg);
+  border-top: 1px solid var(--card-border);
+  background: #fafafa;
 }
 
 .payment-qr-hint {
@@ -189,18 +195,24 @@
 .payment-qr-cancel {
   display: flex;
   align-items: center;
-  gap: 4px;
-  background: transparent;
-  border: none;
-  color: var(--text-muted);
-  font-size: 0.75rem;
-  font-weight: 600;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  margin-top: var(--spacing-xs);
+  background: rgba(239, 68, 68, 0.06);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: var(--color-danger, #ef4444);
+  font-size: 0.8rem;
+  font-weight: 700;
   cursor: pointer;
-  padding: var(--spacing-xs);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
 }
 
 .payment-qr-cancel:hover {
-  color: var(--color-danger, #ef4444);
+  background: rgba(239, 68, 68, 0.12);
+  border-color: var(--color-danger, #ef4444);
 }
 
 .payment-qr-expired {
