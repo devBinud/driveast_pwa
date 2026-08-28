@@ -92,7 +92,7 @@ export const PaymentCard = ({
 
       <div className="payment-fare-showcase text-center">
         <span className="payment-fare-lbl">Collectable Amount</span>
-        <h2 className="payment-fare-value">₹{(qr?.amount ?? fare).toFixed(2)}</h2>
+        <h2 className="payment-fare-value">₹{Number(qr?.amount ?? fare).toFixed(2)}</h2>
       </div>
 
       {!qr && (
