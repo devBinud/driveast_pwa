@@ -1,7 +1,8 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { FiCamera, FiCheckCircle, FiRefreshCw } from 'react-icons/fi'
 import toast from 'react-hot-toast'
 import { fileService } from '../../../services/fileService'
+import { compressImage } from '../../../utils/imageCompressor'
 import './OdometerPhotoCapture.css'
 
 // Backend requires start_odometer_image_url / end_odometer_image_url on verify-otp
@@ -9,24 +10,57 @@ import './OdometerPhotoCapture.css'
 // 422 every time since the field has no default.
 export const OdometerPhotoCapture = ({ label, imageUrl, onUploaded }) => {
   const inputRef = useRef(null)
+  const previewRef = useRef(null)
   const [uploading, setUploading] = useState(false)
   const [previewUrl, setPreviewUrl] = useState(null)
+
+  useEffect(() => {
+    return () => {
+      // Revoke Object URL on component unmount to prevent browser memory leak
+      if (previewRef.current) {
+        URL.revokeObjectURL(previewRef.current)
+      }
+    }
+  }, [])
 
   const handleFileChange = async (e) => {
     const file = e.target.files?.[0]
     if (!file) return
 
-    setPreviewUrl(URL.createObjectURL(file))
+    // Revoke previous blob URL if any to free memory immediately
+    if (previewRef.current) {
+      URL.revokeObjectURL(previewRef.current)
+      previewRef.current = null
+    }
+
     setUploading(true)
     onUploaded(null)
+
     try {
-      const url = await fileService.uploadImage(file)
+      // 1. Compress image FIRST before previewing/uploading (downscales 20MB camera photo to ~150KB)
+      const compressedFile = await compressImage(file)
+
+      // 2. Create lightweight preview object URL from compressed file (prevents WebKit memory crash)
+      const objectUrl = URL.createObjectURL(compressedFile)
+      previewRef.current = objectUrl
+      setPreviewUrl(objectUrl)
+
+      // 3. Upload to backend CDN
+      const url = await fileService.uploadImage(compressedFile)
       onUploaded(url)
     } catch (err) {
       toast.error('Failed to upload odometer photo. Please try again.')
+      if (previewRef.current) {
+        URL.revokeObjectURL(previewRef.current)
+        previewRef.current = null
+      }
       setPreviewUrl(null)
     } finally {
       setUploading(false)
+      // Reset input value so selecting the same file again triggers onChange
+      if (inputRef.current) {
+        inputRef.current.value = ''
+      }
     }
   }
 

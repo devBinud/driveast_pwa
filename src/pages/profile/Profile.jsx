@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { FiUser, FiTruck, FiSettings, FiLogOut, FiPhone, FiMail, FiFileText, FiRefreshCw, FiInfo, FiMapPin } from 'react-icons/fi'
+import toast from 'react-hot-toast'
 import { useAuthStore } from '../../store/authStore'
 import { Card } from '../../components/common/Card/Card'
 import { Button } from '../../components/common/Button/Button'

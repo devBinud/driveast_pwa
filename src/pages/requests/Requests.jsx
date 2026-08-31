@@ -189,12 +189,7 @@ export const Requests = () => {
           onClick={() => handleTabChange('incoming')}
         >
           <FiRadio className="tab-icon" />
-          <span>Incoming Rides</span>
-          {requests.length > 0 ? (
-            <span className="tab-count-badge alert">{requests.length}</span>
-          ) : (
-            <span className="tab-count-badge">0</span>
-          )}
+          <span>Incoming Rides ({requests.length})</span>
         </button>
 
         <button
@@ -205,8 +200,7 @@ export const Requests = () => {
           onClick={() => handleTabChange('upcoming')}
         >
           <FiCalendar className="tab-icon" />
-          <span>Upcoming Bookings</span>
-          <span className="tab-count-badge">{upcomingTrips.length}</span>
+          <span>Upcoming Bookings ({upcomingTrips.length})</span>
         </button>
       </div>
 

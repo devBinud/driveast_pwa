@@ -18,7 +18,7 @@ import './MainLayout.css'
 // Pull-to-refresh is only meaningful on the 4 main bottom-nav tabs -- sub-screens
 // (request details, trip flow steps, profile) have no independent "refresh my data"
 // action, and enabling it there would just be confusing.
-const PULL_TO_REFRESH_ROUTES = new Set(['/', '/requests', '/trips', '/wallet'])
+const PULL_TO_REFRESH_ROUTES = new Set(['/', '/requests', '/trips', '/wallet', '/profile'])
 
 export const MainLayout = () => {
   const { isAuthenticated, token, fetchProfile } = useAuthStore()
@@ -98,10 +98,13 @@ export const MainLayout = () => {
       case '/wallet':
         await fetchWalletAll()
         break
+      case '/profile':
+        await fetchProfile()
+        break
       default:
         break
     }
-  }, [location.pathname, fetchWalletSummary, fetchTripsHistory, fetchPendingRequests, fetchWalletAll])
+  }, [location.pathname, fetchWalletSummary, fetchTripsHistory, fetchPendingRequests, fetchWalletAll, fetchProfile])
 
   const { pullDistance, isRefreshing, threshold } = usePullToRefresh(
     scrollContainerRef,
