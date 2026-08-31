@@ -133,16 +133,23 @@
 /* Live QR panel -- this card holds ONLY the QR image, nothing else */
 .payment-qr-panel {
   display: flex;
-  background: #fff;
+  justify-content: center;
+  align-items: center;
+  background: #ffffff;
   border-radius: var(--radius-md);
   border: 1px solid var(--card-border);
   overflow: hidden;
+  padding: var(--spacing-sm);
 }
 
 .payment-qr-image {
   width: 100%;
+  max-width: 220px;
+  max-height: 220px;
   height: auto;
+  object-fit: contain;
   display: block;
+  margin: 0 auto;
 }
 
 /* A fully separate card below the QR: status + the cancel action */

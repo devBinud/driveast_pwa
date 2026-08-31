@@ -1,6 +1,10 @@
 .payment-page-wrap {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: calc(100vh - var(--header-height) - var(--nav-height));
+  justify-content: flex-start;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  padding-bottom: calc(var(--nav-height) + 28px + env(safe-area-inset-bottom, 0px));
 }

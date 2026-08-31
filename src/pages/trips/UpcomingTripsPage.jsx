@@ -18,7 +18,7 @@ export const UpcomingTripsPage = () => {
           <FiArrowLeft /> Back to Home
         </Link>
         <div className="upcoming-header-title">
-          <h2>Upcoming Bookings</h2>
+          <h2>Upcoming Bookings ({upcomingTrips.length})</h2>
           <p className="upcoming-sub-lbl">Your scheduled future trips (7-10 days later)</p>
         </div>
       </div>

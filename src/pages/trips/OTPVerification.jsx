@@ -54,10 +54,6 @@ export const OTPVerification = () => {
         </div>
         <h2>Verify Guest OTP</h2>
         <p className="otp-desc">Enter passenger 4-digit code and vehicle initial odometer reading to begin trip.</p>
-        
-        <div className="otp-test-hint">
-          <span>Simulation Tip: OTP is <strong>{currentTrip.otpCode || '4829'}</strong> (or type <strong>1234</strong>)</span>
-        </div>
       </div>
 
       {otpError && (

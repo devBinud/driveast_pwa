@@ -19,7 +19,7 @@ export const UpcomingTrips = () => {
   return (
     <div className="upcoming-trips-section">
       <div className="upcoming-trips-header">
-        <h3 className="section-title">Upcoming Trips</h3>
+        <h3 className="section-title">Upcoming Trips ({upcomingTrips.length})</h3>
         {isOnline && upcomingTrips.length > 0 && (
           <span 
             className="view-all-trips-link" 
