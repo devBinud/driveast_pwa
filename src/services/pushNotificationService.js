@@ -15,11 +15,31 @@ function urlBase64ToUint8Array(base64String) {
   return outputArray
 }
 
+const registerSubscription = async () => {
+  const registration = await navigator.serviceWorker.ready
+  let subscription = await registration.pushManager.getSubscription()
+  if (!subscription) {
+    subscription = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+    })
+  }
+
+  const json = subscription.toJSON()
+  await api.post('/driver/me/push-subscriptions', {
+    endpoint: json.endpoint,
+    keys: { p256dh: json.keys.p256dh, auth: json.keys.auth }
+  })
+}
+
 export const pushNotificationService = {
   /**
    * Requests notification permission and registers this device with the backend
    * so it can receive ride requests / cancellations even while backgrounded or closed.
-   * Silently no-ops if unsupported, denied, or misconfigured -- push is a background
+   * Only call this from a direct user gesture (e.g. a button's onClick) -- browsers
+   * (Chrome especially) detect permission prompts fired without one and start
+   * silently auto-blocking future prompts for the whole site instead of showing them.
+   * Silently no-ops if unsupported or misconfigured -- push is a background
    * enhancement, never a login blocker.
    */
   async subscribe() {
@@ -32,23 +52,27 @@ export const pushNotificationService = {
     try {
       const permission = await Notification.requestPermission()
       if (permission !== 'granted') return
-
-      const registration = await navigator.serviceWorker.ready
-      let subscription = await registration.pushManager.getSubscription()
-      if (!subscription) {
-        subscription = await registration.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
-        })
-      }
-
-      const json = subscription.toJSON()
-      await api.post('/driver/me/push-subscriptions', {
-        endpoint: json.endpoint,
-        keys: { p256dh: json.keys.p256dh, auth: json.keys.auth }
-      })
+      await registerSubscription()
     } catch (err) {
       console.warn('Push subscription failed:', err)
+    }
+  },
+
+  /**
+   * Re-registers the push subscription on app load/login WITHOUT ever prompting --
+   * a no-op unless permission was already granted in a past explicit subscribe()
+   * call. Keeps the backend's subscription record fresh (e.g. after the browser
+   * rotated the push endpoint) without risking the auto-block behavior above.
+   */
+  async subscribeSilently() {
+    if (!VAPID_PUBLIC_KEY) return
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return
+    if (Notification.permission !== 'granted') return
+
+    try {
+      await registerSubscription()
+    } catch (err) {
+      console.warn('Push re-subscription failed:', err)
     }
   },
 

@@ -132,7 +132,6 @@ export const Wallet = () => {
         </button>
         <div className="header-titles">
           <h2>Wallet & Settlements</h2>
-          <span className="subtitle">Cash owed to admin & payment history</span>
         </div>
       </div>
 
