@@ -132,3 +132,49 @@
   font-weight: 800;
   color: var(--color-success);
 }
+
+/* Skeleton loading state */
+.skel-id {
+  width: 84px;
+  height: 12px;
+}
+
+.skel-time {
+  width: 110px;
+  height: 10px;
+  margin-top: 6px;
+}
+
+.skel-badge {
+  width: 76px;
+  height: 22px;
+  border-radius: var(--radius-full);
+}
+
+.skel-addr {
+  height: 12px;
+}
+
+.skel-addr-1 {
+  width: 75%;
+}
+
+.skel-addr-2 {
+  width: 50%;
+}
+
+.skel-stat {
+  width: 90px;
+  height: 12px;
+}
+
+.trip-card-fare .skel-fare-sub {
+  width: 42px;
+  height: 8px;
+}
+
+.trip-card-fare .skel-fare-amt {
+  width: 64px;
+  height: 17px;
+  margin-top: 5px;
+}

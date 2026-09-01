@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import { FiUser, FiTruck, FiSettings, FiLogOut, FiPhone, FiMail, FiFileText, FiRefreshCw, FiInfo, FiMapPin } from 'react-icons/fi'
+import { FiUser, FiTruck, FiSettings, FiLogOut, FiPhone, FiMail, FiFileText, FiRefreshCw, FiInfo, FiMapPin, FiBell, FiBellOff } from 'react-icons/fi'
 import toast from 'react-hot-toast'
 import { useAuthStore } from '../../store/authStore'
 import { Card } from '../../components/common/Card/Card'
 import { Button } from '../../components/common/Button/Button'
+import { pushNotificationService } from '../../services/pushNotificationService'
 import './Profile.css'
+
+const getPushSupportState = () => {
+  if (!('Notification' in window) || !('serviceWorker' in navigator) || !('PushManager' in window)) return 'unsupported'
+  return Notification.permission // 'granted' | 'denied' | 'default'
+}
 
 export const Profile = () => {
   const { user, logout, fetchProfile } = useAuthStore()
@@ -13,10 +19,28 @@ export const Profile = () => {
     const saved = localStorage.getItem('ride_alerts_enabled')
     return saved !== null ? saved === 'true' : true
   })
+  const [pushState, setPushState] = useState(getPushSupportState)
+  const [enablingPush, setEnablingPush] = useState(false)
 
   const handleToggleNotifications = (val) => {
     setNotifications(val)
     localStorage.setItem('ride_alerts_enabled', val ? 'true' : 'false')
+  }
+
+  const handleEnablePush = async () => {
+    setEnablingPush(true)
+    try {
+      await pushNotificationService.subscribe()
+    } finally {
+      const newState = getPushSupportState()
+      setPushState(newState)
+      setEnablingPush(false)
+      if (newState === 'granted') {
+        toast.success('Ride request notifications are on')
+      } else if (newState === 'denied') {
+        toast.error('Notifications were blocked. Enable them from your browser/site settings.')
+      }
+    }
   }
 
   useEffect(() => {
@@ -163,6 +187,34 @@ export const Profile = () => {
               className="toggle-switch-checkbox"
             />
           </div>
+
+          <div className="profile-toggle-row">
+            <div className="toggle-lbl-group">
+              <strong>Push Notifications</strong>
+              <span>
+                {pushState === 'granted' && 'On -- ride requests reach you even when the app is minimized'}
+                {pushState === 'default' && 'Off -- allow notifications to get rides while minimized'}
+                {pushState === 'denied' && 'Blocked -- enable notifications for this site in your browser settings'}
+                {pushState === 'unsupported' && 'Not supported on this browser'}
+              </span>
+            </div>
+            {pushState === 'granted' ? (
+              <span className="push-status-badge on"><FiBell /> Enabled</span>
+            ) : pushState === 'unsupported' ? (
+              <span className="push-status-badge off"><FiBellOff /> Unavailable</span>
+            ) : (
+              <Button
+                variant={pushState === 'denied' ? 'secondary' : 'primary'}
+                size="sm"
+                icon={FiBell}
+                loading={enablingPush}
+                disabled={pushState === 'denied'}
+                onClick={handleEnablePush}
+              >
+                {pushState === 'denied' ? 'Blocked' : 'Allow'}
+              </Button>
+            )}
+          </div>
         </div>
       </Card>
 
@@ -178,7 +230,7 @@ export const Profile = () => {
           </div>
           <div className="profile-info-row">
             <span className="info-lbl">App Version</span>
-            <span className="badge badge-success">v1.3.0</span>
+            <span className="badge badge-success">v1.3.1</span>
           </div>
         </div>
       </Card>

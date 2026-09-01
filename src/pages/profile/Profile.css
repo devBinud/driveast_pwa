@@ -150,12 +150,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: var(--spacing-sm);
 }
 
 .toggle-lbl-group {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  flex: 1;
+  min-width: 0;
 }
 
 .toggle-lbl-group strong {
@@ -201,4 +204,25 @@
 
 .toggle-switch-checkbox:checked::before {
   transform: translateX(20px);
+}
+
+.push-status-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.push-status-badge.on {
+  color: var(--color-success);
+  background: var(--color-success-bg);
+}
+
+.push-status-badge.off {
+  color: var(--text-muted);
+  background: var(--bg-tertiary);
 }

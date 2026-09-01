@@ -23,8 +23,9 @@ export const useAuthStore = create((set, get) => ({
         await get().fetchProfile()
         // Also called from MainLayout's mount effect (covers page reload with an
         // existing session); safe to call again here since it's idempotent --
-        // subscribe() reuses the existing PushSubscription if one is already active.
-        pushNotificationService.subscribe()
+        // subscribeSilently() reuses the existing PushSubscription if one is already
+        // active and never prompts (see pushNotificationService for why).
+        pushNotificationService.subscribeSilently()
         set({ isLoading: false })
         return true
       }

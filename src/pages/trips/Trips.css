@@ -56,6 +56,12 @@
   word-break: break-word;
 }
 
+.skel-summary-val {
+  width: 64px;
+  height: 20px;
+  margin-top: 4px;
+}
+
 .trips-history-list {
   display: grid;
   grid-template-columns: 1fr;

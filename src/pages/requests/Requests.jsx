@@ -200,7 +200,7 @@ export const Requests = () => {
           onClick={() => handleTabChange('upcoming')}
         >
           <FiCalendar className="tab-icon" />
-          <span>Upcoming Bookings ({upcomingTrips.length})</span>
+          <span>Upcoming Trips ({upcomingTrips.length})</span>
         </button>
       </div>
 

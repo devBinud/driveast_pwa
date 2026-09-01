@@ -175,9 +175,7 @@
 }
 
 .badge-success {
-  background: var(--color-success-bg);
   color: var(--color-success);
-  border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
 .badge-danger {
