@@ -11,8 +11,10 @@ COPY . .
 # passed as build args (not runtime env vars) -- set these in Coolify's build settings.
 ARG VITE_API_BASE_URL=https://api.driveast.com/api/v1
 ARG VITE_WS_BASE_URL=wss://api.driveast.com/api/v1
+ARG VITE_VAPID_PUBLIC_KEY=""
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 ENV VITE_WS_BASE_URL=$VITE_WS_BASE_URL
+ENV VITE_VAPID_PUBLIC_KEY=$VITE_VAPID_PUBLIC_KEY
 
 RUN npm run build
 
