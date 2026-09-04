@@ -1,6 +1,6 @@
 import React from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import { FiArrowLeft, FiMapPin, FiCalendar, FiClock, FiPhone, FiStar, FiUser, FiInfo, FiTrash2 } from 'react-icons/fi'
+import { FiArrowLeft, FiMapPin, FiCalendar, FiClock, FiPhone, FiUser, FiInfo, FiTrash2 } from 'react-icons/fi'
 import { useTripStore } from '../../store/tripStore'
 import { Card } from '../../components/common/Card/Card'
 import { Button } from '../../components/common/Button/Button'
@@ -31,7 +31,7 @@ export const UpcomingTripDetails = () => {
     )
   }
 
-  const { pickup, drop, date, time, distance, duration, fare, customerName, customerRating, customerAvatar, customerPhone } = trip
+  const { pickup, drop, date, time, distance, duration, fare, customerName, customerAvatar, customerPhone } = trip
 
   return (
     <div className="page-container animate-fade-in upcoming-details-container">
@@ -113,10 +113,6 @@ export const UpcomingTripDetails = () => {
             <img src={customerAvatar} alt={customerName} className="details-cust-avatar" />
             <div className="customer-text-meta">
               <h5>{customerName}</h5>
-              <div className="details-cust-rating">
-                <FiStar className="star-icon" />
-                <span>{customerRating != null ? Number(customerRating).toFixed(1) : '5.0'} Rating</span>
-              </div>
             </div>
             <a href={`tel:${customerPhone}`} className="call-cust-btn">
               <FiPhone />

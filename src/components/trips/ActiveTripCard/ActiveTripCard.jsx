@@ -15,7 +15,6 @@ export const ActiveTripCard = ({
     customerName,
     customerPhone,
     customerAvatar,
-    customerRating,
     pickup,
     drop,
     status

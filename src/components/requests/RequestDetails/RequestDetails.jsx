@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import { FiMapPin, FiNavigation, FiClock, FiStar, FiTrendingUp, FiCreditCard } from 'react-icons/fi'
+import { FiMapPin, FiNavigation, FiClock, FiTrendingUp, FiCreditCard } from 'react-icons/fi'
 import { Button } from '../../common/Button/Button'
 import { Card } from '../../common/Card/Card'
 import './RequestDetails.css'
@@ -22,7 +22,6 @@ export const RequestDetails = ({
     duration,
     fare,
     customerName,
-    customerRating,
     customerAvatar,
     pickupLatLng,
     dropLatLng
@@ -120,10 +119,6 @@ export const RequestDetails = ({
             <img src={customerAvatar} alt={customerName} className="req-cust-avatar-large" />
             <div>
               <h3 className="req-cust-name-title">{customerName}</h3>
-              <div className="req-cust-rating-lbl">
-                <FiStar className="star-icon" />
-                <span>{customerRating != null ? Number(customerRating).toFixed(2) : '5.00'} • Customer</span>
-              </div>
             </div>
           </div>
           <div className="req-details-price">
