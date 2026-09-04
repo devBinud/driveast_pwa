@@ -431,22 +431,116 @@ export const useTripStore = create(
   cancelTrip: () => set({ currentTrip: null }),
 
   /**
-   * Listens for a guest cancelling the booking mid-assignment (already accepted/en route).
-   * The WhatsApp message tells the driver too, but without this the app itself would keep
-   * showing an assigned/active trip for a ride that no longer exists.
+   * Reconciles currentTrip against the backend database.
+   * If the trip was cancelled by admin or guest, or completed, or unassigned,
+   * it clears currentTrip from memory and localStorage immediately.
+   */
+  syncCurrentTrip: async () => {
+    const { currentTrip } = get()
+    if (!currentTrip) return
+
+    // Immediately clear if status locally is marked cancelled/completed/rejected
+    const localStatus = (currentTrip.status || '').toLowerCase()
+    if (['cancelled', 'canceled', 'completed', 'rejected'].includes(localStatus)) {
+      set({ currentTrip: null })
+      return
+    }
+
+    const assignmentId = currentTrip.assignmentId || currentTrip.id
+    if (!assignmentId) {
+      set({ currentTrip: null })
+      return
+    }
+
+    try {
+      const res = await tripService.getTripDetails(assignmentId)
+      if (res?.success && res.data) {
+        const item = res.data
+        const assignmentStatus = (item.status || '').toUpperCase()
+        const bookingStatus = (item.booking?.status || '').toUpperCase()
+
+        const isCancelled =
+          ['CANCELLED', 'CANCELED', 'REJECTED'].includes(assignmentStatus) ||
+          ['CANCELLED', 'CANCELED', 'REJECTED'].includes(bookingStatus)
+
+        const isCompleted = assignmentStatus === 'COMPLETED' || bookingStatus === 'COMPLETED'
+
+        if (isCancelled || isCompleted) {
+          set({ currentTrip: null })
+          if (isCancelled) {
+            toast('The previous ride was cancelled.', { icon: 'ℹ️' })
+          }
+          return
+        }
+
+        // If backend has an updated status (e.g., driver_arrived or in_progress)
+        const backendStatus = (item.status || '').toLowerCase()
+        if (backendStatus && backendStatus !== localStatus) {
+          set((state) => ({
+            currentTrip: state.currentTrip ? { ...state.currentTrip, status: backendStatus } : null
+          }))
+        }
+      } else {
+        set({ currentTrip: null })
+      }
+    } catch (err) {
+      // 404/400/410 means the trip assignment is no longer active / unassigned
+      if ([400, 403, 404, 410].includes(err?.response?.status)) {
+        set({ currentTrip: null })
+      }
+    }
+  },
+
+  /**
+   * Listens for cancellations from admin or guests mid-assignment.
+   * Clears currentTrip and notifies the driver so they aren't stuck on a phantom ride.
    */
   initWebSocketListeners: () => {
-    const unbindCancelled = websocketService.on('trip_cancelled', (data) => {
+    const cancelEvents = [
+      'trip_cancelled',
+      'booking_cancelled',
+      'assignment_cancelled',
+      'ride_cancelled',
+      'trip_unassigned',
+      'admin_cancelled'
+    ]
+
+    const handleCancellation = (data) => {
       const { currentTrip } = get()
       if (!currentTrip) return
-      if (currentTrip.bookingId === data.booking_id || currentTrip.id === data.booking_id) {
+
+      const targetId = String(
+        data?.booking_id ||
+        data?.bookingId ||
+        data?.assignment_id ||
+        data?.assignmentId ||
+        data?.trip_id ||
+        data?.id ||
+        ''
+      )
+
+      const currentBookingId = String(currentTrip.bookingId || '')
+      const currentAssignmentId = String(currentTrip.assignmentId || currentTrip.id || '')
+      const currentBookingNumber = String(currentTrip.bookingNumber || '')
+
+      if (
+        !targetId ||
+        targetId === currentBookingId ||
+        targetId === currentAssignmentId ||
+        targetId === currentBookingNumber
+      ) {
         set({ currentTrip: null })
-        toast.error('This booking was cancelled by the guest.')
+        const msg = data?.message || data?.reason || 'This ride was cancelled by the admin / guest.'
+        toast.error(msg)
       }
-    })
+    }
+
+    const unbinders = cancelEvents.map((evt) =>
+      websocketService.on(evt, handleCancellation)
+    )
 
     return () => {
-      unbindCancelled()
+      unbinders.forEach((unbind) => unbind && unbind())
     }
   }
     }),

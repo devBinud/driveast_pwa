@@ -69,11 +69,11 @@ export const RequestCard = ({
           <div className="route-addresses">
             <div className="address-item">
               <span className="addr-lbl">Pickup</span>
-              <p className="addr-text">{pickup}</p>
+              <p className="addr-text" title={pickup}>{pickup}</p>
             </div>
             <div className="address-item">
               <span className="addr-lbl">Dropoff</span>
-              <p className="addr-text">{drop}</p>
+              <p className="addr-text" title={drop}>{drop}</p>
             </div>
           </div>
         </div>

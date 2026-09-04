@@ -37,21 +37,21 @@ export const PWAInstallModal = () => {
         </div>
 
         <p className="pwa-description">
-         Add DriveEast to your home screen for instant ride alerts and faster navigation.
+          Add DriveEast to your home screen for instant ride alerts and faster navigation.
         </p>
 
-        {/* <ul className="pwa-feature-list">
+        <ul className="pwa-feature-list">
           <li>
             <FiCheckCircle className="check-icon" />
-            <span>Instant Dispatch Push Notifications</span>
+            <span>Allow notifications during installation to receive trips</span>
           </li>
           <li>
             <FiCheckCircle className="check-icon" />
-            <span>Faster 1 Tap Home Screen Access</span>
+            <span>Stay alert for incoming new ride requests</span>
           </li>
-        </ul> */}
+        </ul>
 
-        <div className="pwa-action-buttons" style={{paddingTop:"30px"}}>
+        <div className="pwa-action-buttons">
           {/* Later / Remind in 10 Minutes */}
           <button
             type="button"

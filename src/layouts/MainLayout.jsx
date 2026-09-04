@@ -29,6 +29,7 @@ export const MainLayout = () => {
   const initWebSocketListeners = useRequestStore((state) => state.initWebSocketListeners)
   const { requests, isMinimized, setMinimized } = useRequestStore()
   const currentTrip = useTripStore((state) => state.currentTrip)
+  const syncCurrentTrip = useTripStore((state) => state.syncCurrentTrip)
   const initTripWebSocketListeners = useTripStore((state) => state.initWebSocketListeners)
   const fetchTripsHistory = useTripStore((state) => state.fetchTripsHistory)
   const fetchWalletSummary = useWalletStore((state) => state.fetchSummary)
@@ -59,6 +60,7 @@ export const MainLayout = () => {
       const cleanupTripWs = initTripWebSocketListeners()
       fetchPendingRequests()
       fetchWalletSummary()
+      syncCurrentTrip()
       pushNotificationService.subscribeSilently()
 
       // Safety-net polling: the WebSocket push can silently fail to reach this device
@@ -89,7 +91,7 @@ export const MainLayout = () => {
   const handlePullToRefresh = useCallback(async () => {
     switch (location.pathname) {
       case '/':
-        await Promise.all([fetchWalletSummary(), fetchTripsHistory(), fetchPendingRequests()])
+        await Promise.all([fetchWalletSummary(), fetchTripsHistory(), fetchPendingRequests(), syncCurrentTrip()])
         break
       case '/requests':
         await fetchPendingRequests()

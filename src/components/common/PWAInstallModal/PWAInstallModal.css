@@ -101,25 +101,31 @@
 
 .pwa-feature-list {
   list-style: none;
-  padding: 0;
+  padding: 10px 14px;
   margin: 0 0 1.25rem 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+  background: rgba(251, 191, 36, 0.08);
+  border: 1px solid rgba(251, 191, 36, 0.25);
+  border-radius: var(--radius-md);
 }
 
 .pwa-feature-list li {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  align-items: flex-start;
+  gap: 10px;
   font-size: 0.825rem;
   font-weight: 600;
   color: #1f2937;
+  line-height: 1.35;
 }
 
 .pwa-feature-list .check-icon {
-  color: #10b981;
-  font-size: 1rem;
+  color: #d97706;
+  font-size: 1.05rem;
+  flex-shrink: 0;
+  margin-top: 1px;
 }
 
 .pwa-action-buttons {

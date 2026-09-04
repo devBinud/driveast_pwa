@@ -136,11 +136,9 @@ export const RideRequestModal = () => {
         <div className="request-modal-list-header">
           <div className="header-top-row">
             <div className="header-brand-group">
-              <img 
-                src="/logo/driveast_logo.jpg" 
-                alt="Driveast Logo" 
-                className="modal-logo-img"
-              />
+              <div className="modal-brand-avatar" aria-label="Driveast">
+                <span>D</span>
+              </div>
               <div className="status-badge">
                 <span>{requests.length} Incoming {requests.length > 1 ? 'Rides' : 'Ride'}</span>
               </div>

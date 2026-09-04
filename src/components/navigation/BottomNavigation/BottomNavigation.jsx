@@ -2,14 +2,12 @@ import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { FiHome, FiCompass, FiMapPin, FiCreditCard, FiUser } from 'react-icons/fi'
 import { useRequestStore } from '../../../store/requestStore'
-import { useTripStore } from '../../../store/tripStore'
 import { useWalletStore } from '../../../store/walletStore'
 import './BottomNavigation.css'
 
 export const BottomNavigation = () => {
   const location = useLocation()
   const requests = useRequestStore((state) => state.requests)
-  const currentTrip = useTripStore((state) => state.currentTrip)
   const outstandingCount = useWalletStore((state) => state.summary.outstandingBookingsCount)
   const activePath = location.pathname
 

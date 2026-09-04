@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
 import { FiNavigation, FiActivity, FiMapPin } from 'react-icons/fi'
 import toast from 'react-hot-toast'
@@ -11,11 +11,15 @@ import './ActiveTrip.css'
 
 export const ActiveTrip = () => {
   const navigate = useNavigate()
-  const { currentTrip, endTrip, isLoadingTrip } = useTripStore()
+  const { currentTrip, syncCurrentTrip, endTrip, isLoadingTrip } = useTripStore()
   const [endOdo, setEndOdo] = useState('45340')
   const [endOdoImageUrl, setEndOdoImageUrl] = useState(null)
   const [loading, setLoading] = useState(false)
   const [showOdoModal, setShowOdoModal] = useState(false)
+
+  useEffect(() => {
+    syncCurrentTrip()
+  }, [syncCurrentTrip])
 
   if (!currentTrip) {
     return <Navigate to="/" replace />
