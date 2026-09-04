@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import { FiMapPin, FiNavigation, FiClock, FiTrendingUp, FiCreditCard } from 'react-icons/fi'
+import { FiMapPin, FiNavigation, FiClock, FiCreditCard } from 'react-icons/fi'
 import { Button } from '../../common/Button/Button'
 import { Card } from '../../common/Card/Card'
 import './RequestDetails.css'
@@ -97,11 +97,6 @@ export const RequestDetails = ({
     }
   }, [pickupLatLng, dropLatLng])
 
-  // Mock Fare Details Breakout
-  const baseFare = fare * 0.4
-  const distanceFare = fare * 0.45
-  const surgeFare = fare * 0.15
-
   return (
     <div className="req-details-layout">
       {/* Map Header */}
@@ -122,8 +117,8 @@ export const RequestDetails = ({
             </div>
           </div>
           <div className="req-details-price">
-            <span className="price-label">Net Earning</span>
-            <span className="price-val">₹{fare.toFixed(2)}</span>
+            <span className="price-label">Trip Fare</span>
+            <span className="price-val">₹{Number(fare || 0).toFixed(2)}</span>
           </div>
         </div>
 
@@ -158,37 +153,22 @@ export const RequestDetails = ({
             <span className="stat-box-lbl">Duration</span>
             <span className="stat-box-val">{duration}</span>
           </Card>
-          <Card className="req-stat-box">
-            <FiTrendingUp className="stat-box-icon text-warning" />
-            <span className="stat-box-lbl">Surge Pricing</span>
-            <span className="stat-box-val text-warning">1.25x</span>
-          </Card>
         </div>
 
-        {/* Fare Breakdown Details */}
+        {/* Fare summary. The dispatch payload carries only the trip total --
+            there is no per-component breakdown to show, and the figures that
+            used to sit here (base rate, distance rate, a 1.25x "surge") were
+            fixed percentages of the total, not anything the backend sent. */}
         <Card className="req-details-breakdown-card">
-          <h4 className="breakdown-title">Earnings Breakdown</h4>
           <div className="breakdown-rows">
-            <div className="breakdown-row">
-              <span className="breakdown-row-lbl">Base Rate</span>
-              <span>₹{baseFare.toFixed(2)}</span>
-            </div>
-            <div className="breakdown-row">
-              <span className="breakdown-row-lbl">Distance & Duration Rate</span>
-              <span>₹{distanceFare.toFixed(2)}</span>
-            </div>
-            <div className="breakdown-row">
-              <span className="breakdown-row-lbl">High Demand Surge</span>
-              <span className="text-warning">+₹{surgeFare.toFixed(2)}</span>
-            </div>
             <div className="breakdown-row-total">
-              <span>Driver Payout</span>
-              <span className="text-primary">₹{fare.toFixed(2)}</span>
+              <span>Trip Fare</span>
+              <span className="text-primary">₹{Number(fare || 0).toFixed(2)}</span>
             </div>
           </div>
           <div className="payout-type-indicator">
             <FiCreditCard />
-            <span>This ride is prepaid (Online Wallet)</span>
+            <span>Collect from the customer at drop-off (cash or UPI)</span>
           </div>
         </Card>
 
