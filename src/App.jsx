@@ -1,11 +1,12 @@
 import React from 'react'
 import { Toaster } from 'react-hot-toast'
 import { AppRoutes } from './routes/AppRoutes'
+import { ErrorBoundary } from './components/common/ErrorBoundary'
 import { PWAInstallModal } from './components/common/PWAInstallModal/PWAInstallModal'
 
 function App() {
   return (
-    <>
+    <ErrorBoundary>
       <AppRoutes />
 
       {/* PWA Install Modal Prompt */}
@@ -28,7 +29,7 @@ function App() {
           }
         }}
       />
-    </>
+    </ErrorBoundary>
   )
 }
 

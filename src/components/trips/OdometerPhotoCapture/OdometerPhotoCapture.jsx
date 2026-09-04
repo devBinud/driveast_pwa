@@ -21,6 +21,13 @@ export const OdometerPhotoCapture = ({ label, imageUrl, onUploaded }) => {
   const [showCameraModal, setShowCameraModal] = useState(false)
   const [isCameraStarting, setIsCameraStarting] = useState(false)
 
+  const stopCamera = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop())
+      streamRef.current = null
+    }
+  }
+
   useEffect(() => {
     return () => {
       stopCamera()
@@ -29,13 +36,6 @@ export const OdometerPhotoCapture = ({ label, imageUrl, onUploaded }) => {
       }
     }
   }, [])
-
-  const stopCamera = () => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach((track) => track.stop())
-      streamRef.current = null
-    }
-  }
 
   const handleBoxClick = () => {
     if (uploading) return

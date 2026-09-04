@@ -122,7 +122,7 @@ export const RequestDetails = ({
               <h3 className="req-cust-name-title">{customerName}</h3>
               <div className="req-cust-rating-lbl">
                 <FiStar className="star-icon" />
-                <span>{customerRating.toFixed(2)} • Customer</span>
+                <span>{customerRating != null ? Number(customerRating).toFixed(2) : '5.00'} • Customer</span>
               </div>
             </div>
           </div>

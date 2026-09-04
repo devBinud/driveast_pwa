@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 import toast from 'react-hot-toast'
 import { tripService } from '../services/tripService'
 import { websocketService } from '../services/websocketService'
@@ -14,18 +15,20 @@ const formatDurationMin = (mins) => {
   return m > 0 ? `${h}h ${m}m` : `${h}h`
 }
 
-export const useTripStore = create((set, get) => ({
-  trips: [],
-  upcomingTrips: [],
-  currentTrip: null,
-  otpCode: '',
-  otpInput: '',
-  otpError: '',
-  startOdometer: '',
-  endOdometer: '',
-  paymentMethod: 'CASH',
-  isLoadingTrip: false,
-  tripError: null,
+export const useTripStore = create(
+  persist(
+    (set, get) => ({
+      trips: [],
+      upcomingTrips: [],
+      currentTrip: null,
+      otpCode: '',
+      otpInput: '',
+      otpError: '',
+      startOdometer: '',
+      endOdometer: '',
+      paymentMethod: 'CASH',
+      isLoadingTrip: false,
+      tripError: null,
 
   setAssignedTrip: (req) => {
     set({
@@ -446,4 +449,17 @@ export const useTripStore = create((set, get) => ({
       unbindCancelled()
     }
   }
-}))
+    }),
+    {
+      name: 'driveast_trip_state',
+      partialize: (state) => ({
+        currentTrip: state.currentTrip,
+        otpCode: state.otpCode,
+        otpInput: state.otpInput,
+        startOdometer: state.startOdometer,
+        endOdometer: state.endOdometer,
+        paymentMethod: state.paymentMethod
+      })
+    }
+  )
+)

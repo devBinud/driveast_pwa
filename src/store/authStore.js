@@ -53,6 +53,7 @@ export const useAuthStore = create((set, get) => ({
     } catch (e) {
       localStorage.removeItem('driveast_token')
     }
+    localStorage.removeItem('driveast_trip_state')
     websocketService.disconnectAll()
     set({ isAuthenticated: false, token: null, user: null, error: null })
   },
@@ -82,6 +83,7 @@ export const useAuthStore = create((set, get) => ({
           currentLat: d.current_lat,
           currentLng: d.current_lng,
           isActive: d.is_active !== undefined ? d.is_active : true,
+          rating: Number(d.rating ?? d.driver_rating ?? 5.0),
           avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(d.name || 'Driver')}&background=fbbf24&color=000000&bold=true`
         }
         set({ user: userObj })

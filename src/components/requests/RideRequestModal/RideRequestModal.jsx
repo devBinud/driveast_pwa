@@ -16,21 +16,30 @@ const playIncomingChime = () => {
     if (audioCtx.state === 'suspended') {
       audioCtx.resume().catch(() => {})
     }
+
+    // High urgency dual-tone driver alert siren
     const osc = audioCtx.createOscillator()
     const gainNode = audioCtx.createGain()
 
     osc.connect(gainNode)
     gainNode.connect(audioCtx.destination)
 
-    osc.type = 'sine'
-    gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime)
-    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.45)
+    // Use triangle/sawtooth for punchy, piercing sound that cuts through car/road noise
+    osc.type = 'triangle'
+    const now = audioCtx.currentTime
 
-    osc.frequency.setValueAtTime(659.25, audioCtx.currentTime)
-    osc.frequency.setValueAtTime(880.00, audioCtx.currentTime + 0.15)
+    // Loud, clear volume (0.4 vs previous 0.08 whisper)
+    gainNode.gain.setValueAtTime(0.45, now)
+    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.6)
 
-    osc.start()
-    osc.stop(audioCtx.currentTime + 0.45)
+    // Pulsing two-tone alert siren (800Hz -> 1050Hz -> 800Hz)
+    osc.frequency.setValueAtTime(784.00, now)         // G5
+    osc.frequency.setValueAtTime(1046.50, now + 0.15) // C6
+    osc.frequency.setValueAtTime(784.00, now + 0.3)   // G5
+    osc.frequency.setValueAtTime(1046.50, now + 0.45) // C6
+
+    osc.start(now)
+    osc.stop(now + 0.6)
   } catch (error) {
     console.warn('Audio Context failed for incoming chime:', error)
   }
@@ -59,8 +68,9 @@ export const RideRequestModal = () => {
     if (showModal) {
       const isAlertSoundEnabled = localStorage.getItem('ride_alerts_enabled') !== 'false'
 
+      // Heavy, urgent vibration pulses designed for drivers driving in car / noisy vehicle
       if (navigator.vibrate) {
-        navigator.vibrate([400, 200, 400])
+        navigator.vibrate([500, 150, 500, 150, 500])
       }
       if (isAlertSoundEnabled) {
         playIncomingChime()
@@ -70,13 +80,13 @@ export const RideRequestModal = () => {
         if (isAlertSoundEnabled) {
           playIncomingChime()
         }
-      }, 1500)
+      }, 1200)
 
       const vibrateInterval = setInterval(() => {
         if (navigator.vibrate) {
-          navigator.vibrate([300, 150, 300])
+          navigator.vibrate([400, 150, 400])
         }
-      }, 3500)
+      }, 2000)
 
       return () => {
         clearInterval(chimeInterval)

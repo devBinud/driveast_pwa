@@ -11,11 +11,11 @@ export const fileService = {
    * @returns {Promise<string>} the public CDN URL of the uploaded file
    */
   async uploadImage(file, folder = 'trip-odometer') {
-    const compressedFile = await compressImage(file)
     const formData = new FormData()
-    formData.append('file', compressedFile)
+    formData.append('file', file)
     const res = await api.post(`/files/upload?folder=${encodeURIComponent(folder)}`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
+      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 60000 // Extended 60s timeout for rural 3G/4G photo uploads
     })
     return res?.data?.url
   }

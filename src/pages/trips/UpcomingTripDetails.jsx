@@ -115,7 +115,7 @@ export const UpcomingTripDetails = () => {
               <h5>{customerName}</h5>
               <div className="details-cust-rating">
                 <FiStar className="star-icon" />
-                <span>{customerRating.toFixed(1)} Rating</span>
+                <span>{customerRating != null ? Number(customerRating).toFixed(1) : '5.0'} Rating</span>
               </div>
             </div>
             <a href={`tel:${customerPhone}`} className="call-cust-btn">

@@ -1,11 +1,12 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { FiAward, FiNavigation, FiMapPin, FiAlertCircle, FiRefreshCw } from 'react-icons/fi'
+import { FiAward, FiNavigation, FiMapPin, FiAlertCircle, FiRefreshCw, FiBell } from 'react-icons/fi'
 import { FaRupeeSign } from 'react-icons/fa'
 import { useDriverStatus } from '../../../hooks/useDriverStatus'
 import { useAuthStore } from '../../../store/authStore'
 import { useLocation } from '../../../hooks/useLocation'
 import { AvailabilityStatus } from '../../../services/driverService'
+import { pushNotificationService } from '../../../services/pushNotificationService'
 import { Card } from '../../common/Card/Card'
 import './StatusCard.css'
 
@@ -13,6 +14,23 @@ export const StatusCard = () => {
   const { isOnline, availabilityStatus, todayEarnings, completedTripsCount, setDutyModalOpen } = useDriverStatus()
   const { user } = useAuthStore()
   const { locationDetails, permissionDenied, requestLocation } = useLocation()
+  const [pushPermission, setPushPermission] = useState(
+    typeof window !== 'undefined' && 'Notification' in window ? Notification.permission : 'default'
+  )
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      setPushPermission(Notification.permission)
+    }
+  }, [isOnline])
+
+  const handleEnablePush = async (e) => {
+    e.stopPropagation()
+    await pushNotificationService.subscribe()
+    if ('Notification' in window) {
+      setPushPermission(Notification.permission)
+    }
+  }
 
   const getStatusHeading = () => {
     switch (availabilityStatus) {
@@ -168,6 +186,26 @@ export const StatusCard = () => {
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Push Notification Alert when Online */}
+      {isOnline && pushPermission !== 'granted' && (
+        <div className="status-push-alert-row">
+          <div className="push-alert-info">
+            <FiBell className="push-alert-icon" />
+            <div className="push-alert-text">
+              <strong>Push Notifications Off</strong>
+              <span>Turn on alerts to get ride offers when phone is locked</span>
+            </div>
+          </div>
+          <button
+            type="button"
+            className="push-alert-action-btn"
+            onClick={handleEnablePush}
+          >
+            Turn On
+          </button>
         </div>
       )}
     </Card>

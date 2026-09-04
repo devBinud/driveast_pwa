@@ -12,11 +12,6 @@ export const OTPVerification = () => {
   const { currentTrip, otpInput, otpError, setOtpInput, verifyOtp, startTrip, isLoadingTrip } = useTripStore()
   const [startOdo, setStartOdo] = useState('45210')
   const [startOdoImageUrl, setStartOdoImageUrl] = useState(null)
-
-  if (!currentTrip) {
-    return <Navigate to="/" replace />
-  }
-
   const inputRef = React.useRef(null)
 
   React.useEffect(() => {
@@ -24,6 +19,10 @@ export const OTPVerification = () => {
       inputRef.current.focus()
     }
   }, [])
+
+  if (!currentTrip) {
+    return <Navigate to="/" replace />
+  }
 
   const handleInputChange = (e) => {
     const value = e.target.value

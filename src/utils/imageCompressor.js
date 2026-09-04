@@ -19,10 +19,29 @@ export async function compressImage(file, options = {}) {
 
   return new Promise((resolve) => {
     let objectUrl = null
+    let resolved = false
+
+    const safeResolve = (val) => {
+      if (resolved) return
+      resolved = true
+      if (timeoutId) clearTimeout(timeoutId)
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl)
+        objectUrl = null
+      }
+      resolve(val)
+    }
+
+    // Safeguard: If img.onload never fires (e.g. corrupted camera stream/unsupported decode), don't hang forever
+    const timeoutId = setTimeout(() => {
+      console.warn('Image compression timed out; proceeding with original file')
+      safeResolve(file)
+    }, 8000)
+
     try {
       objectUrl = URL.createObjectURL(file)
     } catch (e) {
-      resolve(file)
+      safeResolve(file)
       return
     }
 
@@ -30,11 +49,6 @@ export async function compressImage(file, options = {}) {
     img.src = objectUrl
 
     img.onload = () => {
-      if (objectUrl) {
-        URL.revokeObjectURL(objectUrl)
-        objectUrl = null
-      }
-
       let { width, height } = img
 
       // Calculate aspect ratio downscaling if larger than max dimensions
@@ -54,7 +68,7 @@ export async function compressImage(file, options = {}) {
 
       const ctx = canvas.getContext('2d')
       if (!ctx) {
-        resolve(file)
+        safeResolve(file)
         return
       }
 
@@ -64,7 +78,7 @@ export async function compressImage(file, options = {}) {
       canvas.toBlob(
         (blob) => {
           if (!blob) {
-            resolve(file)
+            safeResolve(file)
             return
           }
 
@@ -80,7 +94,7 @@ export async function compressImage(file, options = {}) {
           img.onload = null
           img.src = ''
 
-          resolve(compressedFile)
+          safeResolve(compressedFile)
         },
         'image/jpeg',
         quality
@@ -88,11 +102,7 @@ export async function compressImage(file, options = {}) {
     }
 
     img.onerror = () => {
-      if (objectUrl) {
-        URL.revokeObjectURL(objectUrl)
-        objectUrl = null
-      }
-      resolve(file)
+      safeResolve(file)
     }
   })
 }
