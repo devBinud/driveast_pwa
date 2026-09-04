@@ -127,9 +127,6 @@ export const Wallet = () => {
     <div className="wallet-page page-container animate-fade-in">
       {/* Header */}
       <div className="wallet-header">
-        <button className="btn-back" onClick={() => navigate(-1)} aria-label="Go Back">
-          <FiArrowLeft />
-        </button>
         <div className="header-titles">
           <h2>Wallet & Settlements</h2>
         </div>
@@ -231,7 +228,7 @@ export const Wallet = () => {
       <div className="wallet-section">
         <div className="wallet-section-header-row">
           <h3 className="section-heading">Wallet History</h3>
-          
+
           {/* Custom Sleek Sort Dropdown */}
           <div className="wallet-sort-container" ref={sortRef}>
             <button
@@ -318,9 +315,9 @@ export const Wallet = () => {
         ) : filteredHistory.length === 0 ? (
           <div className="wallet-empty-filter glass-panel">
             <p>No {historyFilter.toLowerCase()} transactions found.</p>
-            <button 
-              type="button" 
-              className="wallet-reset-filter-btn" 
+            <button
+              type="button"
+              className="wallet-reset-filter-btn"
               onClick={() => setHistoryFilter('ALL')}
             >
               Show All Transactions
