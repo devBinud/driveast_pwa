@@ -46,15 +46,19 @@ export const useNotifications = () => {
         <div style={{
           width: '32px',
           height: '32px',
-          borderRadius: '50%',
-          background: 'var(--bg-tertiary)',
+          borderRadius: '8px',
+          background: 'var(--color-primary, #fbbf24)',
+          color: '#ffffff',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: '1rem',
-          flexShrink: 0
+          fontWeight: 900,
+          fontSize: '1.1rem',
+          flexShrink: 0,
+          boxShadow: '0 2px 6px rgba(251, 191, 36, 0.35)',
+          userSelect: 'none'
         }}>
-          🔔
+          D
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', flex: 1, textAlign: 'left' }}>
           <span style={{ fontWeight: 700, color: 'var(--text-primary)', fontSize: '0.825rem', lineHeight: 1.2 }}>

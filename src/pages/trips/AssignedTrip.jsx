@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
 import { FiCompass, FiMapPin } from 'react-icons/fi'
 import { useTripStore } from '../../store/tripStore'
@@ -8,8 +8,12 @@ import './AssignedTrip.css'
 
 export const AssignedTrip = () => {
   const navigate = useNavigate()
-  const { currentTrip, startNavigationToPickup, arriveAtPickup, isLoadingTrip } = useTripStore()
+  const { currentTrip, syncCurrentTrip, startNavigationToPickup, arriveAtPickup, isLoadingTrip } = useTripStore()
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    syncCurrentTrip()
+  }, [syncCurrentTrip])
 
   if (!currentTrip) {
     return <Navigate to="/" replace />

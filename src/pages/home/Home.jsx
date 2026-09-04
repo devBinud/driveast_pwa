@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { FiChevronRight, FiNavigation } from 'react-icons/fi'
+import { FiChevronRight, FiNavigation, FiX } from 'react-icons/fi'
 import { FaIndianRupeeSign } from 'react-icons/fa6'
+import toast from 'react-hot-toast'
 import { useAuth } from '../../hooks/useAuth'
 import { useTripStore } from '../../store/tripStore'
 import { useWalletStore } from '../../store/walletStore'
@@ -10,12 +11,45 @@ import { UpcomingTrips } from '../../components/dashboard/UpcomingTrips/Upcoming
 import { Card } from '../../components/common/Card/Card'
 import './Home.css'
 
+const ACTIVE_TRIP_STATUSES = [
+  'assigned',
+  'navigating',
+  'arrived',
+  'driver_arrived',
+  'otp_verified',
+  'active',
+  'in_progress',
+  'payment_pending'
+]
+
 export const Home = () => {
   const { user } = useAuth()
   const currentTrip = useTripStore((state) => state.currentTrip)
+  const syncCurrentTrip = useTripStore((state) => state.syncCurrentTrip)
+  const clearCurrentTrip = useTripStore((state) => state.clearCurrentTrip)
   // Populated centrally by MainLayout on login so the bottom-nav badge and this card
   // both stay in sync without each page re-fetching independently.
   const walletSummary = useWalletStore((state) => state.summary)
+
+  // Reconcile with backend whenever Home is rendered
+  useEffect(() => {
+    syncCurrentTrip()
+  }, [syncCurrentTrip])
+
+  const tripStatus = (currentTrip?.status || '').toLowerCase()
+  const isTripActive = Boolean(
+    currentTrip &&
+    tripStatus &&
+    ACTIVE_TRIP_STATUSES.includes(tripStatus) &&
+    !['cancelled', 'canceled', 'completed', 'rejected'].includes(tripStatus)
+  )
+
+  // If locally held trip is explicitly cancelled or completed, clean it up immediately
+  useEffect(() => {
+    if (currentTrip && !isTripActive) {
+      clearCurrentTrip()
+    }
+  }, [currentTrip, isTripActive, clearCurrentTrip])
 
   const getGreeting = () => {
     const hr = new Date().getHours()
@@ -26,13 +60,13 @@ export const Home = () => {
 
   const getActiveTripRoute = () => {
     if (!currentTrip) return '/trips'
-    if (currentTrip.status === 'assigned' || currentTrip.status === 'navigating' || currentTrip.status === 'arrived') {
+    if (['assigned', 'navigating', 'arrived', 'driver_arrived'].includes(tripStatus)) {
       return '/trips/assigned'
     }
-    if (currentTrip.status === 'otp_verified' || currentTrip.status === 'active') {
+    if (['otp_verified', 'active', 'in_progress'].includes(tripStatus)) {
       return '/trips/active'
     }
-    if (currentTrip.status === 'payment_pending') {
+    if (tripStatus === 'payment_pending') {
       return '/trips/payment'
     }
     return '/trips'
@@ -49,20 +83,36 @@ export const Home = () => {
         <p className="greetings-sub">Drive safely and check your requests feed.</p>
       </div>
 
-      {/* Active Trip Banner Alert if a trip is current */}
-      {currentTrip && currentTrip.status !== 'completed' && (
-        <Link to={getActiveTripRoute()} className="active-trip-banner-link">
-          <div className="active-trip-banner pulse-glow-success">
-            <div className="banner-icon-bg">
-              <FiNavigation />
+      {/* Active Trip Banner Alert if a trip is current and truly active */}
+      {isTripActive && (
+        <div className="active-trip-banner-container">
+          <Link to={getActiveTripRoute()} className="active-trip-banner-link">
+            <div className="active-trip-banner pulse-glow-success">
+              <div className="banner-icon-bg">
+                <FiNavigation />
+              </div>
+              <div className="banner-details">
+                <h4>Active Ride In Progress</h4>
+                <p>To: {currentTrip.drop ? currentTrip.drop.split(',')[0] : 'Destination'}</p>
+              </div>
+              <FiChevronRight className="banner-arrow" />
             </div>
-            <div className="banner-details">
-              <h4>Active Ride In Progress</h4>
-              <p>To: {currentTrip.drop.split(',')[0]}</p>
-            </div>
-            <FiChevronRight className="banner-arrow" />
-          </div>
-        </Link>
+          </Link>
+          <button
+            type="button"
+            className="active-trip-dismiss-btn"
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              clearCurrentTrip()
+              toast('Active ride cleared', { icon: '🗑️' })
+            }}
+            title="Dismiss / Clear ride"
+            aria-label="Dismiss ride"
+          >
+            <FiX />
+          </button>
+        </div>
       )}
 
       {/* Driver Status Toggle */}
