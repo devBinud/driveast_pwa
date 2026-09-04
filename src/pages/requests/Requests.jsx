@@ -127,7 +127,7 @@ export const Requests = () => {
       setIsDragging(true)
       const containerWidth = containerRef.current?.offsetWidth || 360
 
-      let offset = diffX
+      let offset
       // Apply rubber-band resistance when pulling past the ends
       if (activeTab === 'incoming' && diffX > 0) {
         offset = diffX * 0.22

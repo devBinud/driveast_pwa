@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { FiWifi, FiWifiOff, FiCoffee, FiCalendar, FiAlertCircle, FiX } from 'react-icons/fi'
 import { useDriverStatus } from '../../../hooks/useDriverStatus'
 import { AvailabilityStatus } from '../../../services/driverService'
+import { pushNotificationService } from '../../../services/pushNotificationService'
 import './DutyStatusModal.css'
 
 const playDutySound = (type) => {
@@ -45,6 +46,9 @@ export const DutyStatusModal = ({ isOnline, onGoOnline, onGoOffline, onClose }) 
   const handleSetStatus = async (enumStatus) => {
     if (enumStatus === AvailabilityStatus.AVAILABLE) {
       playDutySound('online')
+      if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission !== 'granted') {
+        pushNotificationService.subscribe().catch(() => {})
+      }
     } else {
       playDutySound('offline')
     }

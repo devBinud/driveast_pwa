@@ -26,10 +26,19 @@ const registerSubscription = async () => {
   }
 
   const json = subscription.toJSON()
+  const currentEndpoint = json.endpoint
+  const lastRegistered = localStorage.getItem('driveast_last_push_endpoint')
+
+  // Prevent endpoint churn / duplicate backend registrations if endpoint hasn't changed
+  if (lastRegistered === currentEndpoint) {
+    return
+  }
+
   await api.post('/driver/me/push-subscriptions', {
     endpoint: json.endpoint,
     keys: { p256dh: json.keys.p256dh, auth: json.keys.auth }
   })
+  localStorage.setItem('driveast_last_push_endpoint', currentEndpoint)
 }
 
 export const pushNotificationService = {
@@ -92,6 +101,7 @@ export const pushNotificationService = {
       const endpoint = subscription.endpoint
       await subscription.unsubscribe()
       await api.post('/driver/me/push-subscriptions/unsubscribe', { endpoint })
+      localStorage.removeItem('driveast_last_push_endpoint')
     } catch (err) {
       console.warn('Push unsubscribe failed:', err)
     }

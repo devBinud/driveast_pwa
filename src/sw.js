@@ -30,7 +30,8 @@ self.addEventListener('push', (event) => {
     // ride requests expire within minutes, so the driver must see each one.
     tag: payload.data?.type || 'driveast-notification',
     renotify: true,
-    vibrate: [200, 100, 200],
+    // Heavy, attention-grabbing driver alert vibration (500ms buzz, 200ms pause, repeat 3 times)
+    vibrate: isNewRequest ? [500, 200, 500, 200, 500, 200, 500] : [200, 100, 200],
     data: payload.data || {},
     // Ride offers shouldn't auto-dismiss -- the driver needs to see and act on
     // them even if the phone screen is off when it arrives.
