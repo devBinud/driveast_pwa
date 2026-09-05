@@ -15,6 +15,33 @@ const formatDurationMin = (mins) => {
   return m > 0 ? `${h}h ${m}m` : `${h}h`
 }
 
+// Single source of truth for "given this trip's real status, which screen is
+// the driver actually supposed to be on". Every trip-flow screen (Assigned,
+// OTP, Active, Payment) uses this on mount to redirect itself forward or
+// backward as needed -- not just Home's "resume" banner -- because a status
+// update can legitimately arrive (via syncCurrentTrip's reconciliation with
+// the backend) after the driver already left the screen that produced it.
+// This is what makes recovery from an interrupted request (e.g. the app gets
+// swiped away right as verify-otp's response comes back) actually work: the
+// backend already advanced the assignment, syncCurrentTrip corrects
+// currentTrip.status to match, and the screen the driver lands back on then
+// forwards them to wherever that corrected status says they belong -- instead
+// of leaving them stuck on a stale screen whose action button no longer
+// matches a state the backend will accept.
+export const getTripStatusRoute = (status) => {
+  const s = (status || '').toLowerCase()
+  if (['assigned', 'navigating'].includes(s)) return '/trips/assigned'
+  // Once arrived, the driver's next real step is entering the OTP -- not
+  // being shown the "I've Arrived" button again (tapping it a second time
+  // just gets rejected by the backend, since the assignment already moved
+  // past that transition).
+  if (['arrived', 'driver_arrived'].includes(s)) return '/trips/otp'
+  if (['otp_verified', 'active', 'in_progress'].includes(s)) return '/trips/active'
+  if (s === 'payment_pending') return '/trips/payment'
+  if (s === 'completed') return '/trips/completed'
+  return null
+}
+
 export const useTripStore = create(
   persist(
     (set, get) => ({
@@ -443,6 +470,30 @@ export const useTripStore = create(
   clearCurrentTrip: () => set({ currentTrip: null }),
 
   cancelTrip: () => set({ currentTrip: null }),
+
+  /**
+   * Wipes every bit of this driver's trip state, in memory AND in localStorage
+   * (the `set` here is wrapped by persist's middleware, so it re-persists the
+   * cleared values immediately). Must run on logout -- these stores are
+   * module-level singletons shared for the life of the browser tab, so without
+   * this a second driver logging in on the same device/session would inherit
+   * the previous driver's in-progress trip, pickup/drop addresses and customer
+   * details still sitting in memory.
+   */
+  resetTripState: () => set({
+    trips: [],
+    upcomingTrips: [],
+    currentTrip: null,
+    otpCode: '',
+    otpInput: '',
+    otpError: '',
+    startOdometer: '',
+    endOdometer: '',
+    paymentMethod: 'CASH',
+    isLoadingTrip: false,
+    tripError: null,
+    selectedTripDetails: null
+  }),
 
   /**
    * Reconciles currentTrip against the backend database.

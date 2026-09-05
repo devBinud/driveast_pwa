@@ -50,8 +50,9 @@ export default defineConfig({
         'favicon-16x16.png',
         'favicon-32x32.png',
         'apple-touch-icon.png',
-        'android-chrome-192x192.png',
-        'android-chrome-512x512.png'
+        'logo192.png',
+        'logo512.png',
+        'notification-badge-r.png'
       ],
       manifest: {
         name: 'Driveast Partner',
@@ -64,17 +65,17 @@ export default defineConfig({
         start_url: '/',
         icons: [
           {
-            src: 'android-chrome-192x192.png',
+            src: 'logo192.png',
             sizes: '192x192',
             type: 'image/png'
           },
           {
-            src: 'android-chrome-512x512.png',
+            src: 'logo512.png',
             sizes: '512x512',
             type: 'image/png'
           },
           {
-            src: 'android-chrome-512x512.png',
+            src: 'logo512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any maskable'

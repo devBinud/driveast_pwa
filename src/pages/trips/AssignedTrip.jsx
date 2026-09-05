@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
 import { FiCompass, FiMapPin } from 'react-icons/fi'
-import { useTripStore } from '../../store/tripStore'
+import { useTripStore, getTripStatusRoute } from '../../store/tripStore'
 import { ActiveTripCard } from '../../components/trips/ActiveTripCard/ActiveTripCard'
 import { Button } from '../../components/common/Button/Button'
 import './AssignedTrip.css'
@@ -24,6 +24,17 @@ export const AssignedTrip = () => {
 
   if (!currentTrip) {
     return <Navigate to="/" replace />
+  }
+
+  // The backend may have already moved this assignment past "assigned" --
+  // e.g. arriveAtPickup() succeeded server-side but the app got killed before
+  // the response updated currentTrip.status locally. syncCurrentTrip() (above)
+  // corrects that status from the backend on mount; once it does, send the
+  // driver to whichever screen actually matches where they really are instead
+  // of leaving them on this one with a now-nonfunctional "I've Arrived" button.
+  const correctRoute = getTripStatusRoute(currentTrip.status)
+  if (correctRoute && correctRoute !== '/trips/assigned') {
+    return <Navigate to={correctRoute} replace />
   }
 
   // Opens Google Maps directly in turn-by-turn navigation mode (dir_action=navigate

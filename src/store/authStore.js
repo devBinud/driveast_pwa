@@ -2,8 +2,26 @@ import { create } from 'zustand'
 import { authService } from '../services/authService'
 import { websocketService } from '../services/websocketService'
 import { pushNotificationService } from '../services/pushNotificationService'
+import { useTripStore } from './tripStore'
+import { useRequestStore } from './requestStore'
+import { useDriverStore } from './driverStore'
+import { useWalletStore } from './walletStore'
 
 const initialToken = localStorage.getItem('driveast_token') || null
+
+// Shared by both logout() (driver taps "Sign Out") and forceLogout() (the
+// backend rejected the current session, e.g. an expired token) so the two
+// paths can't drift apart and leave one of them not actually clearing
+// everything. These stores are module-level singletons for the life of the
+// browser tab -- without this, a second driver logging in on the same
+// device/session would inherit whatever trip, requests, duty status and
+// wallet data the previous session left in memory.
+const resetAllDriverStores = () => {
+  useTripStore.getState().resetTripState()
+  useRequestStore.getState().resetRequests()
+  useDriverStore.getState().resetDriverStatus()
+  useWalletStore.getState().resetWallet()
+}
 
 export const useAuthStore = create((set, get) => ({
   isAuthenticated: Boolean(initialToken),
@@ -53,8 +71,20 @@ export const useAuthStore = create((set, get) => ({
     } catch (e) {
       localStorage.removeItem('driveast_token')
     }
-    localStorage.removeItem('driveast_trip_state')
     websocketService.disconnectAll()
+    resetAllDriverStores()
+    set({ isAuthenticated: false, token: null, user: null, error: null })
+  },
+
+  /**
+   * Session was killed by the backend rather than the driver (e.g. an expired
+   * or revoked token surfacing as a 401 on some unrelated request -- see
+   * api.js's response interceptor). No backend call here: the token is
+   * already invalid, so hitting /auth/logout with it would just 401 again.
+   */
+  forceLogout: () => {
+    websocketService.disconnectAll()
+    resetAllDriverStores()
     set({ isAuthenticated: false, token: null, user: null, error: null })
   },
 
@@ -100,3 +130,13 @@ export const useAuthStore = create((set, get) => ({
       user: state.user ? { ...state.user, ...updatedFields } : null
     }))
 }))
+
+// api.js can't import useAuthStore directly (authService.js, which it also
+// imports, imports api.js -- that'd be a circular import). A plain window
+// event decouples the two: api.js dispatches this the moment it sees a 401 on
+// an already-authenticated request, and this listener (registered only after
+// useAuthStore fully exists, avoiding any circular-import timing issue) is
+// what actually flips the app back to the login screen and clears state.
+window.addEventListener('driveast:force-logout', () => {
+  useAuthStore.getState().forceLogout()
+})

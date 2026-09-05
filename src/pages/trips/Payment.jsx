@@ -1,14 +1,18 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
-import { useTripStore } from '../../store/tripStore'
+import { useTripStore, getTripStatusRoute } from '../../store/tripStore'
 import { PaymentCard } from '../../components/trips/PaymentCard/PaymentCard'
 import './Payment.css'
 
 export const Payment = () => {
   const navigate = useNavigate()
-  const { currentTrip, hasHydrated, paymentMethod, setPaymentMethod, completeTrip, isLoadingTrip, tripError } = useTripStore()
+  const { currentTrip, hasHydrated, syncCurrentTrip, paymentMethod, setPaymentMethod, completeTrip, isLoadingTrip, tripError } = useTripStore()
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    syncCurrentTrip()
+  }, [syncCurrentTrip])
 
   // See AssignedTrip.jsx: persisted trip state restores a tick after first
   // render, so this must wait for hydration before treating a null currentTrip
@@ -19,6 +23,12 @@ export const Payment = () => {
 
   if (!currentTrip) {
     return <Navigate to="/" replace />
+  }
+
+  // See AssignedTrip.jsx's matching guard.
+  const correctRoute = getTripStatusRoute(currentTrip.status)
+  if (correctRoute && correctRoute !== '/trips/payment') {
+    return <Navigate to={correctRoute} replace />
   }
 
   const handleCollect = async (verifiedOnline = false) => {

@@ -3,31 +3,11 @@ import { useNavigate, useSearchParams, Navigate } from 'react-router-dom'
 import { FiNavigation, FiClock, FiCalendar, FiRadio } from 'react-icons/fi'
 import toast from 'react-hot-toast'
 import { useRequestStore } from '../../store/requestStore'
-import { useTripStore } from '../../store/tripStore'
+import { useTripStore, getTripStatusRoute } from '../../store/tripStore'
 import { useDriverStore } from '../../store/driverStore'
 import { RequestCard } from '../../components/requests/RequestCard/RequestCard'
 import { EmptyState } from '../../components/common/EmptyState/EmptyState'
 import './Requests.css'
-
-// Same list Home.jsx uses to decide whether currentTrip is a real, ongoing
-// ride (as opposed to a leftover cancelled/completed one).
-const ACTIVE_TRIP_STATUSES = [
-  'assigned',
-  'navigating',
-  'arrived',
-  'driver_arrived',
-  'otp_verified',
-  'active',
-  'in_progress',
-  'payment_pending'
-]
-
-const getActiveTripRoute = (status) => {
-  if (['assigned', 'navigating', 'arrived', 'driver_arrived'].includes(status)) return '/trips/assigned'
-  if (['otp_verified', 'active', 'in_progress'].includes(status)) return '/trips/active'
-  if (status === 'payment_pending') return '/trips/payment'
-  return null
-}
 
 export const Requests = () => {
   const navigate = useNavigate()
@@ -69,11 +49,9 @@ export const Requests = () => {
   // Must come after every hook above -- an early return before them would
   // call hooks conditionally, which React forbids.
   const tripStatus = (currentTrip?.status || '').toLowerCase()
-  if (currentTrip && ACTIVE_TRIP_STATUSES.includes(tripStatus)) {
-    const activeRoute = getActiveTripRoute(tripStatus)
-    if (activeRoute) {
-      return <Navigate to={activeRoute} replace />
-    }
+  const activeRoute = currentTrip ? getTripStatusRoute(tripStatus) : null
+  if (activeRoute) {
+    return <Navigate to={activeRoute} replace />
   }
 
   const handleTabChange = (tabKey) => {

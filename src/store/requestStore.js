@@ -21,6 +21,12 @@ export const useRequestStore = create((set, get) => ({
 
   setMinimized: (val) => set({ isMinimized: val }),
 
+  // See tripStore's resetTripState -- this store is a shared singleton for the
+  // browser tab too, so a stale incoming-request list (with a previous
+  // driver's pickup/drop/customer details) would otherwise carry over into the
+  // next driver's session on logout/login.
+  resetRequests: () => set({ requests: [], isMinimized: false, isLoadingRequests: false, error: null }),
+
   fetchPendingRequests: async () => {
     set({ isLoadingRequests: true, error: null })
     try {
