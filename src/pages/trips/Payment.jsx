@@ -7,8 +7,15 @@ import './Payment.css'
 
 export const Payment = () => {
   const navigate = useNavigate()
-  const { currentTrip, paymentMethod, setPaymentMethod, completeTrip, isLoadingTrip, tripError } = useTripStore()
+  const { currentTrip, hasHydrated, paymentMethod, setPaymentMethod, completeTrip, isLoadingTrip, tripError } = useTripStore()
   const [loading, setLoading] = useState(false)
+
+  // See AssignedTrip.jsx: persisted trip state restores a tick after first
+  // render, so this must wait for hydration before treating a null currentTrip
+  // as "no trip" and redirecting away.
+  if (!hasHydrated) {
+    return null
+  }
 
   if (!currentTrip) {
     return <Navigate to="/" replace />

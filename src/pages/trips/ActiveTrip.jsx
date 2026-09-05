@@ -11,7 +11,7 @@ import './ActiveTrip.css'
 
 export const ActiveTrip = () => {
   const navigate = useNavigate()
-  const { currentTrip, syncCurrentTrip, endTrip, isLoadingTrip } = useTripStore()
+  const { currentTrip, hasHydrated, syncCurrentTrip, endTrip, isLoadingTrip } = useTripStore()
   const [endOdo, setEndOdo] = useState('45340')
   const [endOdoImageUrl, setEndOdoImageUrl] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -20,6 +20,13 @@ export const ActiveTrip = () => {
   useEffect(() => {
     syncCurrentTrip()
   }, [syncCurrentTrip])
+
+  // See AssignedTrip.jsx: persisted trip state restores a tick after first
+  // render, so this must wait for hydration before treating a null currentTrip
+  // as "no trip" and redirecting away.
+  if (!hasHydrated) {
+    return null
+  }
 
   if (!currentTrip) {
     return <Navigate to="/" replace />

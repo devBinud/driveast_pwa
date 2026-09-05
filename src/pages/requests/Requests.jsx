@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams, Navigate } from 'react-router-dom'
 import { FiNavigation, FiClock, FiCalendar, FiRadio } from 'react-icons/fi'
 import toast from 'react-hot-toast'
 import { useRequestStore } from '../../store/requestStore'
@@ -8,6 +8,26 @@ import { useDriverStore } from '../../store/driverStore'
 import { RequestCard } from '../../components/requests/RequestCard/RequestCard'
 import { EmptyState } from '../../components/common/EmptyState/EmptyState'
 import './Requests.css'
+
+// Same list Home.jsx uses to decide whether currentTrip is a real, ongoing
+// ride (as opposed to a leftover cancelled/completed one).
+const ACTIVE_TRIP_STATUSES = [
+  'assigned',
+  'navigating',
+  'arrived',
+  'driver_arrived',
+  'otp_verified',
+  'active',
+  'in_progress',
+  'payment_pending'
+]
+
+const getActiveTripRoute = (status) => {
+  if (['assigned', 'navigating', 'arrived', 'driver_arrived'].includes(status)) return '/trips/assigned'
+  if (['otp_verified', 'active', 'in_progress'].includes(status)) return '/trips/active'
+  if (status === 'payment_pending') return '/trips/payment'
+  return null
+}
 
 export const Requests = () => {
   const navigate = useNavigate()
@@ -26,7 +46,7 @@ export const Requests = () => {
 
   const { requests, fetchPendingRequests, declineRequest, acceptRequest, isLoadingRequests } = useRequestStore()
   const isOnline = useDriverStore((state) => state.isOnline)
-  const { upcomingTrips, setAssignedTrip } = useTripStore()
+  const { upcomingTrips, currentTrip, setAssignedTrip } = useTripStore()
 
   useEffect(() => {
     fetchPendingRequests()
@@ -41,6 +61,20 @@ export const Requests = () => {
       setActiveTab('incoming')
     }
   }, [searchParams])
+
+  // A driver can only ever be on one ride at a time -- if a trip is already in
+  // progress, this screen must never show the Accept/Decline offer list (e.g. a
+  // notification tap or a stray deep link landing here mid-trip used to do
+  // exactly that). Send them back to wherever their actual trip is instead.
+  // Must come after every hook above -- an early return before them would
+  // call hooks conditionally, which React forbids.
+  const tripStatus = (currentTrip?.status || '').toLowerCase()
+  if (currentTrip && ACTIVE_TRIP_STATUSES.includes(tripStatus)) {
+    const activeRoute = getActiveTripRoute(tripStatus)
+    if (activeRoute) {
+      return <Navigate to={activeRoute} replace />
+    }
+  }
 
   const handleTabChange = (tabKey) => {
     if (activeTab === tabKey) return

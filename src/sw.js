@@ -79,8 +79,13 @@ self.addEventListener('notificationclick', (event) => {
   event.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientsArr) => {
       const existing = clientsArr.find((c) => 'focus' in c)
+      // Only steer to targetPath when launching a fresh tab. Force-navigating an
+      // ALREADY OPEN tab here used to yank a driver mid-trip (e.g. on the Payment
+      // or OTP screen) straight to the Requests list, wiping out their in-progress
+      // trip view for no reason other than "some notification was tapped" -- the
+      // open tab already has full app state and its own routing; just bring it to
+      // the front and let the driver keep doing what they were doing.
       if (existing) {
-        if ('navigate' in existing) existing.navigate(targetPath).catch(() => {})
         return existing.focus()
       }
       return self.clients.openWindow(targetPath)

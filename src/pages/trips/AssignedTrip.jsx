@@ -8,12 +8,19 @@ import './AssignedTrip.css'
 
 export const AssignedTrip = () => {
   const navigate = useNavigate()
-  const { currentTrip, syncCurrentTrip, startNavigationToPickup, arriveAtPickup, isLoadingTrip } = useTripStore()
+  const { currentTrip, hasHydrated, syncCurrentTrip, startNavigationToPickup, arriveAtPickup, isLoadingTrip } = useTripStore()
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     syncCurrentTrip()
   }, [syncCurrentTrip])
+
+  // Persisted trip state restores from localStorage a tick after first render --
+  // redirecting away before that finishes would wrongly bounce a driver out of
+  // an in-progress trip on a fresh page load (e.g. app killed while backgrounded).
+  if (!hasHydrated) {
+    return null
+  }
 
   if (!currentTrip) {
     return <Navigate to="/" replace />
