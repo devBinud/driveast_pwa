@@ -9,7 +9,7 @@ import './OTPVerification.css'
 
 export const OTPVerification = () => {
   const navigate = useNavigate()
-  const { currentTrip, otpInput, otpError, setOtpInput, verifyOtp, startTrip, isLoadingTrip } = useTripStore()
+  const { currentTrip, hasHydrated, otpInput, otpError, setOtpInput, verifyOtp, startTrip, isLoadingTrip } = useTripStore()
   const [startOdo, setStartOdo] = useState('45210')
   const [startOdoImageUrl, setStartOdoImageUrl] = useState(null)
   const inputRef = React.useRef(null)
@@ -19,6 +19,13 @@ export const OTPVerification = () => {
       inputRef.current.focus()
     }
   }, [])
+
+  // See AssignedTrip.jsx: persisted trip state restores a tick after first
+  // render, so this must wait for hydration before treating a null currentTrip
+  // as "no trip" and redirecting away.
+  if (!hasHydrated) {
+    return null
+  }
 
   if (!currentTrip) {
     return <Navigate to="/" replace />

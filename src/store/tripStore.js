@@ -29,6 +29,9 @@ export const useTripStore = create(
       paymentMethod: 'CASH',
       isLoadingTrip: false,
       tripError: null,
+      hasHydrated: false,
+
+  setHasHydrated: (val) => set({ hasHydrated: val }),
 
   setAssignedTrip: (req) => {
     set({
@@ -37,7 +40,12 @@ export const useTripStore = create(
         assignmentId: req.assignmentId || req.id,
         bookingId: req.bookingId,
         bookingNumber: req.bookingNumber,
-        status: req.status || 'assigned',
+        // req.status here is the DriverBookingRequest's own offer status (e.g.
+        // "PENDING"), not a trip-stage status -- using it directly used to leak
+        // "pending" into currentTrip.status, which ACTIVE_TRIP_STATUSES on the
+        // Home screen doesn't recognize, wrongly treating a freshly accepted
+        // trip as inactive.
+        status: 'assigned',
         otpCode: req.otpCode || '',
         pickup: req.pickup,
         drop: req.drop,
@@ -559,7 +567,15 @@ export const useTripStore = create(
         startOdometer: state.startOdometer,
         endOdometer: state.endOdometer,
         paymentMethod: state.paymentMethod
-      })
+      }),
+      // NOTE: must read setHasHydrated off the `state` argument zustand passes
+      // in here, not the `useTripStore` module binding -- this callback runs
+      // synchronously during the create(persist(...)) call itself, before the
+      // `export const useTripStore = ...` assignment below has completed, so
+      // referencing the outer binding would hit the temporal dead zone.
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true)
+      }
     }
   )
 )
