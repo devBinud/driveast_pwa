@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
 import { FiNavigation, FiActivity, FiMapPin } from 'react-icons/fi'
 import toast from 'react-hot-toast'
-import { useTripStore } from '../../store/tripStore'
+import { useTripStore, getTripStatusRoute } from '../../store/tripStore'
 import { ActiveTripCard } from '../../components/trips/ActiveTripCard/ActiveTripCard'
 import { Button } from '../../components/common/Button/Button'
 import { Input } from '../../components/common/Input/Input'
@@ -30,6 +30,12 @@ export const ActiveTrip = () => {
 
   if (!currentTrip) {
     return <Navigate to="/" replace />
+  }
+
+  // See AssignedTrip.jsx's matching guard.
+  const correctRoute = getTripStatusRoute(currentTrip.status)
+  if (correctRoute && correctRoute !== '/trips/active') {
+    return <Navigate to={correctRoute} replace />
   }
 
   // Same pattern as AssignedTrip's pickup navigation: dir_action=navigate auto-starts

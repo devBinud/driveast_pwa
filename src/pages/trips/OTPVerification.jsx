@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
 import { FiLock, FiAlertCircle, FiActivity } from 'react-icons/fi'
-import { useTripStore } from '../../store/tripStore'
+import { useTripStore, getTripStatusRoute } from '../../store/tripStore'
 import { Button } from '../../components/common/Button/Button'
 import { Input } from '../../components/common/Input/Input'
 import { OdometerPhotoCapture } from '../../components/trips/OdometerPhotoCapture/OdometerPhotoCapture'
@@ -9,7 +9,7 @@ import './OTPVerification.css'
 
 export const OTPVerification = () => {
   const navigate = useNavigate()
-  const { currentTrip, hasHydrated, otpInput, otpError, setOtpInput, verifyOtp, startTrip, isLoadingTrip } = useTripStore()
+  const { currentTrip, hasHydrated, syncCurrentTrip, otpInput, otpError, setOtpInput, verifyOtp, startTrip, isLoadingTrip } = useTripStore()
   const [startOdo, setStartOdo] = useState('45210')
   const [startOdoImageUrl, setStartOdoImageUrl] = useState(null)
   const inputRef = React.useRef(null)
@@ -20,6 +20,10 @@ export const OTPVerification = () => {
     }
   }, [])
 
+  useEffect(() => {
+    syncCurrentTrip()
+  }, [syncCurrentTrip])
+
   // See AssignedTrip.jsx: persisted trip state restores a tick after first
   // render, so this must wait for hydration before treating a null currentTrip
   // as "no trip" and redirecting away.
@@ -29,6 +33,17 @@ export const OTPVerification = () => {
 
   if (!currentTrip) {
     return <Navigate to="/" replace />
+  }
+
+  // See AssignedTrip.jsx's matching guard: syncCurrentTrip() may have just
+  // corrected currentTrip.status from the backend (e.g. verify-otp actually
+  // went through before the app was killed, even though the local state never
+  // got the response). Forward the driver to wherever that real status says
+  // they belong instead of leaving them on an OTP form for a trip that's
+  // already moved on.
+  const correctRoute = getTripStatusRoute(currentTrip.status)
+  if (correctRoute && correctRoute !== '/trips/otp') {
+    return <Navigate to={correctRoute} replace />
   }
 
   const handleInputChange = (e) => {

@@ -23,8 +23,13 @@ self.addEventListener('push', (event) => {
   const isNewRequest = payload.data?.type === 'new_request'
   const options = {
     body: payload.body || '',
-    icon: '/android-chrome-192x192.png',
-    badge: '/favicon-32x32.png',
+    icon: '/logo192.png',
+    // Android renders this using ONLY its alpha channel (a plain white
+    // silhouette on a system-chosen circle) -- favicon-32x32.png used to be
+    // used here, but it's a fully opaque image with zero transparency, so the
+    // "silhouette" was just a solid blank blob. This is a purpose-made
+    // transparent-background glyph so the mask actually has a shape to show.
+    badge: '/notification-badge-r.png',
     // tag + renotify: a second "new_request" arriving while the first is still
     // showing replaces it (rather than being silently dropped) and re-alerts --
     // ride requests expire within minutes, so the driver must see each one.

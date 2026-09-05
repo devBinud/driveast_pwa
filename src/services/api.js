@@ -97,7 +97,14 @@ api.interceptors.response.use(
     }
     
     if (status === 401) {
+      // Only a real, previously-authenticated session dying (expired/revoked
+      // token) should force a logout -- a wrong-password attempt on the login
+      // screen also 401s here, but there's no session to tear down yet.
+      const hadToken = Boolean(localStorage.getItem('driveast_token'))
       localStorage.removeItem('driveast_token')
+      if (hadToken) {
+        window.dispatchEvent(new Event('driveast:force-logout'))
+      }
     }
 
     return Promise.reject(customError)

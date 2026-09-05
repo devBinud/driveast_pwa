@@ -28,6 +28,22 @@ export const useWalletStore = create((set, get) => ({
   isPaying: false,
   error: null,
 
+  // See tripStore's resetTripState -- without this, a second driver logging in
+  // on the same device/session would briefly see the previous driver's
+  // outstanding balance and settlement history until the next fetch overwrites it.
+  resetWallet: () => set({
+    summary: {
+      outstandingAmount: 0,
+      outstandingBookingsCount: 0,
+      lastSettlementDate: null
+    },
+    outstandingBookings: [],
+    history: [],
+    isLoading: false,
+    isPaying: false,
+    error: null
+  }),
+
   fetchSummary: async () => {
     try {
       const res = await driverService.getWalletSummary()

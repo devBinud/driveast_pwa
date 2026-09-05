@@ -4,7 +4,7 @@ import { FiChevronRight, FiNavigation, FiX } from 'react-icons/fi'
 import { FaIndianRupeeSign } from 'react-icons/fa6'
 import toast from 'react-hot-toast'
 import { useAuth } from '../../hooks/useAuth'
-import { useTripStore } from '../../store/tripStore'
+import { useTripStore, getTripStatusRoute } from '../../store/tripStore'
 import { useWalletStore } from '../../store/walletStore'
 import { StatusCard } from '../../components/dashboard/StatusCard/StatusCard'
 import { UpcomingTrips } from '../../components/dashboard/UpcomingTrips/UpcomingTrips'
@@ -58,19 +58,7 @@ export const Home = () => {
     return 'Good Evening'
   }
 
-  const getActiveTripRoute = () => {
-    if (!currentTrip) return '/trips'
-    if (['assigned', 'navigating', 'arrived', 'driver_arrived'].includes(tripStatus)) {
-      return '/trips/assigned'
-    }
-    if (['otp_verified', 'active', 'in_progress'].includes(tripStatus)) {
-      return '/trips/active'
-    }
-    if (tripStatus === 'payment_pending') {
-      return '/trips/payment'
-    }
-    return '/trips'
-  }
+  const getActiveTripRoute = () => getTripStatusRoute(tripStatus) || '/trips'
 
   return (
     <div className="page-container animate-fade-in">

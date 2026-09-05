@@ -56,6 +56,18 @@ export const useDriverStore = create((set, get) => ({
 
   setDutyModalOpen: (isOpen) => set({ isDutyModalOpen: isOpen }),
 
+  // See tripStore's resetTripState -- without this, a second driver logging in
+  // on the same device/session would inherit the previous driver's duty
+  // toggle and online status until they happened to touch it themselves.
+  resetDriverStatus: () => set({
+    isOnline: false,
+    availabilityStatus: AvailabilityStatus.OFFLINE,
+    hoursOnline: 0.0,
+    isDutyModalOpen: false,
+    isLoadingStatus: false,
+    statusError: null
+  }),
+
   updateHours: (hours) =>
     set((state) => ({ 
       hoursOnline: Math.round((state.hoursOnline + hours) * 10) / 10 
