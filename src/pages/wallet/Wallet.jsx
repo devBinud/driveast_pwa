@@ -31,7 +31,11 @@ const formatDate = (value) => {
 
 export const Wallet = () => {
   const navigate = useNavigate()
-  const { summary, outstandingBookings, history, isLoading, isPaying, fetchAll, payBooking } = useWalletStore()
+  const {
+    summary, outstandingBookings, outstandingHasMore, isLoadingMoreOutstanding, loadMoreOutstanding,
+    history, historyHasMore, isLoadingMoreHistory, loadMoreHistory,
+    isLoading, isPaying, fetchAll, payBooking
+  } = useWalletStore()
 
   const [activePayBooking, setActivePayBooking] = useState(null)
   const [historyFilter, setHistoryFilter] = useState('ALL') // 'ALL' | 'SETTLED' | 'OUTSTANDING' | 'PENDING'
@@ -222,6 +226,19 @@ export const Wallet = () => {
             })}
           </div>
         )}
+
+        {outstandingHasMore && (
+          <div className="wallet-load-more">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={loadMoreOutstanding}
+              disabled={isLoadingMoreOutstanding}
+            >
+              {isLoadingMoreOutstanding ? 'Loading...' : 'Load More'}
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Wallet history section */}
@@ -340,6 +357,19 @@ export const Wallet = () => {
                 </div>
               )
             })}
+          </div>
+        )}
+
+        {historyHasMore && (
+          <div className="wallet-load-more">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={loadMoreHistory}
+              disabled={isLoadingMoreHistory}
+            >
+              {isLoadingMoreHistory ? 'Loading...' : 'Load More'}
+            </Button>
           </div>
         )}
       </div>

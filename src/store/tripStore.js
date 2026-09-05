@@ -376,7 +376,11 @@ export const useTripStore = create(
             duration: (item.completed_at && item.started_at) ? `${Math.round((new Date(item.completed_at) - new Date(item.started_at)) / 60000)} mins` : null,
             fare: item.booking?.total_amount || 0,
             status: item.status?.toLowerCase() || 'completed',
-            paymentMethod: item.payment_method || item.booking?.payment_method || 'CASH',
+            // ride_payment_method is how this ride's fare was actually settled
+            // (CASH/ONLINE) -- booking.payment_method is an unrelated field for
+            // the driver's own later cash-wallet-settlement to the company, and
+            // was always blank here since that hadn't happened yet.
+            paymentMethod: item.booking?.ride_payment_method || null,
             customerName: item.booking?.lead_traveler_name || 'Guest'
           }
         })
@@ -450,7 +454,10 @@ export const useTripStore = create(
           drop: item.booking?.drop_location,
           fare: item.booking?.total_amount,
           totalPaid: item.booking?.total_paid,
-          paymentMethod: item.booking?.payment_method,
+          // ride_payment_method is how this ride's fare was actually settled
+          // (CASH/ONLINE) -- booking.payment_method is an unrelated field for
+          // the driver's own later cash-wallet-settlement to the company.
+          paymentMethod: item.booking?.ride_payment_method,
           customerName: item.booking?.lead_traveler_name,
           customerPhone: item.booking?.lead_traveler_phone,
           bookingNumber: item.booking?.booking_number,

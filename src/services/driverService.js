@@ -58,16 +58,16 @@ export const driverService = {
    * Fetch Outstanding / Payment-Submitted Bookings
    * GET /api/v1/driver/me/wallet/bookings
    */
-  async getWalletBookings() {
-    return await api.get('/driver/me/wallet/bookings')
+  async getWalletBookings({ limit = 20, offset = 0 } = {}) {
+    return await api.get('/driver/me/wallet/bookings', { params: { limit, offset } })
   },
 
   /**
    * Fetch Full Wallet Settlement History
    * GET /api/v1/driver/me/wallet/history
    */
-  async getWalletHistory() {
-    return await api.get('/driver/me/wallet/history')
+  async getWalletHistory({ limit = 20, offset = 0 } = {}) {
+    return await api.get('/driver/me/wallet/history', { params: { limit, offset } })
   },
 
   /**
