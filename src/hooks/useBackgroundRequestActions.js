@@ -43,7 +43,16 @@ export const useBackgroundRequestActions = () => {
           pending = fetched.find((r) => r.id === requestId)
         }
         const result = await acceptRequest(requestId)
-        setAssignedTrip({ ...(pending || { id: requestId }), assignmentId: result?.assignment_id })
+        // booking_id comes from the accept response, not the cached request:
+        // accepting from a notification often can't hydrate `pending` at all,
+        // because /driver/me/requests only returns SENT rows inside their ~60s
+        // window. The fallback object had no bookingId, so trip-end QR creation
+        // posted booking_id: undefined and the API rejected it with a 422.
+        setAssignedTrip({
+          ...(pending || { id: requestId }),
+          assignmentId: result?.assignment_id,
+          bookingId: result?.booking_id || pending?.bookingId,
+        })
         toast.success('Ride accepted')
         navigate('/trips/assigned')
       } catch (err) {

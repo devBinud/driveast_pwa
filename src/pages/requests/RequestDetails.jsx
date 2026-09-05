@@ -26,7 +26,7 @@ export const RequestDetails = () => {
       // for a real assignment id. Every subsequent trip action then 404'd since no
       // DriverAssignment was ever created.
       const result = await acceptRequest(request.id)
-      setAssignedTrip({ ...request, assignmentId: result?.assignment_id })
+      setAssignedTrip({ ...request, assignmentId: result?.assignment_id, bookingId: result?.booking_id || request.bookingId })
       navigate('/trips/assigned')
     } catch (err) {
       toast.error(err?.message || 'Failed to accept this ride. Please try again.')

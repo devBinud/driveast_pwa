@@ -60,7 +60,7 @@ export const Requests = () => {
       // endpoints (arrive/verify-otp/end-trip) actually key off. That id only exists
       // once acceptRequest resolves.
       const result = await acceptRequest(req.id)
-      setAssignedTrip({ ...req, assignmentId: result?.assignment_id })
+      setAssignedTrip({ ...req, assignmentId: result?.assignment_id, bookingId: result?.booking_id || req.bookingId })
       navigate('/trips/assigned')
     } catch (err) {
       toast.error(err?.message || 'Failed to accept this ride. Please try again.')
@@ -82,6 +82,9 @@ export const Requests = () => {
 
     setAssignedTrip({
       id: trip.id,
+      assignmentId: trip.assignmentId || trip.id,
+      bookingId: trip.bookingId,
+      bookingNumber: trip.bookingNumber,
       pickup: trip.pickup,
       drop: trip.drop,
       distance: trip.distance,

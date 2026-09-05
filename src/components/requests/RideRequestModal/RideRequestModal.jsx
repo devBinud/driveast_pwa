@@ -121,7 +121,7 @@ export const RideRequestModal = () => {
       // called against an id that only ever matched a request row, never an
       // assignment, so the backend correctly 404'd every time.
       const result = await acceptRequest(req.id)
-      setAssignedTrip({ ...req, assignmentId: result?.assignment_id })
+      setAssignedTrip({ ...req, assignmentId: result?.assignment_id, bookingId: result?.booking_id || req.bookingId })
       navigate('/trips/assigned')
     } catch (err) {
       toast.error(err?.message || 'Failed to accept this ride. Please try again.')

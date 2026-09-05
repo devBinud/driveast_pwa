@@ -356,6 +356,12 @@ export const useTripStore = create(
       if (upcomingRes?.success && Array.isArray(upcomingRes.data)) {
         const mappedUpcoming = upcomingRes.data.map(item => ({
           id: item.id,
+          // Carried through so starting the trip yields a usable trip object.
+          // Without bookingId, trip-end QR creation posts booking_id: undefined
+          // and the API rejects it with a 422.
+          assignmentId: item.id,
+          bookingId: item.booking?.id,
+          bookingNumber: item.booking?.booking_number,
           pickup: item.booking?.pickup_location,
           drop: item.booking?.drop_location,
           date: item.booking?.pickup_date,
