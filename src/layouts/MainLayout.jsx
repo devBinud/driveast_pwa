@@ -3,7 +3,6 @@ import { Outlet, Navigate, Link, useLocation } from 'react-router-dom'
 import { FiRefreshCw } from 'react-icons/fi'
 import { useAuthStore } from '../store/authStore'
 import { useNotifications } from '../hooks/useNotifications'
-import { useBackgroundRequestActions } from '../hooks/useBackgroundRequestActions'
 import { usePullToRefresh } from '../hooks/usePullToRefresh'
 import { useRequestStore } from '../store/requestStore'
 import { useTripStore } from '../store/tripStore'
@@ -44,7 +43,6 @@ export const MainLayout = () => {
   } = useDriverStore()
   
   useNotifications()
-  useBackgroundRequestActions()
 
   useEffect(() => {
     if (isAuthenticated) {

@@ -52,7 +52,7 @@ export default defineConfig({
         'apple-touch-icon.png',
         'logo192.png',
         'logo512.png',
-        'notification-badge-r.png'
+        'notification-badge-d.png'
       ],
       manifest: {
         name: 'Driveast Partner',

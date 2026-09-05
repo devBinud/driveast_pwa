@@ -29,7 +29,7 @@ self.addEventListener('push', (event) => {
     // used here, but it's a fully opaque image with zero transparency, so the
     // "silhouette" was just a solid blank blob. This is a purpose-made
     // transparent-background glyph so the mask actually has a shape to show.
-    badge: '/notification-badge-r.png',
+    badge: '/notification-badge-d.png',
     // tag + renotify: a second "new_request" arriving while the first is still
     // showing replaces it (rather than being silently dropped) and re-alerts --
     // ride requests expire within minutes, so the driver must see each one.
@@ -40,15 +40,7 @@ self.addEventListener('push', (event) => {
     data: payload.data || {},
     // Ride offers shouldn't auto-dismiss -- the driver needs to see and act on
     // them even if the phone screen is off when it arrives.
-    requireInteraction: isNewRequest,
-    // Accept/Decline directly on the lock-screen notification -- this is what
-    // makes a ride request actionable while the PWA is minimized or fully closed.
-    actions: isNewRequest
-      ? [
-          { action: 'accept', title: 'Accept' },
-          { action: 'decline', title: 'Decline' }
-        ]
-      : []
+    requireInteraction: isNewRequest
   }
 
   event.waitUntil(self.registration.showNotification(title, options))
@@ -56,28 +48,9 @@ self.addEventListener('push', (event) => {
 
 self.addEventListener('notificationclick', (event) => {
   const data = event.notification.data || {}
-  const requestId = data.request_id || data.id
   const isNewRequest = data.type === 'new_request'
-  const action = event.action // '' when the driver tapped the notification body itself
 
   event.notification.close()
-
-  // Accept/Decline action buttons -- relay to an already-open app tab so it can
-  // reuse the normal authenticated accept/decline flow, or if the app isn't
-  // open anywhere, launch it with enough info in the URL to run that flow itself.
-  if (isNewRequest && requestId && (action === 'accept' || action === 'decline')) {
-    event.waitUntil(
-      self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientsArr) => {
-        const existing = clientsArr.find((c) => 'focus' in c)
-        if (existing) {
-          existing.postMessage({ type: 'SW_REQUEST_ACTION', action, requestId })
-          return existing.focus()
-        }
-        return self.clients.openWindow(`/requests?autoAction=${action}&requestId=${encodeURIComponent(requestId)}`)
-      })
-    )
-    return
-  }
 
   const targetPath = isNewRequest ? '/requests' : '/'
 
