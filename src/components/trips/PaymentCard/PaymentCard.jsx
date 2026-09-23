@@ -35,10 +35,23 @@ export const PaymentCard = ({
 
   useEffect(() => clearTimers, [])
 
+  // Cancels whatever QR was active server-side, not just locally -- without
+  // this, backing out of a QR (to retry, or to switch to cash) left its
+  // PENDING payment row dangling: a stray "pending" line in admin accounting,
+  // and (since Razorpay's own close_by only expires it after 10 minutes) a
+  // code that stayed scannable/payable even after the driver had already
+  // collected cash separately for the same trip.
   const resetQR = () => {
+    const activeQr = qr
     clearTimers()
     setQr(null)
     setQrStatus('idle')
+    if (activeQr?.qr_code_id) {
+      paymentService.cancelQR(activeQr.qr_code_id).catch(() => {
+        // Best-effort -- it self-expires via Razorpay's close_by regardless,
+        // and the driver has already moved on locally either way.
+      })
+    }
   }
 
   const generateQR = async () => {

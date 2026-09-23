@@ -26,6 +26,19 @@ export const paymentService = {
    */
   async getQRStatus(qrCodeId) {
     return await api.get(`/payments/razorpay/qr/${qrCodeId}/status`)
+  },
+
+  /**
+   * Driver backed out of the QR screen without paying (e.g. switched to cash).
+   * Without this the PENDING record is left dangling server-side -- it shows
+   * up as a stray pending line in admin accounting, and the QR stays
+   * scannable/payable for up to 10 more minutes even after the driver
+   * collected cash separately for the same trip.
+   * POST /api/v1/payments/razorpay/qr/{qr_code_id}/cancel
+   * @param {string} qrCodeId
+   */
+  async cancelQR(qrCodeId) {
+    return await api.post(`/payments/razorpay/qr/${qrCodeId}/cancel`)
   }
 }
 
