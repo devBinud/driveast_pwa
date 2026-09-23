@@ -16,7 +16,6 @@ export const RequestCard = ({
     drop,
     distance,
     duration,
-    fare,
     timeLeft,
     customerName
   } = request
@@ -52,10 +51,8 @@ export const RequestCard = ({
               <h4 className="request-cust-name">{customerName}</h4>
             </div>
           </div>
-          <div className="request-fare-badge">
-            <span className="request-fare-lbl">Fare</span>
-            <span className="request-fare-amt">₹{fare.toFixed(2)}</span>
-          </div>
+          {/* Fare is intentionally hidden while the driver is still deciding to
+              accept/decline -- see RideRequestModal.jsx for the same rule. */}
         </div>
 
         {/* Route Details */}

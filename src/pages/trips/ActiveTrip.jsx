@@ -54,18 +54,34 @@ export const ActiveTrip = () => {
   }
 
   const handleConfirmEndTrip = async () => {
-    if (!endOdoImageUrl) return
+    if (!endOdoImageUrl) {
+      toast.error('Please capture the final odometer photo before confirming.')
+      return
+    }
+    const parsedEndOdo = Number(endOdo)
+    if (!Number.isFinite(parsedEndOdo) || parsedEndOdo <= 0) {
+      toast.error('Please enter a valid final odometer reading.')
+      return
+    }
     setLoading(true)
-    // endTrip() resolves to the response data on success, or undefined on failure
-    // (it sets tripError internally and swallows the error) -- this must be checked
-    // before navigating, or a failed request (e.g. a validation 422) silently sends
-    // the driver to the Payment screen as if the trip had actually ended.
-    const result = await endTrip(Number(endOdo) || 45340, endOdoImageUrl)
-    setLoading(false)
-    if (result) {
-      navigate('/trips/payment')
-    } else {
-      toast.error(useTripStore.getState().tripError || 'Failed to end trip. Please try again.')
+    try {
+      // endTrip() resolves to the response data on success. On failure it can
+      // either resolve to undefined (tripError set internally, e.g. a
+      // res.success === false response) or reject (e.g. a network error or a
+      // non-2xx status, which axios turns into a rejection) -- both cases must
+      // be handled here, or a failed request either silently sends the driver
+      // to the Payment screen as if the trip had actually ended, or leaves the
+      // button stuck in a permanent loading state with no feedback.
+      const result = await endTrip(parsedEndOdo, endOdoImageUrl)
+      if (result) {
+        navigate('/trips/payment')
+      } else {
+        toast.error(useTripStore.getState().tripError || 'Failed to end trip. Please try again.')
+      }
+    } catch (err) {
+      toast.error(useTripStore.getState().tripError || err?.message || 'Failed to end trip. Please try again.')
+    } finally {
+      setLoading(false)
     }
   }
 
