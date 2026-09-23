@@ -201,15 +201,11 @@ export const RideRequestModal = () => {
                   </div>
                 </div>
 
-                {/* Fare Section */}
-                <div className="modal-fare-section">
-                  <div className="modal-fare-label">
-                    <span>Estimated Earnings</span>
-                  </div>
-                  <div className="modal-fare-amount">
-                    ₹{(Number(req.fare) || 0).toFixed(2)}
-                  </div>
-                </div>
+                {/* Fare is intentionally hidden here -- the driver shouldn't see the
+                    payout while still deciding whether to accept or decline; it's
+                    shown again once the trip is underway/ending (ActiveTripCard,
+                    Payment). Applies to both instant and scheduled requests, since
+                    both flow through this same modal. */}
 
                 {/* Route Details */}
                 <div className="modal-route-details">

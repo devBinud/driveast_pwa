@@ -20,7 +20,6 @@ export const RequestDetails = ({
     drop,
     distance,
     duration,
-    fare,
     customerName,
     customerAvatar,
     pickupLatLng,
@@ -116,10 +115,8 @@ export const RequestDetails = ({
               <h3 className="req-cust-name-title">{customerName}</h3>
             </div>
           </div>
-          <div className="req-details-price">
-            <span className="price-label">Trip Fare</span>
-            <span className="price-val">₹{Number(fare || 0).toFixed(2)}</span>
-          </div>
+          {/* Fare is intentionally hidden while the driver is still deciding to
+              accept/decline -- see RideRequestModal.jsx for the same rule. */}
         </div>
 
         {/* Timeline */}
@@ -155,17 +152,10 @@ export const RequestDetails = ({
           </Card>
         </div>
 
-        {/* Fare summary. The dispatch payload carries only the trip total --
-            there is no per-component breakdown to show, and the figures that
-            used to sit here (base rate, distance rate, a 1.25x "surge") were
-            fixed percentages of the total, not anything the backend sent. */}
+        {/* Fare is intentionally hidden here while the driver is still deciding
+            to accept/decline -- see RideRequestModal.jsx for the same rule.
+            The payout-collection note still matters at this stage, so it stays. */}
         <Card className="req-details-breakdown-card">
-          <div className="breakdown-rows">
-            <div className="breakdown-row-total">
-              <span>Trip Fare</span>
-              <span className="text-primary">₹{Number(fare || 0).toFixed(2)}</span>
-            </div>
-          </div>
           <div className="payout-type-indicator">
             <FiCreditCard />
             <span>Collect from the customer at drop-off (cash or UPI)</span>
