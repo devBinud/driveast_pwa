@@ -236,11 +236,21 @@
   border: 1px solid rgba(245, 158, 11, 0.2);
 }
 
+.empty-icon-wrapper.danger-glow {
+  color: var(--color-danger);
+  background: var(--color-danger-bg);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
 .empty-card-content h4 {
   font-size: 0.95rem;
   font-weight: 700;
   color: var(--text-primary);
   margin: 0;
+}
+
+.upcoming-retry-btn {
+  margin-top: var(--spacing-sm);
 }
 
 .empty-card-content p {

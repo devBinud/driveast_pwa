@@ -56,6 +56,8 @@ export const useTripStore = create(
       paymentMethod: 'CASH',
       isLoadingTrip: false,
       tripError: null,
+      isLoadingUpcoming: false,
+      upcomingTripsError: null,
       hasHydrated: false,
 
   setHasHydrated: (val) => set({ hasHydrated: val }),
@@ -390,6 +392,26 @@ export const useTripStore = create(
       set({ tripError: err?.message })
     }
 
+    await get().fetchUpcomingTrips()
+
+    set({ isLoadingTrip: false })
+  },
+
+  /**
+   * Fetch scheduled (not-yet-started) trips assigned to this driver.
+   *
+   * Split out of fetchTripsHistory so it can be called on its own -- both on
+   * initial app load and on a recurring poll (see MainLayout.jsx), matching
+   * the same "safety-net polling" pattern already used for pending ride
+   * requests there. Previously this only ever ran as part of fetchTripsHistory,
+   * which itself only ran when the driver opened the History tab or explicitly
+   * pulled-to-refresh on Home/History -- so a scheduled trip assigned by the
+   * admin while the driver was sitting on Home never appeared until they
+   * manually refreshed. Kept as its own action (rather than inlined) so
+   * fetchTripsHistory can still await it and share one code path.
+   */
+  fetchUpcomingTrips: async () => {
+    set({ isLoadingUpcoming: true, upcomingTripsError: null })
     try {
       const upcomingRes = await tripService.getTrips({ history: false, upcoming: true })
       if (upcomingRes?.success && Array.isArray(upcomingRes.data)) {
@@ -411,13 +433,21 @@ export const useTripStore = create(
           customerName: item.booking?.lead_traveler_name,
           customerPhone: item.booking?.lead_traveler_phone
         }))
-        set({ upcomingTrips: mappedUpcoming })
+        set({ upcomingTrips: mappedUpcoming, isLoadingUpcoming: false })
+        return mappedUpcoming
       }
+      set({ isLoadingUpcoming: false })
     } catch (err) {
+      // Deliberately doesn't clear the existing upcomingTrips list on failure --
+      // a transient network blip during the background poll shouldn't make
+      // already-known scheduled trips vanish from Home. The error is still
+      // surfaced via upcomingTripsError so a caller (e.g. a manual refresh) can
+      // choose to show it, without this silent background poll spamming a toast
+      // every few seconds if the backend is briefly unreachable.
       console.warn('Upcoming trips fetch error:', err)
+      set({ isLoadingUpcoming: false, upcomingTripsError: err?.message || 'Failed to fetch upcoming trips' })
     }
-
-    set({ isLoadingTrip: false })
+    return null
   },
 
   /**
@@ -499,6 +529,8 @@ export const useTripStore = create(
     paymentMethod: 'CASH',
     isLoadingTrip: false,
     tripError: null,
+    isLoadingUpcoming: false,
+    upcomingTripsError: null,
     selectedTripDetails: null
   }),
 
