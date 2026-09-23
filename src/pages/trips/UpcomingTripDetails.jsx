@@ -31,7 +31,7 @@ export const UpcomingTripDetails = () => {
     )
   }
 
-  const { pickup, drop, date, time, distance, duration, fare, customerName, customerAvatar, customerPhone } = trip
+  const { pickup, drop, date, time, distance, duration, customerName, customerAvatar, customerPhone } = trip
 
   return (
     <div className="page-container animate-fade-in upcoming-details-container">
@@ -51,7 +51,8 @@ export const UpcomingTripDetails = () => {
         {/* Status Badge */}
         <div className="details-status-row">
           <span className="schedule-status-badge">Scheduled Trip</span>
-          <span className="details-fare">₹{fare.toFixed(2)}</span>
+          {/* Fare intentionally hidden before the trip starts -- only shown
+              during collection/end-trip (Payment.jsx, ActiveTripCard). */}
         </div>
 
         {/* Date and Time Panel */}
