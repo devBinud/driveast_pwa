@@ -309,14 +309,8 @@ export const Requests = () => {
                         <span>{trip.date}</span>
                       </div>
 
-                      <div className="modal-fare-section" style={{ margin: 'var(--spacing-xs) 0' }}>
-                        <div className="modal-fare-label">
-                          <span>Estimated Earnings</span>
-                        </div>
-                        <div className="modal-fare-amount" style={{ fontSize: '1.45rem' }}>
-                          ₹{(Number(trip.fare) || 0).toFixed(2)}
-                        </div>
-                      </div>
+                      {/* Fare intentionally hidden before the trip starts -- only shown
+                          during collection/end-trip (Payment.jsx, ActiveTripCard). */}
 
                       <div className="modal-route-details" style={{ margin: 'var(--spacing-sm) 0' }}>
                         <div className="modal-route-indicator">

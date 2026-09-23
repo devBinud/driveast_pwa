@@ -81,7 +81,7 @@ export const UpcomingTrips = () => {
       ) : (
         <div className="upcoming-trips-list">
           {upcomingTrips.map((trip) => {
-            const { id, pickup, drop, date, time, distance, duration, fare, customerName, customerAvatar } = trip
+            const { id, pickup, drop, date, time, distance, duration, customerName, customerAvatar } = trip
             return (
               <Card key={id} className="upcoming-trip-card" padding="none" onClick={() => handleViewDetails(id)}>
                 <div className="upcoming-card-header">
@@ -96,9 +96,8 @@ export const UpcomingTrips = () => {
                       <span className="trip-schedule-time">{date || 'Scheduled'} {time ? `• ${time}` : ''}</span>
                     </div>
                   </div>
-                  <div className="fare-tag">
-                    <span className="fare-val">₹{(Number(fare) || 0).toFixed(2)}</span>
-                  </div>
+                  {/* Fare intentionally hidden before the trip starts -- only shown
+                      during collection/end-trip (Payment.jsx, ActiveTripCard). */}
                 </div>
 
                 <div className="upcoming-card-body">
