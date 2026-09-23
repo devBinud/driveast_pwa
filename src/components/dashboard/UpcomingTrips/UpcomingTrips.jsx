@@ -1,6 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { FiNavigation, FiClock, FiWifiOff, FiCalendar, FiUser } from 'react-icons/fi'
+import { FiNavigation, FiClock, FiWifiOff, FiCalendar, FiUser, FiAlertCircle, FiRefreshCw } from 'react-icons/fi'
 import { useTripStore } from '../../../store/tripStore'
 import { useDriverStatus } from '../../../hooks/useDriverStatus'
 import { Card } from '../../common/Card/Card'
@@ -10,6 +10,9 @@ import './UpcomingTrips.css'
 export const UpcomingTrips = () => {
   const navigate = useNavigate()
   const upcomingTrips = useTripStore((state) => state.upcomingTrips)
+  const isLoadingUpcoming = useTripStore((state) => state.isLoadingUpcoming)
+  const upcomingTripsError = useTripStore((state) => state.upcomingTripsError)
+  const fetchUpcomingTrips = useTripStore((state) => state.fetchUpcomingTrips)
   const { isOnline } = useDriverStatus()
 
   const handleViewDetails = (id) => {
@@ -38,6 +41,31 @@ export const UpcomingTrips = () => {
             </div>
             <h4>You Are Offline</h4>
             <p>Go online in the status panel to receive live dispatches and ride requests.</p>
+          </div>
+        </Card>
+      ) : upcomingTripsError && upcomingTrips.length === 0 ? (
+        // Distinct from the genuine "nothing scheduled" empty state below --
+        // upcomingTripsError only gets set when the fetch itself failed (see
+        // fetchUpcomingTrips in tripStore.js), so telling the driver there are
+        // no scheduled trips here would be actively misleading: there might be
+        // one, this screen just couldn't find out.
+        <Card className="upcoming-empty-card" padding="lg">
+          <div className="empty-card-content">
+            <div className="empty-icon-wrapper danger-glow">
+              <FiAlertCircle className="empty-icon" />
+            </div>
+            <h4>Couldn't Load Upcoming Trips</h4>
+            <p>{upcomingTripsError}</p>
+            <Button
+              variant="secondary"
+              size="sm"
+              icon={FiRefreshCw}
+              loading={isLoadingUpcoming}
+              onClick={() => fetchUpcomingTrips()}
+              className="upcoming-retry-btn"
+            >
+              Retry
+            </Button>
           </div>
         </Card>
       ) : upcomingTrips.length === 0 ? (

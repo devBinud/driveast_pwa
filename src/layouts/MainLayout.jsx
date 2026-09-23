@@ -31,6 +31,7 @@ export const MainLayout = () => {
   const syncCurrentTrip = useTripStore((state) => state.syncCurrentTrip)
   const initTripWebSocketListeners = useTripStore((state) => state.initWebSocketListeners)
   const fetchTripsHistory = useTripStore((state) => state.fetchTripsHistory)
+  const fetchUpcomingTrips = useTripStore((state) => state.fetchUpcomingTrips)
   const fetchWalletSummary = useWalletStore((state) => state.fetchSummary)
   const fetchWalletAll = useWalletStore((state) => state.fetchAll)
 
@@ -57,6 +58,14 @@ export const MainLayout = () => {
       const cleanupWs = initWebSocketListeners()
       const cleanupTripWs = initTripWebSocketListeners()
       fetchPendingRequests()
+      // Populate the Home dashboard's "Upcoming Trips" immediately on load --
+      // previously this only ever ran when the driver opened the History tab or
+      // pulled-to-refresh, so a scheduled trip the admin assigned while the
+      // driver was sitting on Home (or logging in fresh) silently didn't show
+      // up until they manually refreshed. fetchUpcomingTrips() has its own
+      // internal try/catch (see tripStore.js) so a failure here can't block the
+      // rest of this startup sequence.
+      fetchUpcomingTrips()
       fetchWalletSummary()
       syncCurrentTrip()
       pushNotificationService.subscribeSilently()
@@ -69,10 +78,21 @@ export const MainLayout = () => {
         fetchPendingRequests()
       }, 6000)
 
+      // Same safety-net reasoning as above, applied to scheduled trips: there is
+      // no WebSocket event at all for "a new upcoming trip was assigned", so
+      // without this poll a scheduled assignment would never appear on Home
+      // until the driver happened to pull-to-refresh or visit History. A newly
+      // assigned scheduled trip is not time-critical the way an incoming ride
+      // offer is (those expire within minutes), so this polls far less often.
+      const upcomingPollInterval = setInterval(() => {
+        fetchUpcomingTrips()
+      }, 20000)
+
       return () => {
         if (cleanupWs) cleanupWs()
         if (cleanupTripWs) cleanupTripWs()
         clearInterval(pollInterval)
+        clearInterval(upcomingPollInterval)
       }
     }
   }, [isAuthenticated, token])
