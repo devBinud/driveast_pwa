@@ -12,7 +12,9 @@ import './ActiveTrip.css'
 export const ActiveTrip = () => {
   const navigate = useNavigate()
   const { currentTrip, hasHydrated, syncCurrentTrip, endTrip, isLoadingTrip } = useTripStore()
-  const [endOdo, setEndOdo] = useState('45340')
+  // Starts empty, same reason as the start odometer on the OTP screen: a pre-filled sample
+  // number would be submitted as the real final reading if left untouched.
+  const [endOdo, setEndOdo] = useState('')
   const [endOdoImageUrl, setEndOdoImageUrl] = useState(null)
   const [loading, setLoading] = useState(false)
   const [showOdoModal, setShowOdoModal] = useState(false)

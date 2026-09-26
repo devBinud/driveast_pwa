@@ -52,6 +52,17 @@ export const getTripStatusRoute = (status) => {
 // ASSIGNED until the driver starts them, so it can't identify an in-flight trip.
 const IN_FLIGHT_BACKEND_STATUSES = ['ACCEPTED', 'DRIVER_ARRIVED', 'ARRIVED', 'STARTED', 'IN_PROGRESS', 'OTP_VERIFIED', 'ACTIVE', 'PAYMENT_PENDING']
 
+// The backend keeps an assignment at STARTED from OTP verification right up to completion:
+// end-trip only records the final odometer, it never changes the status. So "trip ended,
+// waiting for payment" is STARTED *with end_odometer set*. Anything that copies the backend
+// status verbatim (syncCurrentTrip on every screen mount, recoverActiveTrip) would otherwise
+// turn the local 'payment_pending' back into 'started' the moment the Payment screen mounts --
+// and 'started' routes to /trips/active, bouncing the driver away from the payment methods.
+const localStatusFromAssignment = (item) => {
+  const status = (item?.status || '').toLowerCase()
+  return status === 'started' && item?.end_odometer != null ? 'payment_pending' : status
+}
+
 // Rebuilds a currentTrip object from a raw backend assignment (GET /driver/me/trips[/{id}]).
 const mapAssignmentToCurrentTrip = (item) => {
   const startOdo = item.start_odometer
@@ -62,7 +73,7 @@ const mapAssignmentToCurrentTrip = (item) => {
     assignmentId: item.id,
     bookingId: item.booking_id || item.booking?.id,
     bookingNumber: item.booking?.booking_number,
-    status: (item.status || '').toLowerCase(),
+    status: localStatusFromAssignment(item),
     otpCode: item.otp || '',
     pickup: item.booking?.pickup_location || '',
     drop: item.booking?.drop_location || '',
@@ -617,7 +628,7 @@ export const useTripStore = create(
         }
 
         // If backend has an updated status (e.g., driver_arrived or in_progress)
-        const backendStatus = (item.status || '').toLowerCase()
+        const backendStatus = localStatusFromAssignment(item)
         if (backendStatus && backendStatus !== localStatus) {
           set((state) => ({
             currentTrip: state.currentTrip ? { ...state.currentTrip, status: backendStatus } : null
