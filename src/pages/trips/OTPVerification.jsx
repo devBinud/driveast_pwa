@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
 import { FiLock, FiAlertCircle, FiActivity } from 'react-icons/fi'
+import toast from 'react-hot-toast'
 import { useTripStore, getTripStatusRoute } from '../../store/tripStore'
 import { Button } from '../../components/common/Button/Button'
 import { Input } from '../../components/common/Input/Input'
@@ -10,7 +11,9 @@ import './OTPVerification.css'
 export const OTPVerification = () => {
   const navigate = useNavigate()
   const { currentTrip, hasHydrated, syncCurrentTrip, otpInput, otpError, setOtpInput, verifyOtp, startTrip, isLoadingTrip } = useTripStore()
-  const [startOdo, setStartOdo] = useState('45210')
+  // Starts empty: the driver must type the reading off the dashboard. A pre-filled sample
+  // number here used to be submitted as the real start odometer if left untouched.
+  const [startOdo, setStartOdo] = useState('')
   const [startOdoImageUrl, setStartOdoImageUrl] = useState(null)
   const inputRef = React.useRef(null)
 
@@ -60,7 +63,14 @@ export const OTPVerification = () => {
 
   const handleVerify = async () => {
     if (otpInput.length !== 4 || !startOdoImageUrl) return
-    const verified = await verifyOtp(Number(startOdo) || 45210, startOdoImageUrl)
+    // No fallback number: an unreadable/zero reading must be corrected by the driver, never
+    // replaced by a made-up one (this used to fall back to a sample 45210).
+    const startOdoValue = Number(startOdo)
+    if (!Number.isFinite(startOdoValue) || startOdoValue <= 0) {
+      toast.error('Please enter a valid starting odometer reading.')
+      return
+    }
+    const verified = await verifyOtp(startOdoValue, startOdoImageUrl)
     if (verified) {
       startTrip()
       navigate('/trips/active')
