@@ -30,16 +30,52 @@ const formatDurationMin = (mins) => {
 // matches a state the backend will accept.
 export const getTripStatusRoute = (status) => {
   const s = (status || '').toLowerCase()
-  if (['assigned', 'navigating'].includes(s)) return '/trips/assigned'
+  // 'accepted' is the backend's own TripAssignmentStatus.ACCEPTED -- syncCurrentTrip
+  // copies the backend status verbatim, so without it here an accepted trip had no
+  // route and Home's cleanup effect wiped it as "inactive".
+  if (['assigned', 'accepted', 'navigating'].includes(s)) return '/trips/assigned'
   // Once arrived, the driver's next real step is entering the OTP -- not
   // being shown the "I've Arrived" button again (tapping it a second time
   // just gets rejected by the backend, since the assignment already moved
   // past that transition).
   if (['arrived', 'driver_arrived'].includes(s)) return '/trips/otp'
-  if (['otp_verified', 'active', 'in_progress'].includes(s)) return '/trips/active'
+  // 'started' is the API guide's AssignmentStatus enum name for this stage;
+  // the verify-otp response itself says 'IN_PROGRESS' -- accept both.
+  if (['otp_verified', 'active', 'in_progress', 'started'].includes(s)) return '/trips/active'
   if (s === 'payment_pending') return '/trips/payment'
   if (s === 'completed') return '/trips/completed'
   return null
+}
+
+// Backend assignment statuses that mean "this driver is mid-trip right now".
+// ASSIGNED is deliberately excluded: scheduled (upcoming) trips also sit at
+// ASSIGNED until the driver starts them, so it can't identify an in-flight trip.
+const IN_FLIGHT_BACKEND_STATUSES = ['ACCEPTED', 'DRIVER_ARRIVED', 'ARRIVED', 'STARTED', 'IN_PROGRESS', 'OTP_VERIFIED', 'ACTIVE', 'PAYMENT_PENDING']
+
+// Rebuilds a currentTrip object from a raw backend assignment (GET /driver/me/trips[/{id}]).
+const mapAssignmentToCurrentTrip = (item) => {
+  const startOdo = item.start_odometer
+  const endOdo = item.end_odometer
+  const distanceKm = (startOdo != null && endOdo != null) ? endOdo - startOdo : null
+  return {
+    id: item.id,
+    assignmentId: item.id,
+    bookingId: item.booking_id || item.booking?.id,
+    bookingNumber: item.booking?.booking_number,
+    status: (item.status || '').toLowerCase(),
+    otpCode: item.otp || '',
+    pickup: item.booking?.pickup_location || '',
+    drop: item.booking?.drop_location || '',
+    fare: Number(item.booking?.total_amount || 0),
+    customerName: item.booking?.lead_traveler_name,
+    customerPhone: item.booking?.lead_traveler_phone,
+    startOdometer: startOdo,
+    endOdometer: endOdo,
+    totalDistanceKm: distanceKm,
+    distance: distanceKm != null ? `${distanceKm} km` : null,
+    arrivedAt: item.arrived_at,
+    startedAt: item.started_at
+  }
 }
 
 export const useTripStore = create(
@@ -541,7 +577,10 @@ export const useTripStore = create(
    */
   syncCurrentTrip: async () => {
     const { currentTrip } = get()
-    if (!currentTrip) return
+    if (!currentTrip) {
+      await get().recoverActiveTrip()
+      return
+    }
 
     // Immediately clear if status locally is marked cancelled/completed/rejected
     const localStatus = (currentTrip.status || '').toLowerCase()
@@ -592,6 +631,49 @@ export const useTripStore = create(
       if ([400, 403, 404, 410].includes(err?.response?.status)) {
         set({ currentTrip: null })
       }
+    }
+  },
+
+  /**
+   * Restores currentTrip from the backend when local state has none. currentTrip
+   * otherwise only ever lives in localStorage, so once it was lost (dismissed from
+   * Home, storage cleared, a different device/browser, or an unrecognized status
+   * wiping it) the driver stayed ON_TRIP server-side with no screen anywhere left
+   * to end the trip from.
+   */
+  recoverActiveTrip: async () => {
+    const findInFlight = (res) =>
+      res?.success && Array.isArray(res.data)
+        ? res.data.find((item) => IN_FLIGHT_BACKEND_STATUSES.includes((item.status || '').toUpperCase()))
+        : null
+
+    try {
+      // Non-history, non-upcoming = current trips. Fall back to history in case
+      // the backend lists in-progress assignments there instead.
+      let found = findInFlight(await tripService.getTrips({ history: false, upcoming: false }).catch(() => null))
+      if (!found) {
+        found = findInFlight(await tripService.getTrips({ history: true, upcoming: false }).catch(() => null))
+      }
+      if (!found) return null
+
+      // List rows may be trimmed; the detail endpoint has odometer/timestamps.
+      let detail = found
+      try {
+        const detailRes = await tripService.getTripDetails(found.id)
+        if (detailRes?.success && detailRes.data) detail = detailRes.data
+      } catch {
+        // list row is still enough to resume
+      }
+
+      // A trip may have been picked up locally while this was in flight.
+      if (get().currentTrip) return null
+
+      const recovered = mapAssignmentToCurrentTrip(detail)
+      set({ currentTrip: recovered })
+      return recovered
+    } catch (err) {
+      console.warn('Active trip recovery failed:', err)
+      return null
     }
   },
 
