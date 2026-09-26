@@ -344,3 +344,72 @@
   margin: var(--spacing-lg) 0;
   width: 100%;
 }
+
+/* Shown while a ride is in progress -- links back to the live trip */
+.requests-ontrip-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--color-primary) 0%, #f59e0b 100%);
+  color: #1e293b;
+  text-decoration: none;
+  animation: pulseYellow 2s infinite;
+}
+
+.requests-ontrip-icon {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.35);
+  font-size: 1.1rem;
+}
+
+.requests-ontrip-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.requests-ontrip-text strong {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.requests-ontrip-text span {
+  font-size: 0.775rem;
+  opacity: 0.85;
+  word-break: break-word;
+}
+
+.requests-ontrip-arrow {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+/* Global link hover turns text yellow, which vanishes on this yellow banner --
+   keep the dark text and give feedback with a lift + deeper amber instead. */
+.requests-ontrip-banner {
+  transition: transform var(--transition-fast), filter var(--transition-fast);
+}
+
+.requests-ontrip-banner:hover,
+.requests-ontrip-banner:focus,
+.requests-ontrip-banner:focus-visible {
+  color: #1e293b;
+  transform: translateY(-2px);
+  filter: brightness(0.95);
+}
+
+.requests-ontrip-banner:focus-visible {
+  outline: 2px solid #1e293b;
+  outline-offset: 2px;
+}

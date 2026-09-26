@@ -92,6 +92,22 @@
   }
 }
 
+@keyframes pulseYellow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.45);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(245, 158, 11, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+  }
+}
+
+.pulse-glow-yellow {
+  animation: pulseYellow 2s infinite;
+}
+
 .pulse-glow-success {
   animation: pulseGlow 2s infinite;
 }

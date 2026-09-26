@@ -101,6 +101,17 @@
   border: 1.5px solid var(--card-border);
 }
 
+.customer-avatar-initial {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: var(--color-primary);
+  color: #1e293b;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
 .customer-name-txt {
   display: block;
   font-size: 0.875rem;
