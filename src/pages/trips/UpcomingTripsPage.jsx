@@ -1,10 +1,23 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { FiArrowLeft, FiNavigation, FiClock, FiCalendar } from 'react-icons/fi'
 import { useTripStore } from '../../store/tripStore'
 import { Card } from '../../components/common/Card/Card'
 import { Button } from '../../components/common/Button/Button'
 import './UpcomingTripsPage.css'
+
+// Shows the rider's photo, or their first initial when there is no photo / it fails to load.
+const RiderAvatar = ({ src, name }) => {
+  const [failed, setFailed] = useState(false)
+  if (src && !failed) {
+    return <img src={src} alt={name} className="customer-avatar-sm" onError={() => setFailed(true)} />
+  }
+  return (
+    <div className="customer-avatar-sm customer-avatar-initial">
+      {(name || 'R').trim().charAt(0).toUpperCase()}
+    </div>
+  )
+}
 
 export const UpcomingTripsPage = () => {
   const navigate = useNavigate()
@@ -44,7 +57,7 @@ export const UpcomingTripsPage = () => {
               >
                 <div className="upcoming-card-header">
                   <div className="customer-info-sec">
-                    <img src={customerAvatar} alt={customerName} className="customer-avatar-sm" />
+                    <RiderAvatar src={customerAvatar} name={customerName} />
                     <div>
                       <span className="customer-name-txt">{customerName}</span>
                       <span className="trip-schedule-time">{date} • {time}</span>

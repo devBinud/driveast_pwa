@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { FiArrowLeft, FiMapPin, FiCalendar, FiClock, FiPhone, FiUser, FiInfo, FiTrash2 } from 'react-icons/fi'
 import { useTripStore } from '../../store/tripStore'
@@ -11,6 +11,7 @@ export const UpcomingTripDetails = () => {
   const navigate = useNavigate()
   const upcomingTrips = useTripStore((state) => state.upcomingTrips)
   const trip = upcomingTrips.find((t) => t.id === id)
+  const [avatarFailed, setAvatarFailed] = useState(false)
 
   if (!trip) {
     return (
@@ -42,7 +43,6 @@ export const UpcomingTripDetails = () => {
         </Link>
         <div className="upcoming-details-title-row">
           <h2>Booking Details</h2>
-          <span className="booking-id-tag">{id}</span>
         </div>
       </div>
 
@@ -111,7 +111,18 @@ export const UpcomingTripDetails = () => {
         <div className="details-customer-section">
           <h4 className="details-sec-title">Rider Details</h4>
           <div className="customer-info-card glass-panel">
-            <img src={customerAvatar} alt={customerName} className="details-cust-avatar" />
+            {customerAvatar && !avatarFailed ? (
+              <img
+                src={customerAvatar}
+                alt={customerName}
+                className="details-cust-avatar"
+                onError={() => setAvatarFailed(true)}
+              />
+            ) : (
+              <div className="details-cust-avatar details-cust-avatar-initial">
+                {(customerName || 'R').trim().charAt(0).toUpperCase()}
+              </div>
+            )}
             <div className="customer-text-meta">
               <h5>{customerName}</h5>
             </div>

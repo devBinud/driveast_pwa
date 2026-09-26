@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { useNavigate, useSearchParams, Navigate } from 'react-router-dom'
-import { FiNavigation, FiClock, FiCalendar, FiRadio } from 'react-icons/fi'
+import { useNavigate, useSearchParams, Link } from 'react-router-dom'
+import { FiNavigation, FiClock, FiCalendar, FiRadio, FiChevronRight } from 'react-icons/fi'
 import toast from 'react-hot-toast'
 import { useRequestStore } from '../../store/requestStore'
 import { useTripStore, getTripStatusRoute } from '../../store/tripStore'
@@ -42,17 +42,13 @@ export const Requests = () => {
     }
   }, [searchParams])
 
-  // A driver can only ever be on one ride at a time -- if a trip is already in
-  // progress, this screen must never show the Accept/Decline offer list (e.g. a
-  // notification tap or a stray deep link landing here mid-trip used to do
-  // exactly that). Send them back to wherever their actual trip is instead.
-  // Must come after every hook above -- an early return before them would
-  // call hooks conditionally, which React forbids.
+  // A driver can only ever be on one ride at a time. While a trip is in progress
+  // they can still browse this screen (incoming + upcoming), but the Accept/Decline
+  // offer list is replaced by a notice and "Start Trip Now" is disabled, with a
+  // banner linking back to the live trip.
   const tripStatus = (currentTrip?.status || '').toLowerCase()
   const activeRoute = currentTrip ? getTripStatusRoute(tripStatus) : null
-  if (activeRoute) {
-    return <Navigate to={activeRoute} replace />
-  }
+  const isOnTrip = Boolean(activeRoute)
 
   const handleTabChange = (tabKey) => {
     if (activeTab === tabKey) return
@@ -194,6 +190,19 @@ export const Requests = () => {
         <p className="requests-sub">Manage your incoming requests and scheduled bookings</p>
       </div>
 
+      {isOnTrip && (
+        <Link to={activeRoute} className="requests-ontrip-banner">
+          <div className="requests-ontrip-icon">
+            <FiNavigation />
+          </div>
+          <div className="requests-ontrip-text">
+            <strong>Ride in progress</strong>
+            <span>To: {currentTrip.drop || 'Destination'}</span>
+          </div>
+          <FiChevronRight className="requests-ontrip-arrow" />
+        </Link>
+      )}
+
       {/* Tabs Switcher */}
       <div className="sub-tabs-container" role="tablist">
         <button
@@ -244,7 +253,15 @@ export const Requests = () => {
             aria-hidden={activeTab !== 'incoming'}
           >
             <div className="requests-section">
-              {requests.length === 0 ? (
+              {isOnTrip ? (
+                <div className="incoming-empty-area">
+                  <EmptyState
+                    title="You're On a Ride"
+                    description="Finish your current ride to start accepting new ride requests."
+                    type="requests"
+                  />
+                </div>
+              ) : requests.length === 0 ? (
                 <div className="incoming-empty-area">
                   <EmptyState
                     title={isOnline ? "Waiting for Real-Time Requests..." : "You Are Currently Offline"}
@@ -296,17 +313,13 @@ export const Requests = () => {
                       style={{ cursor: 'pointer' }}
                     >
                       <div className="request-modal-card-header" style={{ justifyContent: 'space-between', paddingBottom: 'var(--spacing-xs)' }}>
-                        <span className="req-id-badge" style={{ background: 'rgba(59, 130, 246, 0.15)', color: '#3b82f6', border: '1px solid rgba(59, 130, 246, 0.2)' }}>
-                          {trip.id}
-                        </span>
+                        <div className="upcoming-date-section" style={{ color: 'var(--text-secondary)', fontSize: '0.825rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <FiCalendar style={{ fontSize: '0.9rem' }} />
+                          <span>{trip.date}</span>
+                        </div>
                         <span className="upcoming-time-badge" style={{ color: 'var(--color-primary)', fontSize: '0.8rem', fontWeight: '800' }}>
                           {trip.time}
                         </span>
-                      </div>
-
-                      <div className="upcoming-date-section" style={{ color: 'var(--text-secondary)', fontSize: '0.825rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '6px', margin: '10px 0 var(--spacing-xs) 0' }}>
-                        <FiCalendar style={{ fontSize: '0.9rem' }} />
-                        <span>{trip.date}</span>
                       </div>
 
                       {/* Fare intentionally hidden before the trip starts -- only shown
@@ -356,12 +369,15 @@ export const Requests = () => {
                         <button
                           type="button"
                           className="btn-modal-accept w-full"
+                          disabled={isOnTrip}
+                          style={isOnTrip ? { opacity: 0.5, cursor: 'not-allowed' } : undefined}
                           onClick={(e) => {
                             e.stopPropagation()
+                            if (isOnTrip) return
                             startUpcomingTrip(trip)
                           }}
                         >
-                          Start Trip Now
+                          {isOnTrip ? 'Finish Current Ride First' : 'Start Trip Now'}
                         </button>
                       </div>
                     </div>

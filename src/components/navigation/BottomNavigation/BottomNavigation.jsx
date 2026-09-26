@@ -14,7 +14,10 @@ export const BottomNavigation = () => {
   const navItems = [
     { label: 'Home', path: '/', icon: FiHome },
     { label: 'Rides', path: '/requests', icon: FiCompass, badge: requests.length > 0 ? requests.length : null },
-    { label: 'History', path: '/trips', icon: FiMapPin },
+    // Only the history list/details count as "History" -- live trip flow pages
+    // (/trips/assigned, /trips/active, /trips/payment, ...) also live under /trips
+    // but are not history, so they must not highlight this tab.
+    { label: 'History', path: '/trips', icon: FiMapPin, matchPrefixes: ['/trips/history/'] },
     { label: 'Wallet', path: '/wallet', icon: FiCreditCard, badge: outstandingCount > 0 ? outstandingCount : null },
     { label: 'Profile', path: '/profile', icon: FiUser }
   ]
@@ -24,7 +27,9 @@ export const BottomNavigation = () => {
       <div className="bottom-nav-container">
         {navItems.map((item) => {
           const Icon = item.icon
-          const isActive = activePath === item.path || (item.path !== '/' && activePath.startsWith(item.path))
+          const isActive = item.matchPrefixes
+            ? activePath === item.path || item.matchPrefixes.some((prefix) => activePath.startsWith(prefix))
+            : activePath === item.path || (item.path !== '/' && activePath.startsWith(item.path))
           return (
             <Link
               key={item.label}

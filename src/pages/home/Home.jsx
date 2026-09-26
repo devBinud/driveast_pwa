@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { FiChevronRight, FiNavigation, FiX } from 'react-icons/fi'
+import { FiChevronRight, FiNavigation } from 'react-icons/fi'
 import { FaIndianRupeeSign } from 'react-icons/fa6'
-import toast from 'react-hot-toast'
 import { useAuth } from '../../hooks/useAuth'
 import { useTripStore, getTripStatusRoute } from '../../store/tripStore'
 import { useWalletStore } from '../../store/walletStore'
@@ -77,31 +76,17 @@ export const Home = () => {
       {isTripActive && (
         <div className="active-trip-banner-container">
           <Link to={getActiveTripRoute()} className="active-trip-banner-link">
-            <div className="active-trip-banner pulse-glow-success">
+            <div className="active-trip-banner pulse-glow-yellow">
               <div className="banner-icon-bg">
                 <FiNavigation />
               </div>
               <div className="banner-details">
                 <h4>Active Ride In Progress</h4>
-                <p>To: {currentTrip.drop ? currentTrip.drop.split(',')[0] : 'Destination'}</p>
+                <p>To: {currentTrip.drop || 'Destination'}</p>
               </div>
               <FiChevronRight className="banner-arrow" />
             </div>
           </Link>
-          <button
-            type="button"
-            className="active-trip-dismiss-btn"
-            onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              clearCurrentTrip()
-              toast('Active ride cleared', { icon: '🗑️' })
-            }}
-            title="Dismiss / Clear ride"
-            aria-label="Dismiss ride"
-          >
-            <FiX />
-          </button>
         </div>
       )}
 

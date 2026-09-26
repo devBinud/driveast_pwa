@@ -233,6 +233,17 @@
   border: 2px solid var(--card-border);
 }
 
+.details-cust-avatar-initial {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: var(--color-primary);
+  color: #1e293b;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
 .customer-text-meta {
   flex: 1;
 }
