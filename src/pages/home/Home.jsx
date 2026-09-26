@@ -13,12 +13,14 @@ import './Home.css'
 
 const ACTIVE_TRIP_STATUSES = [
   'assigned',
+  'accepted',
   'navigating',
   'arrived',
   'driver_arrived',
   'otp_verified',
   'active',
   'in_progress',
+  'started',
   'payment_pending'
 ]
 
